@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Export Test</title>
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <h1>Excel Export Test</h1>
+    <button onclick="exportExcel()" style="padding: 10px 20px; background: #22c55e; color: white; border: none; cursor: pointer;">Export Excel</button>
+    
+    <script>
+        // Simulate the exportExcel function
+        async function exportExcel() {
+            alert("Button clicked! exportExcel function is executing.");
+            console.log("exportExcel called");
+            
+            // Load ExcelJS from CDN
+            if (!window.ExcelJS) {
+                console.log("Loading ExcelJS...");
+                await new Promise((resolve, reject) => {
+                    const s = document.createElement('script');
+                    s.src = 'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';
+                    s.onload = resolve; 
+                    s.onerror = reject;
+                    document.head.appendChild(s);
+                });
+                console.log("ExcelJS loaded");
+            }
+            
+            console.log("Creating workbook...");
+            const wb = new ExcelJS.Workbook();
+            const ws = wb.addWorksheet('Test');
+            
+            ws.getCell('A1').value = 'Store ID';
+            ws.getCell('B1').value = 'Store Name';
+            ws.getCell('A2').value = '001';
+            ws.getCell('B2').value = 'Test Store';
+            
+            console.log("Writing buffer...");
+            const buf = await wb.xlsx.writeBuffer();
+            
+            console.log("Creating blob...");
+            const blob = new Blob([buf], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'test_export.xlsx';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert("Excel file should be downloading now!");
+        }
+    </script>
+</body>
+</html>

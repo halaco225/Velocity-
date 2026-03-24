@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VELOCITY — Speed of Service</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap');
+:root{--bg:#0a0c10;--surface:#111318;--surface2:#181c24;--border:#252a35;--accent:#f97316;--accent2:#fb923c;--green:#22c55e;--yellow:#eab308;--red:#ef4444;--text:#e2e8f0;--muted:#64748b;--muted2:#475569;--highlight:#1e2a3a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;font-size:14px;}
+.header{background:linear-gradient(135deg,#0f1318,#151a24);border-bottom:1px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:32px;height:32px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:12px;color:#fff;}
+.logo-text{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:3px;text-transform:uppercase;}
+.logo-sub{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.badge{padding:3px 8px;border-radius:4px;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;}
+.badge-orange{background:rgba(249,115,22,.15);color:var(--accent);border:1px solid rgba(249,115,22,.3);}
+.badge-green{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25);}
+.badge-blue{background:rgba(99,179,237,.12);color:#63b3ed;border:1px solid rgba(99,179,237,.25);}
+.badge-purple{background:rgba(168,85,247,.12);color:#a855f7;border:1px solid rgba(168,85,247,.25);}
+.btn{display:flex;align-items:center;gap:6px;padding:6px 13px;border-radius:5px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .15s;border:none;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--text);}
+.btn-ghost:hover{background:var(--border);}
+.btn-danger{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--red);}
+
+.toolbar{background:var(--surface);border-bottom:1px solid var(--border);padding:9px 20px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.toolbar-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+select,input[type=number]{background:var(--surface2);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'Barlow',sans-serif;font-size:12px;padding:5px 9px;cursor:pointer;outline:none;}
+select:focus{border-color:var(--accent);}
+select option{background:#1e2533;}
+.sep{width:1px;height:24px;background:var(--border);flex-shrink:0;}
+.hypo-box{display:flex;align-items:center;gap:7px;background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.2);border-radius:6px;padding:5px 11px;}
+.hypo-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--accent);text-transform:uppercase;}
+input[type=number]{width:48px;text-align:center;padding:4px 6px;background:var(--bg);border-color:rgba(249,115,22,.3);color:var(--accent);font-family:'Space Mono',monospace;font-weight:700;font-size:13px;}
+.view-toggle{display:flex;gap:2px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:2px;margin-left:auto;}
+.export-btn{padding:5px 12px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;border:1px solid var(--border);background:rgba(34,197,94,.12);color:var(--green);text-transform:uppercase;white-space:nowrap;transition:background .15s;}
+.export-btn:hover{background:rgba(34,197,94,.25);}
+.view-btn{padding:4px 10px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .15s;border:none;background:transparent;}
+.view-btn.active{background:var(--accent);color:#fff;}
+
+.day-pills{display:flex;gap:6px;padding:8px 20px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center;}
+.day-pill{padding:4px 12px;border-radius:12px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--muted);text-transform:uppercase;}
+.day-pill.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.day-pill.wtd{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:var(--green);}
+.day-pill.wtd.active{background:var(--green);border-color:var(--green);color:#000;}
+.days-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+
+.scorecard-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--border);border-bottom:2px solid var(--border);}
+.score-tile{background:var(--surface);padding:11px 16px;transition:background .15s;}
+.score-tile.clickable{cursor:pointer;}
+.score-tile.clickable:hover{background:var(--surface2);}
+.score-tile.active-alert{background:rgba(249,115,22,.08);border-bottom:2px solid var(--accent);}
+.score-tile-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.score-tile-value{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;line-height:1;}
+.score-tile-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+.tile-hint{font-size:9px;color:var(--accent);margin-top:2px;opacity:.7;}
+.val-good{color:var(--green);}
+.val-warn{color:var(--yellow);}
+.val-orange{color:#f97316;}
+.val-bad{color:var(--red);}
+.val-neutral{color:var(--text);}
+
+.alert-bar{display:none;background:rgba(249,115,22,.06);border-bottom:1px solid rgba(249,115,22,.2);padding:7px 20px;align-items:center;gap:10px;}
+.alert-bar.visible{display:flex;}
+.alert-bar-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);}
+.clear-btn{margin-left:auto;padding:3px 10px;background:transparent;border:1px solid rgba(249,115,22,.3);border-radius:4px;color:var(--accent);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;}
+
+.main{padding:16px 20px;}
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px;}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--border);}
+.table-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+.table-scroll{overflow-x:auto;max-height:calc(100vh - 280px);overflow-y:auto;}
+table{width:100%;border-collapse:collapse;}
+th{position:sticky;top:0;z-index:10;background:var(--surface2);padding:7px 11px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0;z-index:10;}
+th:hover{color:var(--text);}
+th.sort-asc::after{content:' ↑';color:var(--accent);}
+th.sort-desc::after{content:' ↓';color:var(--accent);}
+td{padding:7px 11px;border-bottom:1px solid rgba(37,42,53,.7);font-size:12px;white-space:nowrap;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--highlight);}
+.store-name{font-weight:600;}
+.store-id{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);}
+.ist-val{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;}
+.wtd-val{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--green);}
+.delta-pill{display:inline-flex;align-items:center;padding:1px 5px;border-radius:10px;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;}
+.delta-pos{background:rgba(34,197,94,.1);color:var(--green);}
+.delta-zero{background:rgba(100,116,139,.1);color:var(--muted);}
+.pct-bar{display:flex;align-items:center;gap:4px;}
+.bar-track{height:4px;background:var(--surface2);border-radius:3px;overflow:hidden;width:50px;}
+.bar-fill{height:100%;border-radius:3px;}
+.group-row td{background:var(--surface2);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:6px 11px;border-bottom:1px solid var(--border);}
+.group-row.region-row td{background:rgba(249,115,22,.06);color:var(--accent);border-left:3px solid var(--accent);}
+.group-row.area-row td{background:var(--surface2);color:var(--text);border-left:3px solid var(--muted2);padding-left:20px;}
+.alert-badge{display:inline-flex;align-items:center;gap:3px;padding:1px 5px;border-radius:3px;font-size:8px;font-family:'Space Mono',monospace;font-weight:700;}
+.alert-make{background:rgba(239,68,68,.12);color:var(--red);}
+.alert-prod{background:rgba(234,179,8,.12);color:var(--yellow);}
+
+.ai-panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;}
+.ai-header{display:flex;align-items:center;gap:9px;margin-bottom:12px;}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.ai-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);}
+.ai-text{font-size:13px;color:var(--text);line-height:1.7;}
+.ai-loading{color:var(--muted);font-style:italic;font-size:12px;}
+.ai-prompt-row{display:flex;gap:7px;margin-top:11px;}
+.ai-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'Barlow',sans-serif;font-size:12px;padding:7px 11px;outline:none;}
+.ai-input:focus{border-color:var(--accent);}
+.ai-submit{padding:7px 13px;background:var(--accent);border:none;border-radius:5px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;width:520px;max-width:94vw;}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
+.modal-sub{color:var(--muted);font-size:12px;margin-bottom:18px;line-height:1.5;}
+.form-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;}
+.form-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;padding:8px 12px;outline:none;margin-bottom:14px;}
+.form-input:focus{border-color:var(--accent);}
+.drop-zone{border:2px dashed var(--border);border-radius:8px;padding:28px;text-align:center;cursor:pointer;transition:all .15s;margin-bottom:14px;position:relative;}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--accent);background:rgba(249,115,22,.03);}
+.drop-icon{font-size:26px;margin-bottom:7px;}
+.drop-text{color:var(--muted);font-size:12px;}
+.drop-text strong{color:var(--text);}
+.file-list{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+.file-chip{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);border-radius:12px;padding:2px 9px;font-size:10px;color:var(--accent);font-family:'Space Mono',monospace;}
+.modal-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:4px;}
+#fileInput{display:none;}
+
+.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:70px 24px;text-align:center;}
+.welcome-icon{font-size:44px;margin-bottom:14px;}
+.welcome-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:7px;}
+.welcome-sub{color:var(--muted);font-size:13px;max-width:400px;line-height:1.6;margin-bottom:24px;}
+
+.upload-progress{display:none;align-items:center;gap:10px;padding:8px 20px;background:rgba(249,115,22,.06);border-bottom:1px solid rgba(249,115,22,.2);}
+.upload-progress.visible{display:flex;}
+.progress-text{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">V</div>
+    <div>
+      <div class="logo-text">Velocity</div>
+      <div class="logo-sub">Speed of Service</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="badge badge-orange" id="userBadge" style="display:none"></span>
+    <span class="badge badge-purple" id="periodBadge" style="display:none"></span>
+    <span class="badge badge-green" id="weekBadge" style="display:none"></span>
+    <span class="badge badge-blue" id="daysBadge" style="display:none"></span>
+    <button class="btn btn-ghost" id="resetBtn" style="display:none" onclick="confirmReset()">↺ Reset Week</button>
+    <button class="btn btn-primary" onclick="openUpload()">⬆ Upload Report</button>
+  </div>
+</div>
+
+<div class="upload-progress" id="uploadProgress">
+  <div class="ai-dot"></div>
+  <span class="progress-text" id="progressText">Processing report...</span>
+</div>
+
+<div class="toolbar" id="toolbar" style="display:none">
+  <span class="toolbar-label">Filter:</span>
+  <select id="regionFilter" onchange="applyFilters()"><option value="">All Regions</option></select>
+  <select id="areaFilter" onchange="applyFilters()"><option value="">All Areas</option></select>
+  <select id="storeFilter" onchange="applyFilters()"><option value="">All Stores</option></select>
+  <div class="sep"></div>
+  <span class="toolbar-label">View By:</span>
+  <select id="groupBy" onchange="renderTable()">
+    <option value="region">Region + Area + Store</option>
+    <option value="region_only">Regions Only</option>
+    <option value="area_only">Areas Only</option>
+    <option value="area">Area + Store</option>
+    <option value="store">Stores (flat)</option>
+  </select>
+  <div class="sep"></div>
+  <input type="hidden" id="hypoCount" value="2">
+  <div class="view-toggle">
+    <button class="view-btn active" id="btnTable" onclick="setView('table')">Table</button>
+    <button class="view-btn" id="btnAI" onclick="setView('ai')">AI Analysis</button>
+  </div>
+  <button class="export-btn" onclick="exportExcel()" title="Export current view to Excel">&#8595; Export Excel</button>
+</div>
+
+<div class="day-pills" id="dayPills" style="display:none">
+  <span class="days-label">View:</span>
+</div>
+
+<div class="scorecard-strip" id="scorecardStrip" style="display:none"></div>
+<div class="alert-bar" id="alertBar">
+  <span class="alert-bar-label" id="alertBarLabel">⚠ Alert Filter Active</span>
+  <button class="clear-btn" onclick="clearAlertFilter()">✕ Clear</button>
+</div>
+
+<div class="main" id="mainContent">
+  <div class="welcome" id="welcomeScreen">
+    <div class="welcome-icon">⚡</div>
+    <div class="welcome-title">Welcome to Velocity</div>
+    <div class="welcome-sub">Upload your Pizza Hut Speed of Service report to get started. Upload daily — Velocity stacks your data all week and builds WTD numbers automatically.</div>
+    <button class="btn btn-primary" style="padding:11px 26px;font-size:14px;" onclick="openUpload()">Upload Your Report</button>
+  </div>
+  <div id="tableView" style="display:none">
+    <div class="table-wrap">
+      <div class="table-header">
+        <span class="table-title" id="tableTitle">Overview</span>
+        <div style="display:flex;gap:7px;align-items:center;">
+          <span class="badge badge-orange" id="storeCount"></span>
+          <span style="font-size:9px;color:var(--muted)">Make <4:00 · IST target <19m · PDF buckets</span>
+        </div>
+      </div>
+      <div class="table-scroll"><div id="tableBody"></div></div>
+    </div>
+  </div>
+  <div id="aiView" style="display:none">
+    <div class="ai-panel">
+      <div class="ai-header"><div class="ai-dot"></div><span class="ai-title">Velocity AI — Speed of Service Analysis</span></div>
+      <div id="aiOutput"><span class="ai-loading">Upload a report first, then ask a question or click Analyze Now.</span></div>
+      <div class="ai-prompt-row">
+        <input class="ai-input" id="aiPrompt" placeholder="e.g. Which area has the worst make time? What's trending this week?" onkeydown="if(event.key==='Enter')askAI()">
+        <button class="ai-submit" onclick="askAI()">Ask</button>
+        <button class="ai-submit" style="background:var(--surface2);color:var(--text);border:1px solid var(--border);" onclick="autoAnalyze()">Analyze Now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal">
+    <div class="modal-title">Upload SOS Report</div>
+    <div class="modal-sub">Enter your name so Velocity scopes your view. Drop your Excel SOS report and/or PDF Above Store report together.</div>
+    <label class="form-label">Your Name</label>
+    <input class="form-input" id="uploaderName" placeholder="e.g. Harold Lacoste, Preston Arnwine..." list="nameList">
+    <datalist id="nameList">
+      <option value="Harold Lacoste"><option value="Preston Arnwine"><option value="Terrance Spillane"><option value="Matt Hester">
+      <option value="Darian Spikes"><option value="Ebony Simmons"><option value="Ja'Don McNeil"><option value="Jorge Garcia">
+      <option value="Marc Gannon"><option value="Michelle Meehan"><option value="Emmanuel Boateng"><option value="Erin Pizzo">
+      <option value="Royal Mitchell"><option value="Russell Kowalczyk"><option value="Brenda Marta"><option value="Constance Miranda">
+      <option value="Eric Harstine"><option value="Javier Martinez"><option value="Kevin Dunn"><option value="Max Losey">
+      <option value="Oscar Gutierrez"><option value="Tami Elliott-Baker">
+    </datalist>
+    <div class="drop-zone" id="dropZone"
+      onclick="document.getElementById('fileInput').click()"
+      ondragover="event.preventDefault();this.classList.add('drag')"
+      ondragleave="this.classList.remove('drag')"
+      ondrop="handleDrop(event)">
+      <div class="drop-icon">📊</div>
+      <div class="drop-text"><strong>Click to browse</strong> or drag &amp; drop</div>
+      <div class="drop-text" style="margin-top:4px;font-size:11px;">.xlsx for SOS report · .pdf for Above Store report · Select multiple</div>
+      <div class="file-list" id="fileList"></div>
+    </div>
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.pdf" multiple onchange="handleFileSelect(event)">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeUpload()">Cancel</button>
+      <button class="btn btn-primary" onclick="processUpload()">Load Report(s)</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==============================
+// STATE
+// ==============================
+let allWeeksData = [];
+let currentWeekIdx = 0;
+let currentData = null;
+let currentUser = '';
+let activeDay = 'wtd';
+let activeRegion = '', activeArea = '', activeStore = '';
+let alertFilter = null;
+let sortCol = 'in_store', sortDir = 'desc';
+let selectedFiles = [];
+
+const ROLE_SCOPE = {
+  'Matt Hester':{type:'vp'},
+  'Harold Lacoste':{type:'region',region:'Harold Lacoste'},
+  'Preston Arnwine':{type:'region',region:'Preston Arnwine'},
+  'Terrance Spillane':{type:'region',region:'Terrance Spillane'},
+  'Darian Spikes':{type:'area',area:'Area 2011'},
+  'Ebony Simmons':{type:'area',area:'Area 2016'},
+  "Ja'Don McNeil":{type:'area',area:'Area 2022'},
+  'Jorge Garcia':{type:'area',area:'Area 2000'},
+  'Marc Gannon':{type:'area',area:'Area 2015'},
+  'Michelle Meehan':{type:'area',area:'Area 2034'},
+  'Emmanuel Boateng':{type:'area',area:'Area 2017'},
+  'Erin Pizzo':{type:'area',area:'Area 2004'},
+  'Royal Mitchell':{type:'area',area:'Area 2009'},
+  'Russell Kowalczyk':{type:'area',area:'Area 2048'},
+  'Brenda Marta':{type:'area',area:'Area 2002'},
+  'Constance Miranda':{type:'area',area:'Area 2010'},
+  'Eric Harstine':{type:'area',area:'Area 2033'},
+  'Javier Martinez':{type:'area',area:'Area 2024'},
+  'Kevin Dunn':{type:'area',area:'Area 2055'},
+  'Max Losey':{type:'area',area:'Area 2039'},
+  'Oscar Gutierrez':{type:'area',area:'Area 2043'},
+  'Tami Elliott-Baker':{type:'area',area:'Area 2008'},
+};
+
+// ==============================
+// HELPERS
+// ==============================
+const parsePct = s => s !== null && s !== undefined ? parseFloat(String(s).replace('%',''))||0 : 0;
+const parseTime = s => {
+  if(!s||s==='NaN'||s==='0:00'||s==='—')return 0;
+  if(typeof s === 'number') return s;
+  const neg=s.startsWith('-');const c=s.replace('-','').split(':');
+  return (neg?-1:1)*((parseInt(c[0])||0)+(parseInt(c[1])||0)/60);
+};
+const fmtTime = m => {if(!m||m<=0)return'0:00';const i=Math.floor(m),s=Math.round((m-i)*60);return`${i}:${String(s).padStart(2,'0')}`;};
+const istColor = v => v<=17?'val-good':v<=21?'val-warn':'val-bad';
+const mkColor = v => v<=3?'val-good':v<=4?'val-warn':'val-bad';
+const prColor = v => v<=12?'val-good':v<=15?'val-warn':v<=19?'val-orange':'val-bad';
+const pctColor = (v,g,w) => v>=g?'val-good':v>=w?'val-warn':'val-bad';
+
+// IST <19% — always returns a display-ready string
+function fmtLt19(raw) {
+  if (raw === null || raw === undefined || raw === '') return '—';
+  const n = typeof raw === 'number' ? raw : parseFloat(String(raw).replace('%',''));
+  if (isNaN(n)) return '—';
+  return n.toFixed(1) + '%';
+}
+function numLt19(raw) {
+  if (raw === null || raw === undefined || raw === '') return 0;
+  const n = typeof raw === 'number' ? raw : parseFloat(String(raw).replace('%',''));
+  return isNaN(n) ? 0 : n;
+}
+
+function calcHypo(ist, deliveries, n) {
+  const TARGET = 19;
+  if (!deliveries || deliveries < 1) return ist;
+  const actualN = Math.min(n, deliveries);
+  const slowTime = Math.max(ist + 5, ist * 1.3);
+  const newTotal = (ist * deliveries) - (slowTime * actualN) + (TARGET * actualN);
+  return Math.max(Math.round((newTotal / deliveries) * 10) / 10, TARGET - 2);
+}
+
+// ==============================
+// SCOPE FILTERING
+// ==============================
+function scopeStores(stores) {
+  const scope = ROLE_SCOPE[currentUser];
+  if (!scope || scope.type === 'vp') return stores;
+  if (scope.type === 'region') return stores.filter(s => s.region_coach === scope.region);
+  if (scope.type === 'area') return stores.filter(s => s.area_coach === scope.area || s.area === scope.area);
+  return stores;
+}
+
+function getDisplayStores() {
+  if (!currentData || !currentData.stores) return [];
+  let stores;
+  if (activeDay === 'wtd') {
+    stores = currentData.stores.map(s => ({
+      ...s,
+      in_store: s.wtd_in_store,
+      make: s.wtd_make,
+      pct_lt4: s.wtd_pct_lt4,
+      on_time: s.wtd_on_time,
+      deliveries: s.wtd_deliveries,
+      ist_lt19_pct: s.wtd_lt19_pct,
+      ist_lt10: s.wtd_ist_lt10 || null,
+      ist_1014: s.wtd_ist_1014 || null,
+      ist_1518: s.wtd_ist_1518 || null,
+      ist_1925: s.wtd_ist_1925 || null,
+      ist_gt25: s.wtd_ist_gt25 || null,
+      is_wtd: true
+    }));
+  } else {
+    stores = currentData.stores.map(s => {
+      const day = s.daily && s.daily[activeDay];
+      if (!day) return null;
+      return {
+        ...s,
+        in_store: day.in_store,
+        make: day.make,
+        pct_lt4: day.pct_lt4 || s.pct_lt4,
+        on_time: day.on_time,
+        deliveries: day.deliveries,
+        ist_lt19_pct: day.ist_lt19_pct,
+        ist_lt10: day.ist_lt10 || null,
+        ist_1014: day.ist_1014 || null,
+        ist_1518: day.ist_1518 || null,
+        ist_1925: day.ist_1925 || null,
+        ist_gt25: day.ist_gt25 || null,
+        is_wtd: false
+      };
+    }).filter(Boolean);
+  }
+
+  stores = scopeStores(stores);
+
+  return stores.filter(s => {
+    if (alertFilter === 'make' && parseTime(s.make) <= 4) return false;
+    if (activeRegion && s.region_coach !== activeRegion) return false;
+    if (activeArea && s.area_coach !== activeArea && s.area !== activeArea) return false;
+    if (activeStore && s.store_id !== activeStore) return false;
+    return true;
+  });
+}
+
+function applyFilters() {
+  activeRegion = document.getElementById('regionFilter').value;
+  activeArea = document.getElementById('areaFilter').value;
+  activeStore = document.getElementById('storeFilter').value;
+  renderAll();
+}
+
+// ==============================
+// UPLOAD
+// ==============================
+function openUpload() { document.getElementById('uploadModal').classList.add('open'); }
+function closeUpload() { document.getElementById('uploadModal').classList.remove('open'); }
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag');
+  // Accept both xlsx AND pdf
+  selectedFiles = Array.from(e.dataTransfer.files).filter(f => f.name.match(/\.(xlsx?|pdf)$/i));
+  updateFileList();
+}
+function handleFileSelect(e) {
+  selectedFiles = Array.from(e.target.files);
+  updateFileList();
+}
+function updateFileList() {
+  const fl = document.getElementById('fileList');
+  fl.innerHTML = selectedFiles.map(f => {
+    const icon = f.name.match(/\.pdf$/i) ? '📋' : '📊';
+    return `<span class="file-chip">${icon} ${f.name}</span>`;
+  }).join('');
+}
+
+async function processUpload() {
+  const name = document.getElementById('uploaderName').value.trim();
+  if (!name) { alert('Please enter your name.'); return; }
+  if (!selectedFiles.length) { alert('Please select at least one file.'); return; }
+
+  closeUpload();
+  currentUser = name;
+
+  const progress = document.getElementById('uploadProgress');
+  const progressText = document.getElementById('progressText');
+  progress.classList.add('visible');
+
+  const hasPdf = selectedFiles.some(f => f.name.match(/\.pdf$/i));
+  progressText.textContent = hasPdf
+    ? `Processing ${selectedFiles.length} file(s)... PDF parsing may take 15-30s`
+    : `Processing ${selectedFiles.length} file(s)...`;
+
+  const formData = new FormData();
+  formData.append('uploaderName', name);
+  selectedFiles.forEach(f => formData.append('files', f));
+
+  try {
+    const resp = await fetch('/api/upload', { method: 'POST', body: formData });
+
+    // Always try to parse JSON — if it fails, give a useful message
+    let result;
+    const rawText = await resp.text();
+    
+    if (!rawText || rawText.trim() === '') {
+      throw new Error('Server returned empty response. Check if ANTHROPIC_API_KEY is set for PDF parsing.');
+    }
+    
+    try {
+      result = JSON.parse(rawText);
+    } catch(jsonErr) {
+      console.error('JSON parse error. Raw response:', rawText.substring(0, 500));
+      console.error('Full raw response:', rawText);
+      if (rawText.includes('Internal Server Error')) {
+        throw new Error('Server crashed. Please try again or contact support.');
+      }
+      throw new Error(`Server returned invalid JSON. ${rawText.includes('<!') ? 'Server may be crashing - check Render logs.' : 'Response: ' + rawText.substring(0, 100)}`);
+    }
+
+    if (!resp.ok) throw new Error(result.error || 'Upload failed');
+
+    // FULL STATE RESET - Clear everything before loading new data
+    currentData = null;
+    activeDay = 'wtd';
+    activeRegion = '';
+    activeArea = '';
+    activeStore = '';
+    alertFilter = null;
+    sortCol = 'in_store';
+    sortDir = 'desc';
+    
+    // Clear UI state
+    document.getElementById('regionFilter').value = '';
+    document.getElementById('areaFilter').value = '';
+    document.getElementById('storeFilter').value = '';
+
+    // Set new data
+    allWeeksData = result.data || []; currentWeekIdx = 0; currentData = allWeeksData[0] || null;
+
+    selectedFiles = [];
+    document.getElementById('fileList').innerHTML = '';
+    document.getElementById('fileInput').value = '';
+
+    // Show any partial errors as warnings (not blocking)
+    if (result.errors && result.errors.length) {
+      console.warn('Upload warnings:', result.errors);
+      // Show non-blocking warning for PDF issues
+      const pdfErrors = result.errors.filter(e => e.includes('PDF') || e.includes('ANTHROPIC'));
+      if (pdfErrors.length > 0 && result.results && result.results.length === 0) {
+        // Only alert if NO files succeeded
+        alert('Warning: ' + pdfErrors.join('; '));
+      }
+    }
+
+    // Check if we have data to show
+    if (!currentData || !currentData.stores || currentData.stores.length === 0) {
+      progress.classList.remove('visible');
+      alert('No store data was extracted from the uploaded file(s). Check file format.');
+      return;
+    }
+
+    progress.classList.remove('visible');
+    saveToLocalStorage();
+    showDashboard();
+  } catch(e) {
+    progress.classList.remove('visible');
+    console.error('Upload error:', e);
+    alert('Error processing file: ' + e.message);
+  }
+}
+
+// ==============================
+// DASHBOARD
+// ==============================
+function showDashboard() {
+  if (!currentData || !currentData.stores) return;
+
+  document.getElementById('welcomeScreen').style.display = 'none';
+  document.getElementById('toolbar').style.display = 'flex';
+  document.getElementById('scorecardStrip').style.display = 'grid';
+  document.getElementById('tableView').style.display = 'block';
+  document.getElementById('dayPills').style.display = 'flex';
+  document.getElementById('resetBtn').style.display = 'flex';
+
+  document.getElementById('userBadge').textContent = currentUser;
+  document.getElementById('userBadge').style.display = 'inline';
+
+  // Period badge (P3W4 format)
+  if (currentData.period) {
+    document.getElementById('periodBadge').textContent = currentData.period;
+    document.getElementById('periodBadge').style.display = 'inline';
+  }
+
+  // Week badge — show Tue-Mon range
+  if (currentData.week) {
+    const tue = new Date(currentData.week + 'T12:00:00Z');
+    const mon = new Date(tue);
+    mon.setUTCDate(tue.getUTCDate() + 6);
+    const fmt = d => d.toLocaleDateString('en-US',{month:'numeric',day:'numeric'});
+    document.getElementById('weekBadge').textContent = currentData.dateRange || `${fmt(tue)}–${fmt(mon)}`;
+    document.getElementById('weekBadge').style.display = 'inline';
+  }
+
+  document.getElementById('daysBadge').textContent = `${currentData.days.length} day(s)`;
+  document.getElementById('daysBadge').style.display = 'inline';
+
+  const allStores = scopeStores(currentData.stores);
+  const regions = [...new Set(allStores.map(s=>s.region_coach))].sort();
+  const areas = [...new Set(allStores.map(s=>s.area_coach))].sort();
+  const stores = allStores.map(s=>({id:s.store_id,name:s.name})).sort((a,b)=>a.name.localeCompare(b.name));
+
+  document.getElementById('regionFilter').innerHTML = '<option value="">All Regions</option>'+regions.map(r=>`<option>${r}</option>`).join('');
+  document.getElementById('areaFilter').innerHTML = '<option value="">All Areas</option>'+areas.map(a=>`<option>${a}</option>`).join('');
+  document.getElementById('storeFilter').innerHTML = '<option value="">All Stores</option>'+stores.map(s=>`<option value="${s.id}">${s.name} (${s.id})</option>`).join('');
+
+  const scope = ROLE_SCOPE[currentUser] || {};
+  if (scope.type === 'area') {
+    document.getElementById('regionFilter').style.display='none';
+    document.getElementById('areaFilter').style.display='none';
+  } else if (scope.type === 'region') {
+    document.getElementById('regionFilter').style.display='none';
+  } else {
+    document.getElementById('regionFilter').style.display='';
+    document.getElementById('areaFilter').style.display='';
+  }
+
+  renderDayPills();
+  renderAll();
+}
+
+function renderDayPills() {
+  const container = document.getElementById('dayPills');
+  if (!currentData) return;
+  const days = currentData.days || [];
+  let html = '';
+
+  // Week tabs when multiple weeks loaded
+  if (allWeeksData.length > 1) {
+    html += '<span class="days-label">Week:</span>';
+    allWeeksData.forEach((w, i) => {
+      const label = w.period ? `${w.period} (${w.dateRange||w.week||'?'})` : (w.dateRange||w.week||'?');
+      const active = i===currentWeekIdx ? 'active' : '';
+      html += `<span class="day-pill ${active}" onclick="switchWeek(${i})">${label}</span>`;
+    });
+    html += '<span style="margin:0 8px;color:var(--muted);font-size:10px">|</span>';
+  }
+
+  html += '<span class="days-label">Day:</span>';
+  const wtdActive = activeDay==='wtd' ? 'active' : '';
+  html += `<span class="day-pill wtd ${wtdActive}" onclick="switchDay('wtd')">WTD Avg</span>`;
+  days.sort((a,b)=>a.date.localeCompare(b.date)).forEach(d => {
+    const label = new Date(d.date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'numeric',day:'numeric'});
+    const active = activeDay===d.date ? 'active' : '';
+    html += `<span class="day-pill ${active}" onclick="switchDay('${d.date}')">${label} <span style="opacity:.6;font-size:9px">${d.storeCount}s</span></span>`;
+  });
+  container.innerHTML = html;
+}
+
+function switchWeek(idx) {
+  currentWeekIdx = idx;
+  currentData = allWeeksData[idx];
+  activeDay = 'wtd';
+  renderDayPills();
+  renderAll();
+}
+
+function switchDay(day) {
+  activeDay = day;
+  renderDayPills();
+  renderAll();
+}
+
+// ==============================
+// SCORECARDS
+// ==============================
+function renderScorecards() {
+  const data = getDisplayStores();
+  if (!data.length) return;
+  const avgIST = data.reduce((a,s)=>a+(s.in_store||0),0)/data.length;
+  const avgMk = data.reduce((a,s)=>a+parseTime(s.make),0)/data.length;
+  const avgPct4 = data.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/data.length;
+  const avgOT = data.reduce((a,s)=>a+parsePct(s.on_time),0)/data.length;
+  const totalLt10 = data.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0);
+  const total1014 = data.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0);
+  const total1518 = data.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0);
+  const total1925 = data.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0);
+  const totalGt25 = data.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0);
+
+  document.getElementById('scorecardStrip').innerHTML = `
+    <div class="score-tile"><div class="score-tile-label">Stores</div><div class="score-tile-value val-neutral">${data.length}</div><div class="score-tile-sub">${activeDay==='wtd'?'WTD view':'Day view'}</div></div>
+    <div class="score-tile"><div class="score-tile-label">Avg In-Store</div><div class="score-tile-value ${istColor(avgIST)}">${avgIST.toFixed(1)}m</div><div class="score-tile-sub">Target <19m</div></div>
+    <div class="score-tile"><div class="score-tile-label">Avg Make</div><div class="score-tile-value ${mkColor(avgMk)}">${fmtTime(avgMk)}</div><div class="score-tile-sub">${avgPct4.toFixed(0)}% under 4:00</div></div>
+    <div class="score-tile"><div class="score-tile-label">On-Time %</div><div class="score-tile-value ${pctColor(avgOT,85,75)}">${avgOT.toFixed(1)}%</div><div class="score-tile-sub">Target >85%</div></div>
+    <div class="score-tile"><div class="score-tile-label"><10# / 10-14# / 15-18#</div><div class="score-tile-value val-good" style="font-size:18px">${totalLt10} / ${total1014} / ${total1518}</div><div class="score-tile-sub">Fast IST buckets</div></div>
+    <div class="score-tile"><div class="score-tile-label">19-25# / >25#</div><div class="score-tile-value ${total1925+totalGt25>data.length*3?'val-bad':total1925+totalGt25>data.length?'val-warn':'val-good'}" style="font-size:18px">${total1925} / ${totalGt25}</div><div class="score-tile-sub">Slow IST buckets</div></div>
+  `;
+  document.getElementById('storeCount').textContent = `${data.length} stores`;
+}
+
+function toggleAlert(type) {
+  alertFilter = alertFilter === type ? null : type;
+  const bar = document.getElementById('alertBar');
+  if (alertFilter) {
+    bar.classList.add('visible');
+    document.getElementById('alertBarLabel').textContent = '⚠ Filtered: Make Time > 4:00';
+  } else { bar.classList.remove('visible'); }
+  renderAll();
+}
+function clearAlertFilter() { alertFilter=null; document.getElementById('alertBar').classList.remove('visible'); renderAll(); }
+
+// ==============================
+// TABLE
+// ==============================
+function renderTable() {
+  if (!currentData || !currentData.stores) return;
+  const data = getDisplayStores();
+  if (!data.length) {
+    document.getElementById('tableBody').innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);font-size:12px;">No stores match current filters.</div>';
+    return;
+  }
+  const groupBy = document.getElementById('groupBy').value;
+  const isWTD = activeDay === 'wtd';
+
+  function storeRow(s) {
+    const mm = parseTime(s.make);
+    const lt4 = parsePct(s.pct_lt4), ot = parsePct(s.on_time);
+    const wtdBadge = isWTD && s.days_reported > 1 ? `<span style="font-size:9px;color:var(--green);margin-left:4px">${s.days_reported}d avg</span>` : '';
+    return `<tr>
+      <td><div class="store-name">${s.name}${wtdBadge}</div><div class="store-id">${s.store_id}</div></td>
+      <td style="font-size:11px;color:var(--muted)">${s.area||''}</td>
+      <td style="font-size:10px;color:var(--muted2)">${s.region_coach||''}</td>
+      <td><span class="ist-val ${istColor(s.in_store||0)}">${(s.in_store||0).toFixed ? (s.in_store||0).toFixed(1) : s.in_store}m</span></td>
+      <td><span class="${mkColor(mm)}" style="font-family:'Space Mono',monospace;font-size:11px">${s.make||'\u2014'}</span></td>
+      <td><div class="pct-bar"><span class="${pctColor(lt4,80,60)}" style="font-size:11px;min-width:30px">${s.pct_lt4||'\u2014'}</span><div class="bar-track"><div class="bar-fill" style="width:${lt4}%;background:${lt4>=80?'var(--green)':lt4>=60?'var(--yellow)':'var(--red)'}"></div></div></div></td>
+      <td><span class="${(s.ist_lt10||0)>0?'val-good':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_lt10!=null?parseInt(s.ist_lt10):0}</span></td>
+      <td><span class="${(s.ist_1014||0)>0?'val-good':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_1014!=null?parseInt(s.ist_1014):0}</span></td>
+      <td><span class="${(s.ist_1518||0)>0?'val-warn':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_1518!=null?parseInt(s.ist_1518):0}</span></td>
+      <td><span class="${(s.ist_1925||0)>3?'val-bad':(s.ist_1925||0)>1?'val-warn':'val-good'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_1925!=null?parseInt(s.ist_1925):0}</span></td>
+      <td><span class="${(s.ist_gt25||0)>3?'val-bad':(s.ist_gt25||0)>1?'val-warn':'val-good'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_gt25!=null?parseInt(s.ist_gt25):0}</span></td>
+      <td><span class="${pctColor(ot,85,75)}" style="font-size:11px">${s.on_time||'\u2014'}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${s.deliveries||0}</td>
+    </tr>`;
+  }
+
+  function groupRow(stores, label, cls) {
+    if (!stores.length) return '';
+    const avgIST=stores.reduce((a,s)=>a+(s.in_store||0),0)/stores.length;
+    const avgMk=stores.reduce((a,s)=>a+parseTime(s.make),0)/stores.length;
+    const avgLt4=stores.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/stores.length;
+    const avgOT=stores.reduce((a,s)=>a+parsePct(s.on_time),0)/stores.length;
+    const totalLt10=stores.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0);
+    const total1014=stores.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0);
+    const total1518=stores.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0);
+    const total1925=stores.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0);
+    const totalGt25=stores.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0);
+    const mf=stores.filter(s=>parseTime(s.make)>4).length;
+    return `<tr class="group-row ${cls}">
+      <td colspan="3">${label} <span style="opacity:.4;font-size:9px">${stores.length} stores</span></td>
+      <td><span class="ist-val ${istColor(avgIST)}">${avgIST.toFixed(1)}m</span></td>
+      <td class="${mkColor(avgMk)}">${fmtTime(avgMk)}</td>
+      <td class="${pctColor(avgLt4,80,60)}">${avgLt4.toFixed(0)}%</td>
+      <td>${totalLt10}</td>
+      <td>${total1014}</td>
+      <td>${total1518}</td>
+      <td class="${total1925>stores.length*3?'val-bad':total1925>stores.length?'val-warn':'val-good'}">${total1925}</td>
+      <td class="${totalGt25>stores.length*2?'val-bad':totalGt25>stores.length?'val-warn':'val-good'}">${totalGt25}</td>
+      <td class="${pctColor(avgOT,85,75)}">${avgOT.toFixed(1)}%</td>
+      <td>${stores.reduce((a,s)=>a+(s.deliveries||0),0)}</td>
+    </tr>`;
+  }
+
+  const sorted = [...data].sort((a,b)=>{
+    let av,bv;
+    if(['in_store','deliveries','ist_lt10','ist_1014','ist_1518','ist_1925','ist_gt25'].includes(sortCol)){av=a[sortCol]||0;bv=b[sortCol]||0;}
+    else if(['make'].includes(sortCol)){av=parseTime(a[sortCol]);bv=parseTime(b[sortCol]);}
+    else if(['pct_lt4','on_time'].includes(sortCol)){av=parsePct(a[sortCol]);bv=parsePct(b[sortCol]);}    else{av=(a[sortCol]||'').toLowerCase();bv=(b[sortCol]||'').toLowerCase();return sortDir==='asc'?av.localeCompare(bv):bv.localeCompare(av);}
+    return sortDir==='asc'?av-bv:bv-av;
+  });
+
+  const cols = `<tr>
+    <th onclick="sort('name')">Store</th><th onclick="sort('area')">Area</th><th onclick="sort('region_coach')">Region</th>
+    <th onclick="sort('in_store')" class="${sortCol==='in_store'?'sort-'+sortDir:''}">${isWTD?'WTD IST':'In-Store'}</th>
+    <th onclick="sort('make')" class="${sortCol==='make'?'sort-'+sortDir:''}">${isWTD?'WTD Make':'Make'}</th>
+    <th onclick="sort('pct_lt4')" class="${sortCol==='pct_lt4'?'sort-'+sortDir:''}">%<4m</th>
+    <th onclick="sort('ist_lt10')" class="${sortCol==='ist_lt10'?'sort-'+sortDir:''}">< 10#</th>
+    <th onclick="sort('ist_1014')" class="${sortCol==='ist_1014'?'sort-'+sortDir:''}">10-14#</th>
+    <th onclick="sort('ist_1518')" class="${sortCol==='ist_1518'?'sort-'+sortDir:''}">15-18#</th>
+    <th onclick="sort('ist_1925')" class="${sortCol==='ist_1925'?'sort-'+sortDir:''}">19-25#</th>
+    <th onclick="sort('ist_gt25')" class="${sortCol==='ist_gt25'?'sort-'+sortDir:''}">>25#</th>
+    <th onclick="sort('on_time')" class="${sortCol==='on_time'?'sort-'+sortDir:''}">On-Time</th>
+    <th>Del</th>
+  </tr>`;
+
+  let html = '';
+  if (groupBy==='region_only') {
+    const regions=[...new Set(sorted.map(s=>s.region_coach))];
+    html=`<table>${cols}<tbody>${regions.map(r=>groupRow(sorted.filter(s=>s.region_coach===r),`Region: ${r}`,'region-row')).join('')}</tbody></table>`;
+  } else if (groupBy==='area_only') {
+    const areas=[...new Set(sorted.map(s=>s.area))];
+    html=`<table>${cols}<tbody>${areas.map(a=>{const as=sorted.filter(s=>s.area===a);return as.length?groupRow(as,`${a}`,'area-row'):'';}).join('')}</tbody></table>`;
+  } else if (groupBy==='store') {
+    html=`<table>${cols}<tbody>${sorted.map(s=>storeRow(s)).join('')}</tbody></table>`;
+  } else if (groupBy==='area') {
+    const areas=[...new Set(sorted.map(s=>s.area))];
+    html=`<table>${cols}<tbody>`;
+    areas.forEach(a=>{const as=sorted.filter(s=>s.area===a);if(as.length)html+=groupRow(as,`${a}`,'area-row')+as.map(s=>storeRow(s)).join('');});
+    html+='</tbody></table>';
+  } else {
+    const regions=[...new Set(sorted.map(s=>s.region_coach))];
+    html=`<table>${cols}<tbody>`;
+    regions.forEach(r=>{
+      const rs=sorted.filter(s=>s.region_coach===r);
+      if(!rs.length) return;
+      html+=groupRow(rs,`Region: ${r}`,'region-row');
+      const areas=[...new Set(rs.map(s=>s.area))];
+      areas.forEach(a=>{const as=rs.filter(s=>s.area===a);if(as.length)html+=groupRow(as,`${a}`,'area-row')+as.map(s=>storeRow(s)).join('');});
+    });
+    html+='</tbody></table>';
+  }
+
+  document.getElementById('tableBody').innerHTML = html;
+  const dayLabel = activeDay==='wtd'?'WTD':new Date(activeDay+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+  document.getElementById('tableTitle').textContent = `${currentUser} — ${dayLabel}${currentData.period?' ('+currentData.period+')':''}`;
+}
+
+function sort(col) {
+  if(sortCol===col)sortDir=sortDir==='asc'?'desc':'asc';
+  else{sortCol=col;sortDir='desc';}
+  renderTable();
+}
+
+// ==============================
+// VIEW
+// ==============================
+function setView(v) {
+  document.getElementById('tableView').style.display=v==='table'?'block':'none';
+  document.getElementById('aiView').style.display=v==='ai'?'block':'none';
+  document.getElementById('btnTable').classList.toggle('active',v==='table');
+  document.getElementById('btnAI').classList.toggle('active',v==='ai');
+}
+
+// ==============================
+// AI
+// ==============================
+async function askAI() {
+  const p=document.getElementById('aiPrompt').value.trim();
+  if(!p){autoAnalyze();return;}
+  runAI(p);
+  document.getElementById('aiPrompt').value='';
+}
+async function autoAnalyze() {
+  if(!currentData){alert('Upload a report first.');return;}
+
+  // Get ALL data from the reports, not just filtered view
+  const allStores = currentData.stores || [];
+  const days = currentData.days || [];
+  const period = currentData.period || '';
+
+  // Calculate comprehensive metrics
+  const totalStores = allStores.length;
+
+  // IST analysis
+  const storesByIST = [...allStores].sort((a,b)=>(b.in_store||0)-(a.in_store||0));
+  const worstIST = storesByIST.slice(0,5).map(s=>`${s.name||s.store_id}(${(s.in_store||0).toFixed(1)}m)`).join(', ');
+  const bestIST = storesByIST.slice(-5).reverse().map(s=>`${s.name||s.store_id}(${(s.in_store||0).toFixed(1)}m)`).join(', ');
+
+  // IST bucket totals
+  const totalLt10 = allStores.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0);
+  const total1014 = allStores.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0);
+  const total1518 = allStores.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0);
+  const total1925 = allStores.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0);
+  const totalGt25 = allStores.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0);
+  const totalOrders = totalLt10 + total1014 + total1518 + total1925 + totalGt25;
+
+  // Calculate IST <19%
+  const lt19Count = totalLt10 + total1014 + total1518;
+  const lt19Pct = totalOrders > 0 ? (lt19Count / totalOrders * 100).toFixed(1) : 0;
+
+  // Make time analysis
+  const storesWithMake = allStores.filter(s=>s.make);
+  const storesByMake = [...storesWithMake].sort((a,b)=>parseTime(b.make)-parseTime(a.make));
+  const worstMake = storesByMake.slice(0,5).map(s=>`${s.name||s.store_id}(${s.make})`).join(', ');
+
+  // Production time analysis (for future use)
+  const storesWithProd = allStores.filter(s=>s.production);
+  const avgProd = storesWithProd.length > 0 ?
+    storesWithProd.reduce((a,s)=>a+parseTime(s.production),0)/storesWithProd.length : 0;
+
+  // Pct <4min analysis
+  const storesWithPct4 = allStores.filter(s=>s.pct_lt4);
+  const avgPct4 = storesWithPct4.length > 0 ?
+    storesWithPct4.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/storesWithPct4.length : 0;
+
+  // Day-over-day trends if multiple days
+  let trendsStr = '';
+  if (days.length > 1) {
+    const dayData = {};
+    days.forEach(d => {
+      const dayStores = allStores.filter(s => s.daily && s.daily[d.date]);
+      const avgIST = dayStores.reduce((a,s)=>a+(s.daily[d.date]?.in_store||0),0)/dayStores.length || 0;
+      dayData[d.date] = avgIST;
+    });
+    const sortedDays = Object.keys(dayData).sort();
+    trendsStr = `Day-over-Day IST Trends:\n`;
+    sortedDays.forEach((d,i) => {
+      const label = new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'numeric',day:'numeric'});
+      if (i === 0) {
+        trendsStr += `- ${label}: ${dayData[d].toFixed(1)}m\n`;
+      } else {
+        const prev = dayData[sortedDays[i-1]];
+        const delta = dayData[d] - prev;
+        const arrow = delta > 0.5 ? '▲' : delta < -0.5 ? '▼' : '→';
+        trendsStr += `- ${label}: ${dayData[d].toFixed(1)}m (${arrow} ${Math.abs(delta).toFixed(1)})\n`;
+      }
+    });
+  }
+
+  // Area breakdown
+  const areas = {};
+  allStores.forEach(s => {
+    const area = s.area_coach || s.area || 'Unknown';
+    if (!areas[area]) areas[area] = { count: 0, istSum: 0, gt25Count: 0, orders: 0 };
+    areas[area].count++;
+    areas[area].istSum += s.in_store || 0;
+    areas[area].gt25Count += parseInt(s.ist_gt25) || 0;
+    areas[area].orders += (parseInt(s.ist_lt10)||0) + (parseInt(s.ist_1014)||0) + (parseInt(s.ist_1518)||0) +
+                          (parseInt(s.ist_1925)||0) + (parseInt(s.ist_gt25)||0);
+  });
+
+  const areaSummary = Object.entries(areas)
+    .map(([area, data]) => {
+      const avgIST = (data.istSum / data.count).toFixed(1);
+      return `${area}: ${data.count} stores, Avg IST ${avgIST}m, ${data.gt25Count} >25min orders`;
+    })
+    .join('\n');
+
+  const prompt = `You are Velocity, a Pizza Hut Speed of Service analyst AI. ${currentUser} is analyzing ${period} data with ${days.length} day(s) uploaded. Be direct, actionable, and operations-focused. No fluff.
+
+COMPREHENSIVE REPORT DATA (${totalStores} stores):
+
+IN-STORE TIME (IST) ANALYSIS:
+- Worst IST stores: ${worstIST}
+- Best IST stores: ${bestIST}
+- IST Bucket Distribution:
+  • <10 min: ${totalLt10} orders (${(totalLt10/totalOrders*100||0).toFixed(1)}%)
+  • 10-14 min: ${total1014} orders (${(total1014/totalOrders*100||0).toFixed(1)}%)
+  • 15-18 min: ${total1518} orders (${(total1518/totalOrders*100||0).toFixed(1)}%)
+  • 19-25 min: ${total1925} orders (${(total1925/totalOrders*100||0).toFixed(1)}%)
+  • >25 min: ${totalGt25} orders (${(totalGt25/totalOrders*100||0).toFixed(1)}%)
+- IST <19%: ${lt19Pct}%
+- Total Orders Analyzed: ${totalOrders}
+
+MAKE TIME ANALYSIS:
+- Worst Make Time stores: ${worstMake}
+- Average Pct <4min: ${(avgPct4).toFixed(1)}%
+
+PRODUCTION TIME (stored for analysis):
+- Average Production Time: ${avgProd.toFixed(1)} minutes
+
+AREA COACH BREAKDOWN:
+${areaSummary}
+
+${trendsStr}
+
+Provide a comprehensive analysis:
+1. CRITICAL FINDINGS: Top 3-5 issues requiring immediate attention
+2. IST BUCKET INSIGHTS: What the distribution tells us about operations
+3. COACHING PRIORITIES: Specific stores/areas to focus on with actionable guidance
+4. TREND ANALYSIS: What patterns emerge from the data
+5. SUCCESSES: What's working well that should be reinforced
+6. RECOMMENDATIONS: 3-5 specific actions for the next 24-48 hours`;
+
+  runAI(prompt);
+}
+async function runAI(prompt) {
+  const out=document.getElementById('aiOutput');
+  out.innerHTML='<span class="ai-loading">⚡ Analyzing...</span>';
+  try {
+    const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:prompt}]})});
+    const d=await r.json();
+    const t=d.content?.map(c=>c.text||'').join('')||'No response.';
+    out.innerHTML=`<div class="ai-text">${t.replace(/\n/g,'<br>')}</div>`;
+  } catch(e){out.innerHTML=`<span style="color:var(--red)">Error: ${e.message}</span>`;}
+}
+
+// ==============================
+// RESET
+// ==============================
+function confirmReset() {
+  if(confirm('Reset all WTD data and start a fresh week?')) {
+    fetch('/api/reset',{method:'POST'}).then(()=>{
+      currentData=null; allWeeksData=[]; currentWeekIdx=0; localStorage.removeItem('velocity_data');
+      activeDay='wtd';activeRegion='';activeArea='';activeStore='';alertFilter=null;
+      document.getElementById('welcomeScreen').style.display='flex';
+      document.getElementById('toolbar').style.display='none';
+      document.getElementById('tableView').style.display='none';
+      document.getElementById('scorecardStrip').style.display='none';
+      document.getElementById('dayPills').style.display='none';
+      document.getElementById('resetBtn').style.display='none';
+      document.getElementById('userBadge').style.display='none';
+      document.getElementById('weekBadge').style.display='none';
+      document.getElementById('periodBadge').style.display='none';
+      document.getElementById('daysBadge').style.display='none';
+    });
+  }
+}
+
+function renderAll() {
+  if(!currentData)return;
+  renderScorecards();
+  renderTable();
+}
+
+// ==============================
+// LOCAL STORAGE PERSISTENCE
+// ==============================
+function saveToLocalStorage() {
+  try {
+    const payload = JSON.stringify({ allWeeksData, currentWeekIdx, currentUser });
+    localStorage.setItem('velocity_data', payload);
+  } catch(e) { console.warn('localStorage save failed:', e.message); }
+}
+
+function loadFromLocalStorage() {
+  try {
+    const raw = localStorage.getItem('velocity_data');
+    if (!raw) return false;
+    const parsed = JSON.parse(raw);
+    if (!parsed.allWeeksData || !parsed.allWeeksData.length) return false;
+    if (!parsed.allWeeksData[0].stores || !parsed.allWeeksData[0].stores.length) return false;
+    allWeeksData = parsed.allWeeksData;
+    currentWeekIdx = parsed.currentWeekIdx || 0;
+    currentData = allWeeksData[currentWeekIdx];
+    currentUser = parsed.currentUser || (currentData.days[0]?.uploader || '');
+    return true;
+  } catch(e) { console.warn('localStorage load failed:', e.message); return false; }
+}
+
+// Load on page open: localStorage first, then server
+if (loadFromLocalStorage()) {
+  showDashboard();
+} else {
+  fetch('/api/data').then(r=>r.json()).then(d=>{
+    if(d.data && d.data.length && d.data[0].stores && d.data[0].stores.length) {
+      allWeeksData=d.data; currentWeekIdx=0; currentData=allWeeksData[0];
+      currentUser=currentData.days[0]?.uploader||'';
+      if(currentUser) { saveToLocalStorage(); showDashboard(); }
+    }
+  }).catch(()=>{});
+}
+
+// ==============================
+// EXCEL EXPORT
+// ==============================
+async function exportExcel() {
+  const stores = getFilteredStores();
+  if (!stores || !stores.length) { alert('No data to export.'); return; }
+
+  // Load ExcelJS from CDN
+  if (!window.ExcelJS) {
+    await new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  const wb = new ExcelJS.Workbook();
+  const isWTD = activeDay === 'wtd';
+  
+  // Helper function to create a worksheet with data
+  function createWorksheet(workbook, sheetName, dataStores, dayLabel = '') {
+    const ws = workbook.addWorksheet(sheetName);
+
+    const RED    = { argb: 'FFEF4444' };
+    const ORANGE = { argb: 'FFF97316' };
+    const YELLOW = { argb: 'FFEAB308' };
+    const GREEN  = { argb: 'FF22C55E' };
+    const GRAY   = { argb: 'FF64748B' };
+    const BLUE_FILL = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF00B0F0' } };
+
+    function istFontColor(m) {
+      if (m <= 15) return GREEN;
+      if (m <= 19) return ORANGE;
+      return RED;
+    }
+    function pctFont(pct, good=80, warn=60) {
+      if (pct >= good) return GREEN;
+      if (pct >= warn) return YELLOW;
+      return RED;
+    }
+    function countFont(n) {
+      if (!n || n === 0) return GREEN;
+      if (n <= 2) return YELLOW;
+      if (n <= 5) return ORANGE;
+      return RED;
+    }
+    function prFont(m) {
+      if (m <= 12) return GREEN;
+      if (m <= 15) return YELLOW;
+      if (m <= 19) return ORANGE;
+      return RED;
+    }
+
+    // Set column widths (now 14 columns with store ID as first column)
+    [10,20,18,18,10,9,8,7,7,7,7,7,10,7].forEach((w,i) => { ws.getColumn(i+1).width = w; });
+
+  // Row 1: Title
+    const period = currentData?.week || '';
+    const dateRange = currentData?.dateRange || '';
+    const labelSuffix = dayLabel ? ` (${dayLabel})` : '';
+    ws.mergeCells('A1:N1');
+    const t = ws.getCell('A1');
+    t.value = `${dataStores.length} stores  |  ${period} ${dateRange}  |  Make <4:00 - IST target <19m${labelSuffix}`;
+    t.font = { bold: true, size: 11 };
+
+    // Row 2: Headers (Store ID now first column)
+    const hdr = ws.addRow(['Store ID','Store','Area','Region','In Store','Make','%<4m','<10#','10-14#','15-18#','19-25#','> 25#','%On Time','Del']);
+    hdr.eachCell(c => { c.font = { bold: true, size: 10 }; c.alignment = { horizontal: 'center' }; });
+
+  // Group by area
+    const areas = [...new Set(dataStores.map(s => s.area || s.area_coach || ''))];
+
+    for (const area of areas) {
+      const aStores = dataStores.filter(s => (s.area || s.area_coach || '') === area);
+      if (!aStores.length) continue;
+
+      // Area summary row
+      const avgIST  = aStores.reduce((a,s)=>a+(s.in_store||0),0)/aStores.length;
+      const avgMk   = aStores.reduce((a,s)=>a+parseTime(s.make),0)/aStores.length;
+      const avgLt4  = aStores.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/aStores.length;
+      const avgOT   = aStores.reduce((a,s)=>a+parsePct(s.on_time),0)/aStores.length;
+      const tot1925 = aStores.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0);
+      const totGt25 = aStores.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0);
+      const totDel  = aStores.reduce((a,s)=>a+(s.deliveries||0),0);
+      const mf = aStores.filter(s=>parseTime(s.make)>4).length;
+
+      const coach = aStores[0]?.area_coach || area;
+      const totLt10 = aStores.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0);
+      const tot1014 = aStores.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0);
+      const tot1518 = aStores.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0);
+      const gr = ws.addRow([
+        '', `${coach}  ${aStores.length} stores`, '',
+        avgIST.toFixed(1)+'m', fmtTime(avgMk), avgLt4/100,
+        totLt10, tot1014, tot1518, tot1925, totGt25, avgOT/100, totDel
+      ]);
+      gr.eachCell(c => { c.fill = BLUE_FILL; c.font = { bold: true, size: 10 }; });
+      gr.getCell(5).font  = { bold:true, size:10, color: istFontColor(avgIST) };
+      gr.getCell(6).font  = { bold:true, size:10, color: parseTime(avgMk)>4?RED:parseTime(avgMk)>3.5?ORANGE:GREEN };
+      gr.getCell(7).numFmt  = '0%';
+      gr.getCell(13).numFmt = '0%';
+
+      // Store rows (Store ID now in first column, not as sub-row)
+      for (const s of aStores) {
+        const ist   = s.in_store || 0;
+        const mk    = parseTime(s.make);
+        const lt4   = parsePct(s.pct_lt4);
+        const ot    = parsePct(s.on_time);
+        const c1925 = parseInt(s.ist_1925)||0;
+        const cgt25 = parseInt(s.ist_gt25)||0;
+
+        const clt10 = parseInt(s.ist_lt10)||0;
+        const c1014 = parseInt(s.ist_1014)||0;
+        const c1518 = parseInt(s.ist_1518)||0;
+        const sr = ws.addRow([
+          s.store_id, s.name||s.store_id, s.area||s.area_coach||'', s.region_coach||'',
+          ist.toFixed(1)+'m', s.make||'', lt4>0?lt4/100:null,
+          clt10, c1014, c1518, c1925, cgt25, ot>0?ot/100:null, s.deliveries||0
+        ]);
+        sr.getCell(1).font = { size:9, color: GRAY };
+        sr.getCell(5).font  = { bold:true, size:10, color: istFontColor(ist) };
+        sr.getCell(6).font  = { size:10, color: mk>4?RED:mk>3.5?ORANGE:GREEN };
+        sr.getCell(7).font  = { size:10, color: pctFont(lt4) };
+        sr.getCell(7).numFmt  = '0%';
+        sr.getCell(8).font  = { size:10, color: GREEN };
+        sr.getCell(9).font  = { size:10, color: GREEN };
+        sr.getCell(10).font = { size:10, color: YELLOW };
+        sr.getCell(11).font = { size:10, color: countFont(c1925) };
+        sr.getCell(12).font = { size:10, color: countFont(cgt25) };
+        sr.getCell(13).font = { size:10, color: pctFont(ot,85,75) };
+        sr.getCell(13).numFmt = '0%';
+        sr.getCell(14).font = { size:10, color: GRAY };
+      }
+    }
+
+    ws.views = [{ state:'frozen', ySplit:2 }];
+    // Add autoFilter to enable filtering
+    ws.autoFilter = 'A2:N2';
+    
+    return ws;
+  }
+  
+  // Create main worksheet
+  createWorksheet(wb, isWTD ? 'WTD Summary' : 'Velocity SOS', stores);
+  
+  // If WTD view, add daily tabs for each day in the week
+  if (isWTD && currentData?.days && currentData.days.length > 0) {
+    const days = currentData.days;
+    
+    for (const day of days) {
+      // Get stores for this specific day
+      const dayStores = currentData.stores.map(s => {
+        const d = s.daily && s.daily[day.date];
+        if (!d) return null;
+        return { 
+          ...s, 
+          in_store: d.in_store, 
+          make: d.make,
+          pct_lt4: d.pct_lt4||s.pct_lt4, 
+          on_time: d.on_time,
+          deliveries: d.deliveries,
+          ist_lt10: d.ist_lt10||0, 
+          ist_1014: d.ist_1014||0, 
+          ist_1518: d.ist_1518||0,
+          ist_1925: d.ist_1925||0, 
+          ist_gt25: d.ist_gt25||0 
+        };
+      }).filter(Boolean);
+      
+      // Apply same filters
+      const filteredDayStores = scopeStores(dayStores).filter(s => {
+        const rf = document.getElementById('regionFilter')?.value || '';
+        const af = document.getElementById('areaFilter')?.value || '';
+        const sf = document.getElementById('storeFilter')?.value || '';
+        if (rf && s.region_coach !== rf) return false;
+        if (af && s.area !== af && s.area_coach !== af) return false;
+        if (sf && s.store_id !== sf && s.name !== sf) return false;
+        return true;
+      });
+      
+      // Create formatted day label
+      const dayLabel = new Date(day.date + 'T12:00:00').toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'short',
+        day: 'numeric'
+      });
+      
+      // Only create sheet if there's data
+      if (filteredDayStores.length > 0) {
+        createWorksheet(wb, dayLabel, filteredDayStores, dayLabel);
+      }
+    }
+  }
+
+  const buf  = await wb.xlsx.writeBuffer();
+  const blob = new Blob([buf], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const ds   = new Date().toISOString().slice(0,10);
+  const period = currentData?.week || '';
+  a.href = url; a.download = `Velocity_SOS_${period.replace(/\s/g,'_')}_${ds}.xlsx`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function getFilteredStores() {
+  if (!currentData) return [];
+  let stores;
+  const n = parseInt(document.getElementById('hypoCount')?.value || 2);
+  if (activeDay === 'wtd') {
+    stores = currentData.stores.map(s => ({
+      ...s,
+      in_store: s.wtd_in_store, make: s.wtd_make, pct_lt4: s.wtd_pct_lt4,
+      on_time: s.wtd_on_time, deliveries: s.wtd_deliveries,
+      ist_lt10: s.wtd_ist_lt10||0, ist_1014: s.wtd_ist_1014||0, ist_1518: s.wtd_ist_1518||0,
+      ist_1925: s.wtd_ist_1925||0, ist_gt25: s.wtd_ist_gt25||0,
+    }));
+  } else {
+    stores = currentData.stores.map(s => {
+      const day = s.daily && s.daily[activeDay];
+      if (!day) return null;
+      return { ...s, in_store: day.in_store, make: day.make,
+        pct_lt4: day.pct_lt4||s.pct_lt4, on_time: day.on_time,
+        deliveries: day.deliveries,
+        ist_lt10: day.ist_lt10||0, ist_1014: day.ist_1014||0, ist_1518: day.ist_1518||0,
+        ist_1925: day.ist_1925||0, ist_gt25: day.ist_gt25||0 };
+    }).filter(Boolean);
+  }
+  return scopeStores(stores).filter(s => {
+    const rf = document.getElementById('regionFilter')?.value || '';
+    const af = document.getElementById('areaFilter')?.value || '';
+    const sf = document.getElementById('storeFilter')?.value || '';
+    if (rf && s.region_coach !== rf) return false;
+    if (af && s.area !== af && s.area_coach !== af) return false;
+    if (sf && s.store_id !== sf && s.name !== sf) return false;
+    return true;
+  });
+}
+</script>
+</body>
+</html>
