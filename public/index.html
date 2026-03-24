@@ -640,23 +640,42 @@ function switchDay(day) {
 function renderScorecards() {
   const data = getDisplayStores();
   if (!data.length) return;
-  const avgIST = data.reduce((a,s)=>a+(s.in_store||0),0)/data.length;
-  const avgMk = data.reduce((a,s)=>a+parseTime(s.make),0)/data.length;
-  const avgPct4 = data.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/data.length;
-  const avgOT = data.reduce((a,s)=>a+parsePct(s.on_time),0)/data.length;
-  const totalLt10 = data.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0);
-  const total1014 = data.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0);
-  const total1518 = data.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0);
-  const total1925 = data.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0);
-  const totalGt25 = data.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0);
+  
+  // Check if any stores have data for each field
+  const hasIST = data.some(s => s.in_store != null);
+  const hasMake = data.some(s => s.make != null);
+  const hasPct4 = data.some(s => s.pct_lt4 != null);
+  const hasOT = data.some(s => s.on_time != null);
+  const hasISTBuckets = data.some(s => s.ist_lt10 != null || s.ist_1014 != null || s.ist_1518 != null || s.ist_1925 != null || s.ist_gt25 != null);
+  
+  // Calculate averages only from stores that have data
+  const storesWithIST = data.filter(s => s.in_store != null);
+  const avgIST = hasIST ? storesWithIST.reduce((a,s)=>a+s.in_store,0)/storesWithIST.length : null;
+  
+  const storesWithMake = data.filter(s => s.make != null);
+  const avgMk = hasMake ? storesWithMake.reduce((a,s)=>a+parseTime(s.make),0)/storesWithMake.length : null;
+  
+  const storesWithPct4 = data.filter(s => s.pct_lt4 != null);
+  const avgPct4 = hasPct4 ? storesWithPct4.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/storesWithPct4.length : null;
+  
+  const storesWithOT = data.filter(s => s.on_time != null);
+  const avgOT = hasOT ? storesWithOT.reduce((a,s)=>a+parsePct(s.on_time),0)/storesWithOT.length : null;
+  
+  // For IST buckets, only count stores that have bucket data
+  const storesWithBuckets = data.filter(s => s.ist_lt10 != null);
+  const totalLt10 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0) : null;
+  const total1014 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0) : null;
+  const total1518 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0) : null;
+  const total1925 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0) : null;
+  const totalGt25 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0) : null;
 
   document.getElementById('scorecardStrip').innerHTML = `
     <div class="score-tile"><div class="score-tile-label">Stores</div><div class="score-tile-value val-neutral">${data.length}</div><div class="score-tile-sub">${activeDay==='wtd'?'WTD view':'Day view'}</div></div>
-    <div class="score-tile"><div class="score-tile-label">Avg In-Store</div><div class="score-tile-value ${istColor(avgIST)}">${avgIST.toFixed(1)}m</div><div class="score-tile-sub">Target <19m</div></div>
-    <div class="score-tile"><div class="score-tile-label">Avg Make</div><div class="score-tile-value ${mkColor(avgMk)}">${fmtTime(avgMk)}</div><div class="score-tile-sub">${avgPct4.toFixed(0)}% under 4:00</div></div>
-    <div class="score-tile"><div class="score-tile-label">On-Time %</div><div class="score-tile-value ${pctColor(avgOT,85,75)}">${avgOT.toFixed(1)}%</div><div class="score-tile-sub">Target >85%</div></div>
-    <div class="score-tile"><div class="score-tile-label"><10# / 10-14# / 15-18#</div><div class="score-tile-value val-good" style="font-size:18px">${totalLt10} / ${total1014} / ${total1518}</div><div class="score-tile-sub">Fast IST buckets</div></div>
-    <div class="score-tile"><div class="score-tile-label">19-25# / >25#</div><div class="score-tile-value ${total1925+totalGt25>data.length*3?'val-bad':total1925+totalGt25>data.length?'val-warn':'val-good'}" style="font-size:18px">${total1925} / ${totalGt25}</div><div class="score-tile-sub">Slow IST buckets</div></div>
+    <div class="score-tile"><div class="score-tile-label">Avg In-Store</div><div class="score-tile-value ${avgIST!=null?istColor(avgIST):'val-neutral'}">${avgIST!=null?avgIST.toFixed(1)+'m':'—'}</div><div class="score-tile-sub">Target <19m</div></div>
+    <div class="score-tile"><div class="score-tile-label">Avg Make</div><div class="score-tile-value ${avgMk!=null?mkColor(avgMk):'val-neutral'}">${avgMk!=null?fmtTime(avgMk):'—'}</div><div class="score-tile-sub">${avgPct4!=null?avgPct4.toFixed(0)+'% under 4:00':'Upload PDF for details'}</div></div>
+    <div class="score-tile"><div class="score-tile-label">On-Time %</div><div class="score-tile-value ${avgOT!=null?pctColor(avgOT,85,75):'val-neutral'}">${avgOT!=null?avgOT.toFixed(1)+'%':'—'}</div><div class="score-tile-sub">Target >85%</div></div>
+    <div class="score-tile"><div class="score-tile-label"><10# / 10-14# / 15-18#</div><div class="score-tile-value val-good" style="font-size:18px">${totalLt10!=null?totalLt10:'—'} / ${total1014!=null?total1014:'—'} / ${total1518!=null?total1518:'—'}</div><div class="score-tile-sub">Fast IST buckets</div></div>
+    <div class="score-tile"><div class="score-tile-label">19-25# / >25#</div><div class="score-tile-value ${total1925!=null&&totalGt25!=null?(total1925+totalGt25>data.length*3?'val-bad':total1925+totalGt25>data.length?'val-warn':'val-good'):'val-neutral'}" style="font-size:18px">${total1925!=null?total1925:'—'} / ${totalGt25!=null?totalGt25:'—'}</div><div class="score-tile-sub">Slow IST buckets</div></div>
   `;
   document.getElementById('storeCount').textContent = `${data.length} stores`;
 }
@@ -689,47 +708,77 @@ function renderTable() {
     const mm = parseTime(s.make);
     const lt4 = parsePct(s.pct_lt4), ot = parsePct(s.on_time);
     const wtdBadge = isWTD && s.days_reported > 1 ? `<span style="font-size:9px;color:var(--green);margin-left:4px">${s.days_reported}d avg</span>` : '';
+    // Show — for missing in_store (PDF not uploaded)
+    const istDisplay = s.in_store != null ? `${(s.in_store).toFixed(1)}m` : '—';
+    const istClass = s.in_store != null ? istColor(s.in_store) : 'val-neutral';
+    // Show — for missing IST bucket data (PDF not uploaded)
+    const lt10Display = s.ist_lt10 != null ? parseInt(s.ist_lt10) : '—';
+    const t1014Display = s.ist_1014 != null ? parseInt(s.ist_1014) : '—';
+    const t1518Display = s.ist_1518 != null ? parseInt(s.ist_1518) : '—';
+    const t1925Display = s.ist_1925 != null ? parseInt(s.ist_1925) : '—';
+    const gt25Display = s.ist_gt25 != null ? parseInt(s.ist_gt25) : '—';
     return `<tr>
       <td><div class="store-name">${s.name}${wtdBadge}</div><div class="store-id">${s.store_id}</div></td>
       <td style="font-size:11px;color:var(--muted)">${s.area||''}</td>
       <td style="font-size:10px;color:var(--muted2)">${s.region_coach||''}</td>
-      <td><span class="ist-val ${istColor(s.in_store||0)}">${(s.in_store||0).toFixed ? (s.in_store||0).toFixed(1) : s.in_store}m</span></td>
-      <td><span class="${mkColor(mm)}" style="font-family:'Space Mono',monospace;font-size:11px">${s.make||'\u2014'}</span></td>
-      <td><div class="pct-bar"><span class="${pctColor(lt4,80,60)}" style="font-size:11px;min-width:30px">${s.pct_lt4||'\u2014'}</span><div class="bar-track"><div class="bar-fill" style="width:${lt4}%;background:${lt4>=80?'var(--green)':lt4>=60?'var(--yellow)':'var(--red)'}"></div></div></div></td>
-      <td><span class="${(s.ist_lt10||0)>0?'val-good':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_lt10!=null?parseInt(s.ist_lt10):0}</span></td>
-      <td><span class="${(s.ist_1014||0)>0?'val-good':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_1014!=null?parseInt(s.ist_1014):0}</span></td>
-      <td><span class="${(s.ist_1518||0)>0?'val-warn':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_1518!=null?parseInt(s.ist_1518):0}</span></td>
-      <td><span class="${(s.ist_1925||0)>3?'val-bad':(s.ist_1925||0)>1?'val-warn':'val-good'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_1925!=null?parseInt(s.ist_1925):0}</span></td>
-      <td><span class="${(s.ist_gt25||0)>3?'val-bad':(s.ist_gt25||0)>1?'val-warn':'val-good'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_gt25!=null?parseInt(s.ist_gt25):0}</span></td>
-      <td><span class="${pctColor(ot,85,75)}" style="font-size:11px">${s.on_time||'\u2014'}</span></td>
-      <td style="font-size:11px;color:var(--muted)">${s.deliveries||0}</td>
+      <td><span class="ist-val ${istClass}">${istDisplay}</span></td>
+      <td><span class="${mm!=null?mkColor(mm):'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.make||'\u2014'}</span></td>
+      <td><div class="pct-bar"><span class="${lt4!=null?pctColor(lt4,80,60):'val-neutral'}" style="font-size:11px;min-width:30px">${s.pct_lt4||'\u2014'}</span><div class="bar-track"><div class="bar-fill" style="width:${lt4||0}%;background:${lt4>=80?'var(--green)':lt4>=60?'var(--yellow)':'var(--red)'}"></div></div></div></td>
+      <td><span class="${typeof lt10Display==='number'&&(lt10Display)>0?'val-good':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${lt10Display}</span></td>
+      <td><span class="${typeof t1014Display==='number'&&(t1014Display)>0?'val-good':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${t1014Display}</span></td>
+      <td><span class="${typeof t1518Display==='number'&&(t1518Display)>0?'val-warn':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${t1518Display}</span></td>
+      <td><span class="${typeof t1925Display==='number'?(t1925Display)>3?'val-bad':(t1925Display)>1?'val-warn':'val-good':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${t1925Display}</span></td>
+      <td><span class="${typeof gt25Display==='number'?(gt25Display)>3?'val-bad':(gt25Display)>1?'val-warn':'val-good':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${gt25Display}</span></td>
+      <td><span class="${ot!=null?pctColor(ot,85,75):'val-neutral'}" style="font-size:11px">${s.on_time||'\u2014'}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${s.deliveries!=null?s.deliveries:'—'}</td>
     </tr>`;
   }
 
   function groupRow(stores, label, cls) {
     if (!stores.length) return '';
-    const avgIST=stores.reduce((a,s)=>a+(s.in_store||0),0)/stores.length;
-    const avgMk=stores.reduce((a,s)=>a+parseTime(s.make),0)/stores.length;
-    const avgLt4=stores.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/stores.length;
-    const avgOT=stores.reduce((a,s)=>a+parsePct(s.on_time),0)/stores.length;
-    const totalLt10=stores.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0);
-    const total1014=stores.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0);
-    const total1518=stores.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0);
-    const total1925=stores.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0);
-    const totalGt25=stores.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0);
-    const mf=stores.filter(s=>parseTime(s.make)>4).length;
+    // Check if any stores have data for each field
+    const hasIST = stores.some(s => s.in_store != null);
+    const hasMake = stores.some(s => s.make != null);
+    const hasPct4 = stores.some(s => s.pct_lt4 != null);
+    const hasOT = stores.some(s => s.on_time != null);
+    const hasDel = stores.some(s => s.deliveries != null);
+    const hasISTBuckets = stores.some(s => s.ist_lt10 != null || s.ist_1014 != null || s.ist_1518 != null || s.ist_1925 != null || s.ist_gt25 != null);
+    
+    // Calculate averages only from stores that have data
+    const storesWithIST = stores.filter(s => s.in_store != null);
+    const avgIST = hasIST ? storesWithIST.reduce((a,s)=>a+s.in_store,0)/storesWithIST.length : null;
+    
+    const storesWithMake = stores.filter(s => s.make != null);
+    const avgMk = hasMake ? storesWithMake.reduce((a,s)=>a+parseTime(s.make),0)/storesWithMake.length : null;
+    
+    const storesWithPct4 = stores.filter(s => s.pct_lt4 != null);
+    const avgLt4 = hasPct4 ? storesWithPct4.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/storesWithPct4.length : null;
+    
+    const storesWithOT = stores.filter(s => s.on_time != null);
+    const avgOT = hasOT ? storesWithOT.reduce((a,s)=>a+parsePct(s.on_time),0)/storesWithOT.length : null;
+    
+    // For IST buckets, only count stores that have bucket data
+    const storesWithBuckets = stores.filter(s => s.ist_lt10 != null);
+    const totalLt10 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0) : null;
+    const total1014 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0) : null;
+    const total1518 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0) : null;
+    const total1925 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0) : null;
+    const totalGt25 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0) : null;
+    
+    const totalDel = hasDel ? stores.reduce((a,s)=>a+(s.deliveries||0),0) : null;
+    
     return `<tr class="group-row ${cls}">
       <td colspan="3">${label} <span style="opacity:.4;font-size:9px">${stores.length} stores</span></td>
-      <td><span class="ist-val ${istColor(avgIST)}">${avgIST.toFixed(1)}m</span></td>
-      <td class="${mkColor(avgMk)}">${fmtTime(avgMk)}</td>
-      <td class="${pctColor(avgLt4,80,60)}">${avgLt4.toFixed(0)}%</td>
-      <td>${totalLt10}</td>
-      <td>${total1014}</td>
-      <td>${total1518}</td>
-      <td class="${total1925>stores.length*3?'val-bad':total1925>stores.length?'val-warn':'val-good'}">${total1925}</td>
-      <td class="${totalGt25>stores.length*2?'val-bad':totalGt25>stores.length?'val-warn':'val-good'}">${totalGt25}</td>
-      <td class="${pctColor(avgOT,85,75)}">${avgOT.toFixed(1)}%</td>
-      <td>${stores.reduce((a,s)=>a+(s.deliveries||0),0)}</td>
+      <td><span class="ist-val ${avgIST!=null?istColor(avgIST):'val-neutral'}">${avgIST!=null?avgIST.toFixed(1)+'m':'—'}</span></td>
+      <td class="${avgMk!=null?mkColor(avgMk):'val-neutral'}">${avgMk!=null?fmtTime(avgMk):'—'}</td>
+      <td class="${avgLt4!=null?pctColor(avgLt4,80,60):'val-neutral'}">${avgLt4!=null?avgLt4.toFixed(0)+'%':'—'}</td>
+      <td>${totalLt10!=null?totalLt10:'—'}</td>
+      <td>${total1014!=null?total1014:'—'}</td>
+      <td>${total1518!=null?total1518:'—'}</td>
+      <td class="${total1925!=null?(total1925>stores.length*3?'val-bad':total1925>stores.length?'val-warn':'val-good'):'val-neutral'}">${total1925!=null?total1925:'—'}</td>
+      <td class="${totalGt25!=null?(totalGt25>stores.length*2?'val-bad':totalGt25>stores.length?'val-warn':'val-good'):'val-neutral'}">${totalGt25!=null?totalGt25:'—'}</td>
+      <td class="${avgOT!=null?pctColor(avgOT,85,75):'val-neutral'}">${avgOT!=null?avgOT.toFixed(1)+'%':'—'}</td>
+      <td>${totalDel!=null?totalDel:'—'}</td>
     </tr>`;
   }
 
@@ -1090,61 +1139,84 @@ async function exportExcel() {
       const aStores = dataStores.filter(s => (s.area || s.area_coach || '') === area);
       if (!aStores.length) continue;
 
-      // Area summary row
-      const avgIST  = aStores.reduce((a,s)=>a+(s.in_store||0),0)/aStores.length;
-      const avgMk   = aStores.reduce((a,s)=>a+parseTime(s.make),0)/aStores.length;
-      const avgLt4  = aStores.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/aStores.length;
-      const avgOT   = aStores.reduce((a,s)=>a+parsePct(s.on_time),0)/aStores.length;
-      const tot1925 = aStores.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0);
-      const totGt25 = aStores.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0);
-      const totDel  = aStores.reduce((a,s)=>a+(s.deliveries||0),0);
-      const mf = aStores.filter(s=>parseTime(s.make)>4).length;
+      // Check if any stores have data for each field
+      const hasIST = aStores.some(s => s.in_store != null);
+      const hasMake = aStores.some(s => s.make != null);
+      const hasPct4 = aStores.some(s => s.pct_lt4 != null);
+      const hasOT = aStores.some(s => s.on_time != null);
+      const hasISTBuckets = aStores.some(s => s.ist_lt10 != null || s.ist_1014 != null || s.ist_1518 != null || s.ist_1925 != null || s.ist_gt25 != null);
+      const hasDel = aStores.some(s => s.deliveries != null);
+
+      // Area summary row - calculate averages only from stores with data
+      const storesWithIST = aStores.filter(s => s.in_store != null);
+      const avgIST  = hasIST ? storesWithIST.reduce((a,s)=>a+s.in_store,0)/storesWithIST.length : null;
+      
+      const storesWithMake = aStores.filter(s => s.make != null);
+      const avgMk   = hasMake ? storesWithMake.reduce((a,s)=>a+parseTime(s.make),0)/storesWithMake.length : null;
+      
+      const storesWithPct4 = aStores.filter(s => s.pct_lt4 != null);
+      const avgLt4  = hasPct4 ? storesWithPct4.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/storesWithPct4.length : null;
+      
+      const storesWithOT = aStores.filter(s => s.on_time != null);
+      const avgOT   = hasOT ? storesWithOT.reduce((a,s)=>a+parsePct(s.on_time),0)/storesWithOT.length : null;
+      
+      const storesWithBuckets = aStores.filter(s => s.ist_lt10 != null);
+      const totLt10 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0) : null;
+      const tot1014 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0) : null;
+      const tot1518 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0) : null;
+      const tot1925 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0) : null;
+      const totGt25 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0) : null;
+      const totDel  = hasDel ? aStores.reduce((a,s)=>a+(s.deliveries||0),0) : null;
 
       const coach = aStores[0]?.area_coach || area;
-      const totLt10 = aStores.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0);
-      const tot1014 = aStores.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0);
-      const tot1518 = aStores.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0);
       const gr = ws.addRow([
         '', `${coach}  ${aStores.length} stores`, '',
-        avgIST.toFixed(1)+'m', fmtTime(avgMk), avgLt4/100,
-        totLt10, tot1014, tot1518, tot1925, totGt25, avgOT/100, totDel
+        avgIST!=null ? avgIST.toFixed(1)+'m' : '—', avgMk!=null ? fmtTime(avgMk) : '—', avgLt4!=null ? avgLt4/100 : '—',
+        totLt10!=null ? totLt10 : '—', tot1014!=null ? tot1014 : '—', tot1518!=null ? tot1518 : '—', 
+        tot1925!=null ? tot1925 : '—', totGt25!=null ? totGt25 : '—', avgOT!=null ? avgOT/100 : '—', totDel!=null ? totDel : '—'
       ]);
       gr.eachCell(c => { c.fill = BLUE_FILL; c.font = { bold: true, size: 10 }; });
-      gr.getCell(5).font  = { bold:true, size:10, color: istFontColor(avgIST) };
-      gr.getCell(6).font  = { bold:true, size:10, color: parseTime(avgMk)>4?RED:parseTime(avgMk)>3.5?ORANGE:GREEN };
-      gr.getCell(7).numFmt  = '0%';
-      gr.getCell(13).numFmt = '0%';
+      if (avgIST!=null) gr.getCell(5).font  = { bold:true, size:10, color: istFontColor(avgIST) };
+      if (avgMk!=null) gr.getCell(6).font  = { bold:true, size:10, color: avgMk>4?RED:avgMk>3.5?ORANGE:GREEN };
+      if (avgLt4!=null) gr.getCell(7).numFmt  = '0%';
+      if (avgOT!=null) gr.getCell(13).numFmt = '0%';
 
       // Store rows (Store ID now in first column, not as sub-row)
       for (const s of aStores) {
-        const ist   = s.in_store || 0;
-        const mk    = parseTime(s.make);
-        const lt4   = parsePct(s.pct_lt4);
-        const ot    = parsePct(s.on_time);
-        const c1925 = parseInt(s.ist_1925)||0;
-        const cgt25 = parseInt(s.ist_gt25)||0;
+        const ist   = s.in_store;
+        const mk    = s.make ? parseTime(s.make) : null;
+        const lt4   = s.pct_lt4 ? parsePct(s.pct_lt4) : null;
+        const ot    = s.on_time ? parsePct(s.on_time) : null;
+        const c1925 = s.ist_1925 != null ? parseInt(s.ist_1925) : null;
+        const cgt25 = s.ist_gt25 != null ? parseInt(s.ist_gt25) : null;
+        const clt10 = s.ist_lt10 != null ? parseInt(s.ist_lt10) : null;
+        const c1014 = s.ist_1014 != null ? parseInt(s.ist_1014) : null;
+        const c1518 = s.ist_1518 != null ? parseInt(s.ist_1518) : null;
+        const del   = s.deliveries != null ? s.deliveries : null;
 
-        const clt10 = parseInt(s.ist_lt10)||0;
-        const c1014 = parseInt(s.ist_1014)||0;
-        const c1518 = parseInt(s.ist_1518)||0;
         const sr = ws.addRow([
           s.store_id, s.name||s.store_id, s.area||s.area_coach||'', s.region_coach||'',
-          ist.toFixed(1)+'m', s.make||'', lt4>0?lt4/100:null,
-          clt10, c1014, c1518, c1925, cgt25, ot>0?ot/100:null, s.deliveries||0
+          ist!=null ? ist.toFixed(1)+'m' : '—', s.make||'—', lt4!=null ? lt4/100 : '—',
+          clt10!=null ? clt10 : '—', c1014!=null ? c1014 : '—', c1518!=null ? c1518 : '—', 
+          c1925!=null ? c1925 : '—', cgt25!=null ? cgt25 : '—', ot!=null ? ot/100 : '—', del!=null ? del : '—'
         ]);
         sr.getCell(1).font = { size:9, color: GRAY };
-        sr.getCell(5).font  = { bold:true, size:10, color: istFontColor(ist) };
-        sr.getCell(6).font  = { size:10, color: mk>4?RED:mk>3.5?ORANGE:GREEN };
-        sr.getCell(7).font  = { size:10, color: pctFont(lt4) };
-        sr.getCell(7).numFmt  = '0%';
-        sr.getCell(8).font  = { size:10, color: GREEN };
-        sr.getCell(9).font  = { size:10, color: GREEN };
-        sr.getCell(10).font = { size:10, color: YELLOW };
-        sr.getCell(11).font = { size:10, color: countFont(c1925) };
-        sr.getCell(12).font = { size:10, color: countFont(cgt25) };
-        sr.getCell(13).font = { size:10, color: pctFont(ot,85,75) };
-        sr.getCell(13).numFmt = '0%';
-        sr.getCell(14).font = { size:10, color: GRAY };
+        if (ist!=null) sr.getCell(5).font  = { bold:true, size:10, color: istFontColor(ist) };
+        if (mk!=null) sr.getCell(6).font  = { size:10, color: mk>4?RED:mk>3.5?ORANGE:GREEN };
+        if (lt4!=null) {
+          sr.getCell(7).font  = { size:10, color: pctFont(lt4) };
+          sr.getCell(7).numFmt  = '0%';
+        }
+        if (clt10!=null) sr.getCell(8).font  = { size:10, color: GREEN };
+        if (c1014!=null) sr.getCell(9).font  = { size:10, color: GREEN };
+        if (c1518!=null) sr.getCell(10).font = { size:10, color: YELLOW };
+        if (c1925!=null) sr.getCell(11).font = { size:10, color: countFont(c1925) };
+        if (cgt25!=null) sr.getCell(12).font = { size:10, color: countFont(cgt25) };
+        if (ot!=null) {
+          sr.getCell(13).font = { size:10, color: pctFont(ot,85,75) };
+          sr.getCell(13).numFmt = '0%';
+        }
+        if (del!=null) sr.getCell(14).font = { size:10, color: GRAY };
       }
     }
 
