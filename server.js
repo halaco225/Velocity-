@@ -72,8 +72,9 @@ function getWeekKey(dateStr) {
 }
 
 function getPeriodWeek(dateStr) {
-  // Ayvaz fiscal year starts 12/30/2024 (Period 1 Week 1 begins Tuesday 12/30/2024)
-  const ANCHOR = new Date('2024-12-30T12:00:00Z');
+  // Ayvaz fiscal year starts Tuesday 12/31/2024 (Period 1 Week 1 begins Tuesday 12/31/2024)
+  // FY2026 starts Tuesday 12/30/2025
+  const ANCHOR = new Date('2024-12-31T12:00:00Z');
   const weekKey = getWeekKey(dateStr);
   const weekStart = new Date(weekKey + 'T12:00:00Z');
   const msPerWeek = 7 * 24 * 60 * 60 * 1000;
