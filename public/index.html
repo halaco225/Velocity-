@@ -1361,204 +1361,552 @@ if (loadFromLocalStorage()) {
 // EXCEL EXPORT
 // ==============================
 async function exportExcel() {
-  const stores = getFilteredStores();
-  if (!stores || !stores.length) { alert('No data to export.'); return; }
+  try {
+    if (!currentData) { alert('No data to export.'); return; }
 
-  // Load ExcelJS from CDN
-  if (!window.ExcelJS) {
-    await new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';
-      s.onload = resolve; s.onerror = reject;
-      document.head.appendChild(s);
-    });
-  }
-
-  const wb = new ExcelJS.Workbook();
-  const isWTD = activeDay === 'wtd';
-  
-  // Helper function to create a worksheet with data
-  function createWorksheet(workbook, sheetName, dataStores, dayLabel = '') {
-    const ws = workbook.addWorksheet(sheetName);
-
-    const RED    = { argb: 'FFEF4444' };
-    const ORANGE = { argb: 'FFF97316' };
-    const YELLOW = { argb: 'FFEAB308' };
-    const GREEN  = { argb: 'FF22C55E' };
-    const GRAY   = { argb: 'FF64748B' };
-    const BLUE_FILL = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF00B0F0' } };
-
-    function istFontColor(m) {
-      if (m <= 15) return GREEN;
-      if (m <= 19) return ORANGE;
-      return RED;
-    }
-    function pctFont(pct, good=80, warn=60) {
-      if (pct >= good) return GREEN;
-      if (pct >= warn) return YELLOW;
-      return RED;
-    }
-    function countFont(n) {
-      if (!n || n === 0) return GREEN;
-      if (n <= 2) return YELLOW;
-      if (n <= 5) return ORANGE;
-      return RED;
-    }
-    function prFont(m) {
-      if (m <= 12) return GREEN;
-      if (m <= 15) return YELLOW;
-      if (m <= 19) return ORANGE;
-      return RED;
+    // Load ExcelJS from CDN
+    if (!window.ExcelJS) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';
+        s.onload = resolve; s.onerror = reject;
+        document.head.appendChild(s);
+      });
     }
 
-    // Set column widths (now 14 columns with store ID as first column)
-    [10,20,18,18,10,9,8,7,7,7,7,7,10,7].forEach((w,i) => { ws.getColumn(i+1).width = w; });
+    const wb = new ExcelJS.Workbook();
+    const isWTD = activeDay === 'wtd';
 
-  // Row 1: Title
-    const period = currentData?.week || '';
-    const dateRange = currentData?.dateRange || '';
-    const labelSuffix = dayLabel ? ` (${dayLabel})` : '';
-    ws.mergeCells('A1:N1');
-    const t = ws.getCell('A1');
-    t.value = `${dataStores.length} stores  |  ${period} ${dateRange}  |  Make <4:00 - IST target <19m${labelSuffix}`;
-    t.font = { bold: true, size: 11 };
+    // ─── Color palette matching IST_Tracker ───
+    const DARK_NAVY   = 'FF1F3864';
+    const MID_NAVY    = 'FF0D2137';
+    const BLUE_ROW    = 'FF2E75B6';
+    const LIGHT_BLUE1 = 'FFD6E4F0';
+    const LIGHT_BLUE2 = 'FFEBF3FB';
+    const LIGHT_GRAY  = 'FFF2F2F2';
+    const GREEN_FILL  = 'FF70AD47';
+    const YELLOW_FILL = 'FFFFD966';
+    const ORANGE_FILL = 'FFED7D31';
+    const RED_FILL    = 'FFC00000';
 
-    // Row 2: Headers (Store ID now first column)
-    const hdr = ws.addRow(['Store ID','Store','Area','Region','In Store','Make','%<4m','<10#','10-14#','15-18#','19-25#','> 25#','%On Time','Del']);
-    hdr.eachCell(c => { c.font = { bold: true, size: 10 }; c.alignment = { horizontal: 'center' }; });
+    function istFill(avg) {
+      if (avg == null) return LIGHT_GRAY;
+      if (avg <= 18) return GREEN_FILL;
+      if (avg <= 20) return YELLOW_FILL;
+      if (avg <= 25) return ORANGE_FILL;
+      return RED_FILL;
+    }
+    function ist19Fill(pct) {
+      if (pct == null) return LIGHT_GRAY;
+      const p = typeof pct === 'string' ? parseFloat(pct) : pct;
+      if (p >= 70) return GREEN_FILL;
+      if (p >= 50) return YELLOW_FILL;
+      return ORANGE_FILL;
+    }
+    function gt25Fill(pct) {
+      if (pct == null) return LIGHT_GRAY;
+      const p = typeof pct === 'string' ? parseFloat(pct) : pct;
+      if (p <= 5) return GREEN_FILL;
+      if (p <= 15) return YELLOW_FILL;
+      if (p <= 25) return ORANGE_FILL;
+      return RED_FILL;
+    }
 
-  // Group by area
-    const areas = [...new Set(dataStores.map(s => s.area || s.area_coach || ''))];
+    function setSolid(cell, argb) {
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb } };
+    }
 
-    for (const area of areas) {
-      const aStores = dataStores.filter(s => (s.area || s.area_coach || '') === area);
-      if (!aStores.length) continue;
+    function hdrCell(cell, value) {
+      cell.value = value;
+      cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10 };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: DARK_NAVY } };
+      cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+      cell.border = {
+        top: { style: 'thin', color: { argb: 'FF000000' } },
+        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+        left: { style: 'thin', color: { argb: 'FF000000' } },
+        right: { style: 'thin', color: { argb: 'FF000000' } }
+      };
+    }
 
-      // Area summary row
-      const avgIST  = aStores.reduce((a,s)=>a+(s.in_store||0),0)/aStores.length;
-      const avgMk   = aStores.reduce((a,s)=>a+parseTime(s.make),0)/aStores.length;
-      const avgLt4  = aStores.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/aStores.length;
-      const avgOT   = aStores.reduce((a,s)=>a+parsePct(s.on_time),0)/aStores.length;
-      const tot1925 = aStores.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0);
-      const totGt25 = aStores.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0);
-      const totDel  = aStores.reduce((a,s)=>a+(s.deliveries||0),0);
-      const mf = aStores.filter(s=>parseTime(s.make)>4).length;
+    // ─── Build grouped hierarchy for a set of stores ───
+    // Returns array of { level, region, area_coach, store_id, store_name, data } rows
+    function buildRows(stores) {
+      const rows = [];
+      // Compute totals
+      const allWithIST = stores.filter(s => s.in_store != null);
+      const totalIST = allWithIST.length ? allWithIST.reduce((a,s)=>a+(s.in_store||0),0)/allWithIST.length : null;
+      const totalOrders = stores.reduce((a,s)=>a+(s.ist_lt10||0)+(s.ist_1014||0)+(s.ist_1518||0)+(s.ist_1925||0)+(s.ist_gt25||0),0);
+      const totLt10 = stores.reduce((a,s)=>a+(s.ist_lt10||0),0);
+      const tot1014 = stores.reduce((a,s)=>a+(s.ist_1014||0),0);
+      const tot1518 = stores.reduce((a,s)=>a+(s.ist_1518||0),0);
+      const tot1925 = stores.reduce((a,s)=>a+(s.ist_1925||0),0);
+      const totGt25 = stores.reduce((a,s)=>a+(s.ist_gt25||0),0);
+      const totLt19 = totLt10 + tot1014 + tot1518;
 
-      const coach = aStores[0]?.area_coach || area;
-      const totLt10 = aStores.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0);
-      const tot1014 = aStores.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0);
-      const tot1518 = aStores.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0);
-      const gr = ws.addRow([
-        '', `${coach}  ${aStores.length} stores`, '',
-        avgIST.toFixed(1)+'m', fmtTime(avgMk), avgLt4/100,
-        totLt10, tot1014, tot1518, tot1925, totGt25, avgOT/100, totDel
-      ]);
-      gr.eachCell(c => { c.fill = BLUE_FILL; c.font = { bold: true, size: 10 }; });
-      gr.getCell(5).font  = { bold:true, size:10, color: istFontColor(avgIST) };
-      gr.getCell(6).font  = { bold:true, size:10, color: parseTime(avgMk)>4?RED:parseTime(avgMk)>3.5?ORANGE:GREEN };
-      gr.getCell(7).numFmt  = '0%';
-      gr.getCell(13).numFmt = '0%';
+      rows.push({
+        level: 'TOTAL', region: 'ALL REGIONS', area_coach: null, store_id: null,
+        store_name: stores.length + ' Stores',
+        avg_ist: totalIST ? +totalIST.toFixed(1) : null,
+        total_orders: totalOrders,
+        ist_lt10: totLt10, ist_lt10_pct: totalOrders?totLt10/totalOrders:null,
+        ist_1014: tot1014, ist_1014_pct: totalOrders?tot1014/totalOrders:null,
+        ist_1518: tot1518, ist_1518_pct: totalOrders?tot1518/totalOrders:null,
+        ist_1925: tot1925, ist_1925_pct: totalOrders?tot1925/totalOrders:null,
+        ist_gt25: totGt25, ist_gt25_pct: totalOrders?totGt25/totalOrders:null,
+        ist_lt19_pct: totalOrders?totLt19/totalOrders:null,
+        ist_gt25_pct2: totalOrders?totGt25/totalOrders:null,
+        fillBg: MID_NAVY, fontColor: 'FFFFFFFF', bold: true
+      });
 
-      // Store rows (Store ID now in first column, not as sub-row)
-      for (const s of aStores) {
-        const ist   = s.in_store || 0;
-        const mk    = parseTime(s.make);
-        const lt4   = parsePct(s.pct_lt4);
-        const ot    = parsePct(s.on_time);
-        const c1925 = parseInt(s.ist_1925)||0;
-        const cgt25 = parseInt(s.ist_gt25)||0;
+      // Group by region
+      const regions = [...new Set(stores.map(s => s.region_coach||'Unknown'))].sort();
+      for (const region of regions) {
+        const rStores = stores.filter(s=>(s.region_coach||'Unknown')===region);
+        const rWithIST = rStores.filter(s=>s.in_store!=null);
+        const rIST = rWithIST.length ? rWithIST.reduce((a,s)=>a+(s.in_store||0),0)/rWithIST.length : null;
+        const rOrders = rStores.reduce((a,s)=>a+(s.ist_lt10||0)+(s.ist_1014||0)+(s.ist_1518||0)+(s.ist_1925||0)+(s.ist_gt25||0),0);
+        const rLt10=rStores.reduce((a,s)=>a+(s.ist_lt10||0),0), r1014=rStores.reduce((a,s)=>a+(s.ist_1014||0),0);
+        const r1518=rStores.reduce((a,s)=>a+(s.ist_1518||0),0), r1925=rStores.reduce((a,s)=>a+(s.ist_1925||0),0);
+        const rGt25=rStores.reduce((a,s)=>a+(s.ist_gt25||0),0), rLt19=rLt10+r1014+r1518;
 
-        const clt10 = parseInt(s.ist_lt10)||0;
-        const c1014 = parseInt(s.ist_1014)||0;
-        const c1518 = parseInt(s.ist_1518)||0;
-        const sr = ws.addRow([
-          s.store_id, s.name||s.store_id, s.area||s.area_coach||'', s.region_coach||'',
-          ist.toFixed(1)+'m', s.make||'', lt4>0?lt4/100:null,
-          clt10, c1014, c1518, c1925, cgt25, ot>0?ot/100:null, s.deliveries||0
+        rows.push({
+          level:'REGION', region, area_coach:null, store_id:null,
+          store_name: rStores.length+' Stores',
+          avg_ist: rIST ? +rIST.toFixed(1) : null,
+          total_orders: rOrders,
+          ist_lt10:rLt10, ist_lt10_pct:rOrders?rLt10/rOrders:null,
+          ist_1014:r1014, ist_1014_pct:rOrders?r1014/rOrders:null,
+          ist_1518:r1518, ist_1518_pct:rOrders?r1518/rOrders:null,
+          ist_1925:r1925, ist_1925_pct:rOrders?r1925/rOrders:null,
+          ist_gt25:rGt25, ist_gt25_pct:rOrders?rGt25/rOrders:null,
+          ist_lt19_pct: rOrders?rLt19/rOrders:null,
+          ist_gt25_pct2: rOrders?rGt25/rOrders:null,
+          fillBg: DARK_NAVY, fontColor:'FFFFFFFF', bold:true
+        });
+
+        // Group by area within region
+        const areas = [...new Set(rStores.map(s=>s.area_coach||s.area||'Unknown'))].sort();
+        for (const area of areas) {
+          const aStores = rStores.filter(s=>(s.area_coach||s.area||'Unknown')===area);
+          const aWithIST = aStores.filter(s=>s.in_store!=null);
+          const aIST = aWithIST.length ? aWithIST.reduce((a,s)=>a+(s.in_store||0),0)/aWithIST.length : null;
+          const aOrders = aStores.reduce((a,s)=>a+(s.ist_lt10||0)+(s.ist_1014||0)+(s.ist_1518||0)+(s.ist_1925||0)+(s.ist_gt25||0),0);
+          const aLt10=aStores.reduce((a,s)=>a+(s.ist_lt10||0),0), a1014=aStores.reduce((a,s)=>a+(s.ist_1014||0),0);
+          const a1518=aStores.reduce((a,s)=>a+(s.ist_1518||0),0), a1925=aStores.reduce((a,s)=>a+(s.ist_1925||0),0);
+          const aGt25=aStores.reduce((a,s)=>a+(s.ist_gt25||0),0), aLt19=aLt10+a1014+a1518;
+          const areaNum = aStores[0]?.area || '';
+
+          rows.push({
+            level:'AREA', region, area_coach:area, store_id:areaNum,
+            store_name: aStores.length+' Stores',
+            avg_ist: aIST ? +aIST.toFixed(1) : null,
+            total_orders: aOrders,
+            ist_lt10:aLt10, ist_lt10_pct:aOrders?aLt10/aOrders:null,
+            ist_1014:a1014, ist_1014_pct:aOrders?a1014/aOrders:null,
+            ist_1518:a1518, ist_1518_pct:aOrders?a1518/aOrders:null,
+            ist_1925:a1925, ist_1925_pct:aOrders?a1925/aOrders:null,
+            ist_gt25:aGt25, ist_gt25_pct:aOrders?aGt25/aOrders:null,
+            ist_lt19_pct: aOrders?aLt19/aOrders:null,
+            ist_gt25_pct2: aOrders?aGt25/aOrders:null,
+            fillBg: BLUE_ROW, fontColor:'FFFFFFFF', bold:true
+          });
+
+          // Individual stores (alternating light blue)
+          aStores.forEach((s, idx) => {
+            const sOrders=(s.ist_lt10||0)+(s.ist_1014||0)+(s.ist_1518||0)+(s.ist_1925||0)+(s.ist_gt25||0);
+            const sLt19=(s.ist_lt10||0)+(s.ist_1014||0)+(s.ist_1518||0);
+            rows.push({
+              level:'STORE', region, area_coach:area, store_id:s.store_id,
+              store_name: s.name||s.store_id,
+              avg_ist: s.in_store,
+              total_orders: sOrders,
+              ist_lt10:s.ist_lt10||0, ist_lt10_pct:sOrders?(s.ist_lt10||0)/sOrders:null,
+              ist_1014:s.ist_1014||0, ist_1014_pct:sOrders?(s.ist_1014||0)/sOrders:null,
+              ist_1518:s.ist_1518||0, ist_1518_pct:sOrders?(s.ist_1518||0)/sOrders:null,
+              ist_1925:s.ist_1925||0, ist_1925_pct:sOrders?(s.ist_1925||0)/sOrders:null,
+              ist_gt25:s.ist_gt25||0, ist_gt25_pct:sOrders?(s.ist_gt25||0)/sOrders:null,
+              ist_lt19_pct: sOrders?sLt19/sOrders:null,
+              ist_gt25_pct2: sOrders?(s.ist_gt25||0)/sOrders:null,
+              fillBg: idx%2===0 ? LIGHT_BLUE1 : LIGHT_BLUE2, fontColor:'FF000000', bold:false
+            });
+          });
+        }
+      }
+      return rows;
+    }
+
+    // ─── Write an IST-Tracker style sheet ───
+    function writeISTSheet(ws, stores, sheetTitle) {
+      // Column widths matching IST Tracker
+      ws.getColumn(1).width = 8;   // Level
+      ws.getColumn(2).width = 16;  // Region
+      ws.getColumn(3).width = 18;  // Area Coach
+      ws.getColumn(4).width = 9;   // Store #
+      ws.getColumn(5).width = 18;  // Store Name
+      ws.getColumn(6).width = 14;  // Avg IST
+      ws.getColumn(7).width = 11;  // Total Orders
+      ws.getColumn(8).width = 8;   // IST <10 #
+      ws.getColumn(9).width = 8;   // IST <10 %
+      ws.getColumn(10).width = 9;  // IST 10-14 #
+      ws.getColumn(11).width = 9;  // IST 10-14 %
+      ws.getColumn(12).width = 9;  // IST 15-18 #
+      ws.getColumn(13).width = 9;  // IST 15-18 %
+      ws.getColumn(14).width = 9;  // IST 19-25 #
+      ws.getColumn(15).width = 9;  // IST 19-25 %
+      ws.getColumn(16).width = 8;  // IST >25 #
+      ws.getColumn(17).width = 8;  // IST >25 %
+      ws.getColumn(18).width = 10; // IST <19 %
+
+      // Title row
+      ws.mergeCells('A1:R1');
+      const titleCell = ws.getCell('A1');
+      titleCell.value = sheetTitle;
+      titleCell.font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
+      titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: MID_NAVY } };
+      titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+      ws.getRow(1).height = 20;
+
+      // Header row
+      const headers = ['Level','Region','Area Coach','Store #','Store Name','Avg IST (mins)',
+        'Total Orders','IST <10 #','IST <10 %','IST 10-14 #','IST 10-14 %',
+        'IST 15-18 #','IST 15-18 %','IST 19-25 #','IST 19-25 %',
+        'IST >25 #','IST >25 %','IST <19 %'];
+      const hdrRow = ws.addRow(headers);
+      hdrRow.height = 28;
+      hdrRow.eachCell((cell, col) => hdrCell(cell, headers[col-1]));
+
+      // Freeze header
+      ws.views = [{ state: 'frozen', ySplit: 2 }];
+      ws.autoFilter = { from: { row: 2, column: 1 }, to: { row: 2, column: 18 } };
+
+      // Data rows
+      const dataRows = buildRows(stores);
+      dataRows.forEach(r => {
+        const row = ws.addRow([
+          r.level, r.region, r.area_coach, r.store_id, r.store_name,
+          r.avg_ist,
+          r.total_orders||0,
+          r.ist_lt10, r.ist_lt10_pct,
+          r.ist_1014, r.ist_1014_pct,
+          r.ist_1518, r.ist_1518_pct,
+          r.ist_1925, r.ist_1925_pct,
+          r.ist_gt25, r.ist_gt25_pct,
+          r.ist_lt19_pct
         ]);
-        sr.getCell(1).font = { size:9, color: GRAY };
-        sr.getCell(5).font  = { bold:true, size:10, color: istFontColor(ist) };
-        sr.getCell(6).font  = { size:10, color: mk>4?RED:mk>3.5?ORANGE:GREEN };
-        sr.getCell(7).font  = { size:10, color: pctFont(lt4) };
-        sr.getCell(7).numFmt  = '0%';
-        sr.getCell(8).font  = { size:10, color: GREEN };
-        sr.getCell(9).font  = { size:10, color: GREEN };
-        sr.getCell(10).font = { size:10, color: YELLOW };
-        sr.getCell(11).font = { size:10, color: countFont(c1925) };
-        sr.getCell(12).font = { size:10, color: countFont(cgt25) };
-        sr.getCell(13).font = { size:10, color: pctFont(ot,85,75) };
-        sr.getCell(13).numFmt = '0%';
-        sr.getCell(14).font = { size:10, color: GRAY };
-      }
+
+        const bgArgb = r.fillBg;
+        const isTotalOrRegion = r.level==='TOTAL'||r.level==='REGION';
+
+        row.eachCell((cell, col) => {
+          cell.font = { bold: r.bold, color: { argb: r.fontColor }, size: 10 };
+          setSolid(cell, bgArgb);
+          cell.border = { bottom: { style: 'hair', color: { argb: 'FFCCCCCC' } } };
+          // Format percentages
+          if ([9,11,13,15,17,18].includes(col)) {
+            cell.numFmt = '0.0%';
+            cell.alignment = { horizontal: 'center' };
+          }
+          if ([6,7,8,10,12,14,16].includes(col)) {
+            cell.alignment = { horizontal: 'center' };
+          }
+        });
+
+        // Color-code Avg IST (col 6)
+        if (r.avg_ist != null) {
+          setSolid(row.getCell(6), istFill(r.avg_ist));
+          row.getCell(6).font = { bold: true, size: 10, color: { argb: r.avg_ist > 25 ? 'FFFFFFFF' : 'FF000000' } };
+        }
+
+        // Color-code IST <19 % (col 18)
+        if (r.ist_lt19_pct != null) {
+          const pct = r.ist_lt19_pct * 100;
+          setSolid(row.getCell(18), ist19Fill(pct));
+          row.getCell(18).font = { bold: r.bold, size: 10 };
+        }
+
+        // Color-code IST >25 % (col 17)
+        if (r.ist_gt25_pct != null) {
+          const pct = r.ist_gt25_pct * 100;
+          setSolid(row.getCell(17), gt25Fill(pct));
+        }
+      });
     }
 
-    ws.views = [{ state:'frozen', ySplit:2 }];
-    // Add autoFilter to enable filtering
-    ws.autoFilter = 'A2:N2';
-    
-    return ws;
-  }
-  
-  // Create main worksheet
-  createWorksheet(wb, isWTD ? 'WTD Summary' : 'Velocity SOS', stores);
-  
-  // If WTD view, add daily tabs for each day in the week
-  if (isWTD && currentData?.days && currentData.days.length > 0) {
-    const days = currentData.days;
-    
-    for (const day of days) {
-      // Get stores for this specific day
-      const dayStores = currentData.stores.map(s => {
-        const d = s.daily && s.daily[day.date];
+    // ─── Helper: get stores for a specific day ───
+    function getStoresForDay(date) {
+      return (currentData.stores || []).map(s => {
+        const d = s.daily && s.daily[date];
         if (!d) return null;
-        return { 
-          ...s, 
-          in_store: d.in_store, 
-          make: d.make,
-          pct_lt4: d.pct_lt4||s.pct_lt4, 
-          on_time: d.on_time,
-          deliveries: d.deliveries,
-          ist_lt10: d.ist_lt10||0, 
-          ist_1014: d.ist_1014||0, 
-          ist_1518: d.ist_1518||0,
-          ist_1925: d.ist_1925||0, 
-          ist_gt25: d.ist_gt25||0 
-        };
+        return { ...s, in_store: d.in_store, make: d.make,
+          pct_lt4: d.pct_lt4||s.pct_lt4, on_time: d.on_time, deliveries: d.deliveries,
+          ist_lt10: d.ist_lt10||0, ist_1014: d.ist_1014||0, ist_1518: d.ist_1518||0,
+          ist_1925: d.ist_1925||0, ist_gt25: d.ist_gt25||0 };
       }).filter(Boolean);
-      
-      // Apply same filters
-      const filteredDayStores = scopeStores(dayStores).filter(s => {
-        const rf = document.getElementById('regionFilter')?.value || '';
-        const af = document.getElementById('areaFilter')?.value || '';
-        const sf = document.getElementById('storeFilter')?.value || '';
-        if (rf && s.region_coach !== rf) return false;
-        if (af && s.area !== af && s.area_coach !== af) return false;
-        if (sf && s.store_id !== sf && s.name !== sf) return false;
-        return true;
-      });
-      
-      // Create formatted day label
-      const dayLabel = new Date(day.date + 'T12:00:00').toLocaleDateString('en-US', {
-        weekday: 'long',
-        month: 'short',
-        day: 'numeric'
-      });
-      
-      // Only create sheet if there's data
-      if (filteredDayStores.length > 0) {
-        createWorksheet(wb, dayLabel, filteredDayStores, dayLabel);
-      }
     }
-  }
 
-  const buf  = await wb.xlsx.writeBuffer();
-  const blob = new Blob([buf], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  const ds   = new Date().toISOString().slice(0,10);
-  const period = currentData?.week || '';
-  a.href = url; a.download = `Velocity_SOS_${period.replace(/\s/g,'_')}_${ds}.xlsx`; a.click();
-  URL.revokeObjectURL(url);
+    // ─── Helper: get WTD stores ───
+    function getWTDStores() {
+      return (currentData.stores || []).map(s => ({
+        ...s,
+        in_store: s.wtd_in_store, make: s.wtd_make, pct_lt4: s.wtd_pct_lt4,
+        on_time: s.wtd_on_time, deliveries: s.wtd_deliveries,
+        ist_lt10: s.wtd_ist_lt10||0, ist_1014: s.wtd_ist_1014||0, ist_1518: s.wtd_ist_1518||0,
+        ist_1925: s.wtd_ist_1925||0, ist_gt25: s.wtd_ist_gt25||0,
+      }));
+    }
+
+    // ─── Get PTD stores (aggregate all days across all weeks in current period) ───
+    function getPTDStores() {
+      // Use all weeks that share the same period
+      const currentPeriod = currentData.period ? currentData.period.replace(/W\d+$/, '') : null;
+      const periodWeeks = currentPeriod
+        ? allWeeksData.filter(w => w.period && w.period.startsWith(currentPeriod))
+        : [currentData];
+
+      // Collect all daily store data from all matching weeks
+      const storeMap = {};
+      for (const week of periodWeeks) {
+        for (const day of Object.values(week.days || {})) {
+          for (const s of (day.stores || [])) {
+            const key = s.store_id;
+            if (!storeMap[key]) {
+              storeMap[key] = { ...s, _days: [], _ist_sum: 0, _ist_count: 0,
+                ist_lt10:0, ist_1014:0, ist_1518:0, ist_1925:0, ist_gt25:0 };
+            }
+            if (s.in_store != null) {
+              storeMap[key]._ist_sum += s.in_store;
+              storeMap[key]._ist_count++;
+            }
+            storeMap[key].ist_lt10 += s.ist_lt10||0;
+            storeMap[key].ist_1014 += s.ist_1014||0;
+            storeMap[key].ist_1518 += s.ist_1518||0;
+            storeMap[key].ist_1925 += s.ist_1925||0;
+            storeMap[key].ist_gt25 += s.ist_gt25||0;
+            storeMap[key]._days.push(s);
+          }
+        }
+      }
+      return Object.values(storeMap).map(s => ({
+        ...s,
+        in_store: s._ist_count ? +(s._ist_sum / s._ist_count).toFixed(1) : null
+      }));
+    }
+
+    // ─── Trend sheet: Avg IST by day across all uploaded days ───
+    function writeTrendSheet(ws) {
+      // Collect all days across all weeks
+      const allDays = [];
+      for (const week of allWeeksData) {
+        const days = Object.values(week.days || {}).sort((a,b)=>a.date.localeCompare(b.date));
+        for (const day of days) {
+          if (!allDays.find(d=>d.date===day.date)) allDays.push(day);
+        }
+      }
+      allDays.sort((a,b)=>a.date.localeCompare(b.date));
+
+      if (!allDays.length) return;
+
+      // Column labels
+      const dayLabels = allDays.map(d => {
+        const dt = new Date(d.date + 'T12:00:00Z');
+        return dt.toLocaleDateString('en-US', { weekday:'short', month:'numeric', day:'numeric' });
+      });
+
+      // Cols: Level, Region, Area Coach, Store #, Store Name, [day cols...], [delta cols...]
+      const baseCols = 5;
+      const dayCols = dayLabels.length;
+      const deltaCols = dayCols > 1 ? dayCols - 1 : 0;
+      const totalCols = baseCols + dayCols + deltaCols;
+
+      ws.getColumn(1).width = 8;
+      ws.getColumn(2).width = 16;
+      ws.getColumn(3).width = 18;
+      ws.getColumn(4).width = 9;
+      ws.getColumn(5).width = 18;
+      for (let i = 0; i < dayCols; i++) { ws.getColumn(baseCols + 1 + i).width = 14; }
+      for (let i = 0; i < deltaCols; i++) { ws.getColumn(baseCols + dayCols + 1 + i).width = 12; }
+
+      // Title
+      const lastCol = String.fromCharCode(64 + Math.min(totalCols, 26));
+      ws.mergeCells(`A1:${lastCol}1`);
+      const tc = ws.getCell('A1');
+      tc.value = `In-Store Time Trend — ${currentData.period||''} ${currentData.dateRange||''}`;
+      tc.font = { bold:true, size:12, color:{argb:'FFFFFFFF'} };
+      tc.fill = { type:'pattern', pattern:'solid', fgColor:{argb: MID_NAVY} };
+      tc.alignment = { horizontal:'center', vertical:'middle' };
+      ws.getRow(1).height = 20;
+
+      // Headers
+      const headers = ['Level','Region','Area Coach','Store #','Store Name',
+        ...dayLabels,
+        ...allDays.slice(1).map((d,i) => {
+          const l1 = dayLabels[i], l2 = dayLabels[i+1];
+          return `\u0394 ${l1}\u2192${l2}`;
+        })
+      ];
+      const hdrRow = ws.addRow(headers);
+      hdrRow.height = 28;
+      hdrRow.eachCell((cell, col) => hdrCell(cell, headers[col-1]));
+      ws.views = [{ state:'frozen', ySplit:2 }];
+
+      // Build store avg IST per day
+      const allStoreIds = [...new Set(allDays.flatMap(d=>(d.stores||[]).map(s=>s.store_id)))];
+      const storeInfo = {};
+      for (const day of allDays) {
+        for (const s of (day.stores||[])) {
+          if (!storeInfo[s.store_id]) {
+            storeInfo[s.store_id] = { ...s, byDay:{} };
+          }
+          storeInfo[s.store_id].byDay[day.date] = s.in_store;
+        }
+      }
+
+      // Group by region and area like other sheets
+      const allStores = Object.values(storeInfo);
+      const regions = [...new Set(allStores.map(s=>s.region_coach||'Unknown'))].sort();
+
+      // Collect rows
+      const trendRows = [];
+
+      // TOTAL row
+      function avgISTForDay(stores, date) {
+        const vals = stores.map(s=>s.byDay&&s.byDay[date]).filter(v=>v!=null);
+        return vals.length ? +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : null;
+      }
+      function deltaStr(a, b) {
+        if (a==null || b==null) return '\u2013';
+        const diff = +(b - a).toFixed(1);
+        if (Math.abs(diff) < 0.05) return '\u2013';
+        return diff < 0 ? `\u25bc ${diff}` : `\u25b2 +${diff}`;
+      }
+
+      const totalDayVals = allDays.map(d => avgISTForDay(allStores, d.date));
+      const totalDeltas = allDays.slice(1).map((d,i) => deltaStr(totalDayVals[i], totalDayVals[i+1]));
+      trendRows.push({
+        level:'TOTAL', region:'ALL REGIONS', area_coach:null, store_id:null,
+        store_name: allStores.length+' Stores',
+        dayVals: totalDayVals, deltas: totalDeltas,
+        fillBg: MID_NAVY, fontColor:'FFFFFFFF', bold:true
+      });
+
+      for (const region of regions) {
+        const rStores = allStores.filter(s=>(s.region_coach||'Unknown')===region);
+        const rDayVals = allDays.map(d => avgISTForDay(rStores, d.date));
+        const rDeltas = allDays.slice(1).map((d,i) => deltaStr(rDayVals[i], rDayVals[i+1]));
+        trendRows.push({
+          level:'REGION', region, area_coach:null, store_id:null,
+          store_name: rStores.length+' Stores',
+          dayVals:rDayVals, deltas:rDeltas,
+          fillBg:DARK_NAVY, fontColor:'FFFFFFFF', bold:true
+        });
+
+        const areas = [...new Set(rStores.map(s=>s.area_coach||s.area||'Unknown'))].sort();
+        for (const area of areas) {
+          const aStores = rStores.filter(s=>(s.area_coach||s.area||'Unknown')===area);
+          const aDayVals = allDays.map(d => avgISTForDay(aStores, d.date));
+          const aDeltas = allDays.slice(1).map((d,i) => deltaStr(aDayVals[i], aDayVals[i+1]));
+          const areaNum = aStores[0]?.area||'';
+          trendRows.push({
+            level:'AREA', region, area_coach:area, store_id:areaNum,
+            store_name: aStores.length+' Stores',
+            dayVals:aDayVals, deltas:aDeltas,
+            fillBg:BLUE_ROW, fontColor:'FFFFFFFF', bold:true
+          });
+
+          aStores.forEach((s, idx) => {
+            const sDayVals = allDays.map(d => s.byDay&&s.byDay[d.date]!=null ? s.byDay[d.date] : null);
+            const sDeltas = allDays.slice(1).map((d,i) => deltaStr(sDayVals[i], sDayVals[i+1]));
+            trendRows.push({
+              level:'STORE', region, area_coach:area, store_id:s.store_id,
+              store_name: s.name||s.store_id,
+              dayVals:sDayVals, deltas:sDeltas,
+              fillBg: idx%2===0?LIGHT_BLUE1:LIGHT_BLUE2, fontColor:'FF000000', bold:false
+            });
+          });
+        }
+      }
+
+      // Write trend rows
+      trendRows.forEach(r => {
+        const rowData = [r.level, r.region, r.area_coach, r.store_id, r.store_name,
+          ...r.dayVals, ...r.deltas];
+        const row = ws.addRow(rowData);
+        row.eachCell((cell, col) => {
+          cell.font = { bold:r.bold, color:{argb:r.fontColor}, size:10 };
+          setSolid(cell, r.fillBg);
+          cell.border = { bottom:{style:'hair',color:{argb:'FFCCCCCC'}} };
+          // Day value columns - color code by IST
+          if (col > baseCols && col <= baseCols + dayCols) {
+            const val = cell.value;
+            if (val != null && typeof val === 'number') {
+              setSolid(cell, istFill(val));
+              cell.font = { bold:r.bold, size:10, color:{argb: val>25?'FFFFFFFF':'FF000000'} };
+              cell.alignment = { horizontal:'center' };
+            } else {
+              cell.value = '—';
+              cell.alignment = { horizontal:'center' };
+            }
+          }
+          // Delta columns
+          if (col > baseCols + dayCols) {
+            cell.alignment = { horizontal:'center' };
+            const v = cell.value;
+            if (typeof v==='string') {
+              if (v.startsWith('▼')) cell.font = { bold:r.bold, size:10, color:{argb:'FF00B050'} };
+              else if (v.startsWith('▲')) cell.font = { bold:r.bold, size:10, color:{argb:'FFFF0000'} };
+            }
+          }
+        });
+      });
+    }
+
+    // ─── Build all sheets ───
+    const period = currentData.period || currentData.week || '';
+    const dateRange = currentData.dateRange || '';
+
+    // 1. WTD sheet
+    const wtdStores = getWTDStores();
+    const wtdWS = wb.addWorksheet('WTD IST');
+    writeISTSheet(wtdWS, wtdStores, `WTD IST — ${period} ${dateRange}`);
+
+    // 2. PTD sheet (all days in current period)
+    const ptdStores = getPTDStores();
+    const ptdWS = wb.addWorksheet('PTD IST');
+    writeISTSheet(ptdWS, ptdStores, `PTD IST — ${period.replace(/W\d+$/,'')} (Period To Date)`);
+
+    // 3. Individual day sheets for current week
+    const days = Object.values(currentData.days || {}).sort((a,b)=>a.date.localeCompare(b.date));
+    for (const day of days) {
+      const dayStores = getStoresForDay(day.date);
+      if (!dayStores.length) continue;
+      const dt = new Date(day.date + 'T12:00:00Z');
+      const sheetName = dt.toLocaleDateString('en-US', { weekday:'short', month:'numeric', day:'numeric' });
+      const ws = wb.addWorksheet(sheetName);
+      writeISTSheet(ws, dayStores, `${sheetName} — ${period}`);
+    }
+
+    // 4. Trend sheet
+    const trendWS = wb.addWorksheet('Trend');
+    writeTrendSheet(trendWS);
+
+    // ─── Download ───
+    const buf = await wb.xlsx.writeBuffer();
+    const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const ds = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `Velocity_IST_${period.replace(/\s/g,'_')}_${ds}.xlsx`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+  } catch(err) {
+    alert('Export error: ' + err.message);
+    console.error(err);
+  }
+}
+
 }
 
 function getFilteredStores() {
