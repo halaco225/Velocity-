@@ -141,6 +141,21 @@ tr:hover td{background:var(--highlight);}
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+/* Week Dropdown Styles */
+.week-dropdown{position:relative;display:inline-block;}
+.week-dropdown-btn{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;border:1px solid var(--accent);background:rgba(249,115,22,.12);color:var(--accent);text-transform:uppercase;white-space:nowrap;transition:all .15s;}
+.week-dropdown-btn:hover{background:rgba(249,115,22,.2);}
+.week-dropdown-btn::after{content:'▼';font-size:8px;opacity:.7;}
+.week-dropdown-btn.open{background:var(--accent);color:#fff;}
+.week-dropdown-btn.open::after{content:'▲';}
+.week-dropdown-menu{display:none;position:absolute;top:100%;left:0;margin-top:4px;min-width:180px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:50;max-height:300px;overflow-y:auto;}
+.week-dropdown-menu.open{display:block;}
+.week-dropdown-item{padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.week-dropdown-item:last-child{border-bottom:none;}
+.week-dropdown-item:hover{background:var(--highlight);}
+.week-dropdown-item.active{background:rgba(249,115,22,.15);color:var(--accent);}
+.week-dropdown-item .week-date{font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;}
 </style>
 </head>
 <body>
@@ -598,15 +613,28 @@ function renderDayPills() {
   const days = currentData.days || [];
   let html = '';
 
-  // Week tabs when multiple weeks loaded
+  // Week dropdown when multiple weeks loaded
   if (allWeeksData.length > 1) {
-    html += '<span class="days-label">Week:</span>';
+    const currentWeek = allWeeksData[currentWeekIdx];
+    const currentLabel = currentWeek.period ? `${currentWeek.period}` : (currentWeek.dateRange||currentWeek.week||'?');
+    const currentDate = currentWeek.dateRange || currentWeek.week || '';
+    
+    html += `<div class="week-dropdown">`;
+    html += `<button class="week-dropdown-btn" id="weekDropdownBtn" onclick="toggleWeekDropdown()">`;
+    html += `<span>${currentLabel}</span>`;
+    html += `</button>`;
+    html += `<div class="week-dropdown-menu" id="weekDropdownMenu">`;
     allWeeksData.forEach((w, i) => {
-      const label = w.period ? `${w.period} (${w.dateRange||w.week||'?'})` : (w.dateRange||w.week||'?');
+      const label = w.period ? `${w.period}` : (w.dateRange||w.week||'?');
+      const dateStr = w.dateRange || w.week || '';
       const active = i===currentWeekIdx ? 'active' : '';
-      html += `<span class="day-pill ${active}" onclick="switchWeek(${i})">${label}</span>`;
+      html += `<div class="week-dropdown-item ${active}" onclick="switchWeek(${i})">`;
+      html += `<span>${label}</span>`;
+      html += `<span class="week-date">${dateStr}</span>`;
+      html += `</div>`;
     });
-    html += '<span style="margin:0 8px;color:var(--muted);font-size:10px">|</span>';
+    html += `</div></div>`;
+    html += '<span style="margin:0 10px;color:var(--muted);font-size:10px">|</span>';
   }
 
   html += '<span class="days-label">Day:</span>';
@@ -620,10 +648,34 @@ function renderDayPills() {
   container.innerHTML = html;
 }
 
+function toggleWeekDropdown() {
+  const btn = document.getElementById('weekDropdownBtn');
+  const menu = document.getElementById('weekDropdownMenu');
+  if (btn && menu) {
+    btn.classList.toggle('open');
+    menu.classList.toggle('open');
+  }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.week-dropdown')) {
+    const btn = document.getElementById('weekDropdownBtn');
+    const menu = document.getElementById('weekDropdownMenu');
+    if (btn) btn.classList.remove('open');
+    if (menu) menu.classList.remove('open');
+  }
+});
+
 function switchWeek(idx) {
   currentWeekIdx = idx;
   currentData = allWeeksData[idx];
   activeDay = 'wtd';
+  // Close dropdown before re-rendering
+  const btn = document.getElementById('weekDropdownBtn');
+  const menu = document.getElementById('weekDropdownMenu');
+  if (btn) btn.classList.remove('open');
+  if (menu) menu.classList.remove('open');
   renderDayPills();
   renderAll();
 }
