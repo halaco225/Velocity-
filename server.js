@@ -391,7 +391,21 @@ function parseAboveStorePDFLocal(filePath) {
       let reportDate = null;
       if (dateMatch) {
         const parts = dateMatch[1].split('/');
-        const yr = parseInt(parts[2]) < 100 ? 2000 + parseInt(parts[2]) : parseInt(parts[2]);
+        let yr = parseInt(parts[2]) < 100 ? 2000 + parseInt(parts[2]) : parseInt(parts[2]);
+        // Handle fiscal year dates: PDF shows FY like "03/17/26" meaning FY2026
+        // FY2026 runs Dec 2024 - Dec 2025, so early months (Jan-Mar) in "26" are calendar 2025
+        // If month is Jan-Jun and date would be far in future, use previous calendar year
+        const month = parseInt(parts[0]);
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        // If the parsed year is more than 1 year ahead of current year, adjust
+        if (yr > currentYear + 1) {
+          yr = yr - 1;
+        } else if (yr > currentYear && month <= 6) {
+          // If date is in "next year" but early months, it's likely fiscal year notation
+          // Check if this date would be reasonable as previous year
+          yr = yr - 1;
+        }
         reportDate = `${yr}-${parts[0].padStart(2,'0')}-${parts[1].padStart(2,'0')}`;
       }
 
