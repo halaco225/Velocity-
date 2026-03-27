@@ -141,21 +141,6 @@ tr:hover td{background:var(--highlight);}
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
-
-/* Week Dropdown Styles */
-.week-dropdown{position:relative;display:inline-block;}
-.week-dropdown-btn{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;border:1px solid var(--accent);background:rgba(249,115,22,.12);color:var(--accent);text-transform:uppercase;white-space:nowrap;transition:all .15s;}
-.week-dropdown-btn:hover{background:rgba(249,115,22,.2);}
-.week-dropdown-btn::after{content:'▼';font-size:8px;opacity:.7;}
-.week-dropdown-btn.open{background:var(--accent);color:#fff;}
-.week-dropdown-btn.open::after{content:'▲';}
-.week-dropdown-menu{display:none;position:absolute;top:100%;left:0;margin-top:4px;min-width:180px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:50;max-height:300px;overflow-y:auto;}
-.week-dropdown-menu.open{display:block;}
-.week-dropdown-item{padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-.week-dropdown-item:last-child{border-bottom:none;}
-.week-dropdown-item:hover{background:var(--highlight);}
-.week-dropdown-item.active{background:rgba(249,115,22,.15);color:var(--accent);}
-.week-dropdown-item .week-date{font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;}
 </style>
 </head>
 <body>
@@ -297,28 +282,482 @@ let selectedFiles = [];
 
 const ROLE_SCOPE = {
   'Matt Hester':{type:'vp'},
+  // Region Coaches
   'Harold Lacoste':{type:'region',region:'Harold Lacoste'},
+  'Jerry Warren':{type:'region',region:'Jerry Warren'},
+  'Jose Lozano Sr.':{type:'region',region:'Jose Lozano Sr.'},
+  'Lori Schwartz':{type:'region',region:'Lori Schwartz'},
+  'Papa Diack':{type:'region',region:'Papa Diack'},
   'Preston Arnwine':{type:'region',region:'Preston Arnwine'},
   'Terrance Spillane':{type:'region',region:'Terrance Spillane'},
-  'Darian Spikes':{type:'area',area:'Area 2011'},
-  'Ebony Simmons':{type:'area',area:'Area 2016'},
-  "Ja'Don McNeil":{type:'area',area:'Area 2022'},
-  'Jorge Garcia':{type:'area',area:'Area 2000'},
-  'Marc Gannon':{type:'area',area:'Area 2015'},
-  'Michelle Meehan':{type:'area',area:'Area 2034'},
-  'Emmanuel Boateng':{type:'area',area:'Area 2017'},
-  'Erin Pizzo':{type:'area',area:'Area 2004'},
-  'Royal Mitchell':{type:'area',area:'Area 2009'},
-  'Russell Kowalczyk':{type:'area',area:'Area 2048'},
+  'Theresa McDaniel':{type:'region',region:'Theresa McDaniel'},
+  // Area Coaches
+  'Alpha Garza':{type:'area',area:'Area 2042'},
+  'Amanda Spikes':{type:'area',area:'Area 2001'},
+  'Bahram Kaman':{type:'area',area:'Area 2025'},
   'Brenda Marta':{type:'area',area:'Area 2002'},
+  'Brian Marzan':{type:'area',area:'Area 2032'},
+  'Cesar Robles':{type:'area',area:'Area 2007'},
   'Constance Miranda':{type:'area',area:'Area 2010'},
+  'Darian Spikes':{type:'area',area:'Area 2011'},
+  'Debbra Selvig':{type:'area',area:'Area 2013'},
+  'Derek King':{type:'area',area:'Area 2057'},
+  'Donna Dittmar':{type:'area',area:'Area 2014'},
+  'Ebony Simmons':{type:'area',area:'Area 2016'},
+  'Emmanuel Boateng':{type:'area',area:'Area 2017'},
   'Eric Harstine':{type:'area',area:'Area 2033'},
+  'Erin Pizzo':{type:'area',area:'Area 2004'},
+  'Freddy (Antonio) Sandoval':{type:'area',area:'Area 2031'},
+  'Imran Awan (Kiosks-Express)':{type:'area',area:'Area 2100'},
+  'Jacob Maldonado':{type:'area',area:'Area 2021'},
+  'Jadon McNeil':{type:'area',area:'Area 2022'},
+  "Ja'Don McNeil":{type:'area',area:'Area 2022'},
   'Javier Martinez':{type:'area',area:'Area 2024'},
+  'Jeffrey Washburn':{type:'area',area:'Area 2054'},
+  'Jesse Luna':{type:'area',area:'Area 2028'},
+  'Joel Salinas':{type:'area',area:'Area 2019'},
+  'Jorge Garcia':{type:'area',area:'Area 2000'},
+  'Jose Flores':{type:'area',area:'Area 2027'},
   'Kevin Dunn':{type:'area',area:'Area 2055'},
+  'Kyle Smith':{type:'area',area:'Area 2056'},
+  'Larry (Steve) Battenfield':{type:'area',area:'Area 2050'},
+  'Lee Duran':{type:'area',area:'Area 2035'},
+  'Luigi Andinolfi':{type:'area',area:'Area 2036'},
+  'Marc Gannon':{type:'area',area:'Area 2015'},
+  'Maria Avila':{type:'area',area:'Area 2038'},
+  'Maria Delgado-Perez':{type:'area',area:'Area 2006'},
   'Max Losey':{type:'area',area:'Area 2039'},
+  'Michelle Cavazos':{type:'area',area:'Area 2040'},
+  'Michelle Meehan':{type:'area',area:'Area 2034'},
   'Oscar Gutierrez':{type:'area',area:'Area 2043'},
+  'Rachel Hightower':{type:'area',area:'Area 2045'},
+  'Ravin Lott':{type:'area',area:'Area 2051'},
+  'Reginald Brown':{type:'area',area:'Area 2046'},
+  'Robert Thomas':{type:'area',area:'Area 2037'},
+  'Roberto Sanchez':{type:'area',area:'Area 2029'},
+  'Royal Mitchell':{type:'area',area:'Area 2009'},
+  'Ruben Gonzalez':{type:'area',area:'Area 2047'},
+  'Russell Kowalczyk':{type:'area',area:'Area 2048'},
+  'Scott Fiksdal':{type:'area',area:'Area 2049'},
+  'Shayda Willison':{type:'area',area:'Area 2059'},
+  'Stepfen White':{type:'area',area:'Area 2041'},
+  'Szymon Lubas':{type:'area',area:'Area 2044'},
   'Tami Elliott-Baker':{type:'area',area:'Area 2008'},
+  'Thomas Cobb':{type:'area',area:'Area 2030'},
+  'Va Vang':{type:'area',area:'Area 2012'},
 };
+
+// ==============================
+// STORE ALIGNMENT (from Master Alignment P4)
+// Maps store IDs to area coach, region coach, area number
+// ==============================
+const STORE_ALIGNMENT = {
+  'S038876': {name:'Senoia',area:'Area 2011',area_coach:'Darian Spikes',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039377': {name:'Griffin',area:'Area 2011',area_coach:'Darian Spikes',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039378': {name:'Union City',area:'Area 2011',area_coach:'Darian Spikes',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039379': {name:'Jefferson St',area:'Area 2011',area_coach:'Darian Spikes',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039384': {name:'Newnan',area:'Area 2011',area_coach:'Darian Spikes',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039454': {name:'Zebulon',area:'Area 2011',area_coach:'Darian Spikes',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039465': {name:'Senoia',area:'Area 2011',area_coach:'Darian Spikes',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039383': {name:'Stockbridge',area:'Area 2016',area_coach:'Ebony Simmons',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039388': {name:'Jonesboro Rd',area:'Area 2016',area_coach:'Ebony Simmons',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039393': {name:'Lovejoy',area:'Area 2016',area_coach:'Ebony Simmons',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039429': {name:'Ola',area:'Area 2016',area_coach:'Ebony Simmons',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039461': {name:'County Line',area:'Area 2016',area_coach:'Ebony Simmons',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039513': {name:'Jodeco',area:'Area 2016',area_coach:'Ebony Simmons',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039521': {name:'Kellytown',area:'Area 2016',area_coach:'Ebony Simmons',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039522': {name:'Ellenwood',area:'Area 2016',area_coach:'Ebony Simmons',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039375': {name:'Bells Ferry Rd',area:'Area 2022',area_coach:'Jadon McNeil',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039376': {name:'CrossRds',area:'Area 2022',area_coach:'Jadon McNeil',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039382': {name:'Glade Rd',area:'Area 2022',area_coach:'Jadon McNeil',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039387': {name:'Kennesaw',area:'Area 2022',area_coach:'Jadon McNeil',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039392': {name:'Towne Lake',area:'Area 2022',area_coach:'Jadon McNeil',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039462': {name:'Acworth/Emerson',area:'Area 2022',area_coach:'Jadon McNeil',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039380': {name:'Windy Hill',area:'Area 2000',area_coach:'Jorge Garcia',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039386': {name:'Powder Springs',area:'Area 2000',area_coach:'Jorge Garcia',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039389': {name:'Lithia Springs',area:'Area 2000',area_coach:'Jorge Garcia',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039410': {name:'Mableton',area:'Area 2000',area_coach:'Jorge Garcia',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039451': {name:'Bolton',area:'Area 2000',area_coach:'Jorge Garcia',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039525': {name:'Smyrna',area:'Area 2000',area_coach:'Jorge Garcia',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039527': {name:'Austell Rd',area:'Area 2000',area_coach:'Jorge Garcia',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039412': {name:'Miracle Strip',area:'Area 2015',area_coach:'Marc Gannon',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039413': {name:'Navarre',area:'Area 2015',area_coach:'Marc Gannon',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039414': {name:'Gulf Breeze',area:'Area 2015',area_coach:'Marc Gannon',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039415': {name:'Miramar Beach',area:'Area 2015',area_coach:'Marc Gannon',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039416': {name:'Niceville',area:'Area 2015',area_coach:'Marc Gannon',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039430': {name:'Racetrack',area:'Area 2015',area_coach:'Marc Gannon',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039529': {name:'Crestview',area:'Area 2015',area_coach:'Marc Gannon',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S042659': {name:'Destin',area:'Area 2015',area_coach:'Marc Gannon',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039381': {name:'Fairburn Rd',area:'Area 2034',area_coach:'Michelle Meehan',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039385': {name:'Ridge Rd',area:'Area 2034',area_coach:'Michelle Meehan',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039390': {name:'East Paulding',area:'Area 2034',area_coach:'Michelle Meehan',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039391': {name:'Hwy 5',area:'Area 2034',area_coach:'Michelle Meehan',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039526': {name:'Dallas',area:'Area 2034',area_coach:'Michelle Meehan',region_coach:'Harold Lacoste',region:'ATLANTA'},
+  'S039289': {name:'Ella',area:'Area 2042',area_coach:'Alpha Garza',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039320': {name:'Beltway 8',area:'Area 2042',area_coach:'Alpha Garza',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039321': {name:'Summerwood',area:'Area 2042',area_coach:'Alpha Garza',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039326': {name:'Northside Tidwell',area:'Area 2042',area_coach:'Alpha Garza',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039329': {name:'St Emanuel',area:'Area 2042',area_coach:'Alpha Garza',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039438': {name:'Kirby ',area:'Area 2042',area_coach:'Alpha Garza',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039524': {name:'Lockwood',area:'Area 2042',area_coach:'Alpha Garza',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039248': {name:'Champions Forest',area:'Area 2001',area_coach:'Amanda Spikes',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039249': {name:'College Park',area:'Area 2001',area_coach:'Amanda Spikes',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039251': {name:'FM 1960',area:'Area 2001',area_coach:'Amanda Spikes',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039266': {name:'Kuykendahl',area:'Area 2001',area_coach:'Amanda Spikes',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039295': {name:'London Way',area:'Area 2001',area_coach:'Amanda Spikes',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039300': {name:'Rayford',area:'Area 2001',area_coach:'Amanda Spikes',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039304': {name:'Tomball',area:'Area 2001',area_coach:'Amanda Spikes',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039519': {name:'Grand Parkway',area:'Area 2001',area_coach:'Amanda Spikes',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039528': {name:'McBeth Way',area:'Area 2001',area_coach:'Amanda Spikes',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S317869': {name:'AT&T Center/Frost Bank Center #1',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S317870': {name:'AT&T Center/Frost Bank Center #2',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S317872': {name:'Toyota Center ',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788091': {name:'NRG Stadium & Arena (Texans)',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788190': {name:'Handi Stop #93',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788192': {name:'Handi Stop #133',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788195': {name:'Handi Stop #123',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788196': {name:'Handi Stop #100',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788197': {name:'Handi Stop #136',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788378': {name:'Handi Stop #128',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788379': {name:'Handi Stop #120',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788380': {name:'Handi Stop #125',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788381': {name:'Handi Stop #32',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788385': {name:'Cynthia Woods Mitchell Pavilion #1',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788411': {name:'Cynthia Woods Mitchell Pavilion #1',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788423': {name:'TDECU #1',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788424': {name:'TDECU #2',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788426': {name:'Fertitta Center #1 - University of Houston',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S788427': {name:'Fertitta Center #2 - University of Houston',area:'Area 2100',area_coach:'Imran Awan (Kiosks-Express)',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039261': {name:'Northpark',area:'Area 2050',area_coach:'Larry (Steve) Battenfield',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039293': {name:'Crosby',area:'Area 2050',area_coach:'Larry (Steve) Battenfield',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039298': {name:'Kingwood Dr',area:'Area 2050',area_coach:'Larry (Steve) Battenfield',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039303': {name:'Porter',area:'Area 2050',area_coach:'Larry (Steve) Battenfield',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039305': {name:'1st St',area:'Area 2050',area_coach:'Larry (Steve) Battenfield',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039308': {name:'Liberty',area:'Area 2050',area_coach:'Larry (Steve) Battenfield',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039325': {name:'New Caney',area:'Area 2050',area_coach:'Larry (Steve) Battenfield',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039331': {name:'Dayton',area:'Area 2050',area_coach:'Larry (Steve) Battenfield',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039245': {name:'Antoine',area:'Area 2030',area_coach:'Thomas Cobb',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039250': {name:'Cypresswood',area:'Area 2030',area_coach:'Thomas Cobb',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039253': {name:'N Gessner',area:'Area 2030',area_coach:'Thomas Cobb',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039254': {name:'Long Point',area:'Area 2030',area_coach:'Thomas Cobb',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039272': {name:'W 43rd',area:'Area 2030',area_coach:'Thomas Cobb',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039281': {name:'Cypress',area:'Area 2030',area_coach:'Thomas Cobb',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039291': {name:'Crosstimbers',area:'Area 2030',area_coach:'Thomas Cobb',region_coach:'Jerry Warren',region:'HOUSTON NORTH'},
+  'S039218': {name:'Carrizo Springs',area:'Area 2021',area_coach:'Jacob Maldonado',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039219': {name:'Crystal City',area:'Area 2021',area_coach:'Jacob Maldonado',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039220': {name:'Del Rio',area:'Area 2021',area_coach:'Jacob Maldonado',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039221': {name:'Eagle Pass',area:'Area 2021',area_coach:'Jacob Maldonado',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039236': {name:'Uvalde',area:'Area 2021',area_coach:'Jacob Maldonado',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039443': {name:'Eagle Pass Mall',area:'Area 2021',area_coach:'Jacob Maldonado',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039474': {name:'Brownsville Central',area:'Area 2019',area_coach:'Joel Salinas',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039479': {name:'Brownsville Security',area:'Area 2019',area_coach:'Joel Salinas',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039487': {name:'Brownsville Boca Chica',area:'Area 2019',area_coach:'Joel Salinas',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039488': {name:'Brownsville 802',area:'Area 2019',area_coach:'Joel Salinas',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039500': {name:'Brownsville International',area:'Area 2019',area_coach:'Joel Salinas',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039503': {name:'South Padre Island',area:'Area 2019',area_coach:'Joel Salinas',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039505': {name:'Port Isabel',area:'Area 2019',area_coach:'Joel Salinas',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039523': {name:'Alton Gloor',area:'Area 2019',area_coach:'Joel Salinas',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039470': {name:'Edinburg UTRUV',area:'Area 2027',area_coach:'Jose Flores',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039493': {name:'Alamo',area:'Area 2027',area_coach:'Jose Flores',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039494': {name:'Mission Exp 83',area:'Area 2027',area_coach:'Jose Flores',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039501': {name:'San Juan',area:'Area 2027',area_coach:'Jose Flores',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039506': {name:'Palm View',area:'Area 2027',area_coach:'Jose Flores',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039507': {name:'Sharyland',area:'Area 2027',area_coach:'Jose Flores',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039510': {name:'Palmhurst',area:'Area 2027',area_coach:'Jose Flores',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039468': {name:'McAllen McColl',area:'Area 2035',area_coach:'Lee Duran',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039469': {name:'McAllen Dove',area:'Area 2035',area_coach:'Lee Duran',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039471': {name:'McAllen South 10th',area:'Area 2035',area_coach:'Lee Duran',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039476': {name:'McAllen North 10th',area:'Area 2035',area_coach:'Lee Duran',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039480': {name:'Pharr',area:'Area 2035',area_coach:'Lee Duran',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039486': {name:'McAllen North 23rd',area:'Area 2035',area_coach:'Lee Duran',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039516': {name:'Valley View',area:'Area 2035',area_coach:'Lee Duran',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039227': {name:'Rio Grande',area:'Area 2038',area_coach:'Maria Avila',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039228': {name:'Roma',area:'Area 2038',area_coach:'Maria Avila',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039485': {name:'Laredo Saunders',area:'Area 2038',area_coach:'Maria Avila',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039492': {name:'Laredo Santa Ursula',area:'Area 2038',area_coach:'Maria Avila',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039496': {name:'Laredo Pine',area:'Area 2038',area_coach:'Maria Avila',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039504': {name:'Zapata',area:'Area 2038',area_coach:'Maria Avila',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S040768': {name:'Pita Mangana',area:'Area 2038',area_coach:'Maria Avila',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039335': {name:'Cotulla',area:'Area 2040',area_coach:'Michelle Cavazos',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039473': {name:'Laredo Guadalupe',area:'Area 2040',area_coach:'Michelle Cavazos',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039478': {name:'Laredo',area:'Area 2040',area_coach:'Michelle Cavazos',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039491': {name:'McPherson - Hillside',area:'Area 2040',area_coach:'Michelle Cavazos',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039499': {name:'Laredo FM 1472',area:'Area 2040',area_coach:'Michelle Cavazos',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039502': {name:'Laredo Hillside',area:'Area 2040',area_coach:'Michelle Cavazos',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039512': {name:'Laredo Jacaman',area:'Area 2040',area_coach:'Michelle Cavazos',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039472': {name:'Harlingen Commerce',area:'Area 2029',area_coach:'Roberto Sanchez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039481': {name:'Raymondville',area:'Area 2029',area_coach:'Roberto Sanchez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039482': {name:'Mercedes W 2nd',area:'Area 2029',area_coach:'Roberto Sanchez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039484': {name:'Harlingen Morgan',area:'Area 2029',area_coach:'Roberto Sanchez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039490': {name:'Harlingen Tyler',area:'Area 2029',area_coach:'Roberto Sanchez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039498': {name:'San Benito',area:'Area 2029',area_coach:'Roberto Sanchez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S040916': {name:'La Feria',area:'Area 2029',area_coach:'Roberto Sanchez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S041948': {name:'Los Fresnos',area:'Area 2029',area_coach:'Roberto Sanchez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039475': {name:'Weslaco Hwy 83',area:'Area 2047',area_coach:'Ruben Gonzalez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039483': {name:'Edinburg Closner',area:'Area 2047',area_coach:'Ruben Gonzalez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039489': {name:'Donna',area:'Area 2047',area_coach:'Ruben Gonzalez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039495': {name:'Elsa',area:'Area 2047',area_coach:'Ruben Gonzalez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039497': {name:'Weslaco Texas',area:'Area 2047',area_coach:'Ruben Gonzalez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039508': {name:'Edinburg Trenton',area:'Area 2047',area_coach:'Ruben Gonzalez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039509': {name:'Edinburg University',area:'Area 2047',area_coach:'Ruben Gonzalez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039517': {name:'El Bosque',area:'Area 2047',area_coach:'Ruben Gonzalez',region_coach:'Jose Lozano Sr.',region:'RGV'},
+  'S039341': {name:'Hastings',area:'Area 2013',area_coach:'Debbra Selvig',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039352': {name:'Maplewood/Hillcrest',area:'Area 2013',area_coach:'Debbra Selvig',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039354': {name:'Cottage Grove',area:'Area 2013',area_coach:'Debbra Selvig',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039364': {name:'Robert Street',area:'Area 2013',area_coach:'Debbra Selvig',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039366': {name:'Farmington',area:'Area 2013',area_coach:'Debbra Selvig',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039460': {name:'Woodbury',area:'Area 2013',area_coach:'Debbra Selvig',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S041084': {name:'Snelling',area:'Area 2013',area_coach:'Debbra Selvig',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039336': {name:'Cloquet',area:'Area 2057',area_coach:'Derek King',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039337': {name:'Virginia',area:'Area 2057',area_coach:'Derek King',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039339': {name:'Baxter',area:'Area 2057',area_coach:'Derek King',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039340': {name:'Bemidji',area:'Area 2057',area_coach:'Derek King',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039441': {name:'Duluth Grand',area:'Area 2057',area_coach:'Derek King',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039467': {name:'Duluth-Central',area:'Area 2057',area_coach:'Derek King',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039338': {name:'Mason City',area:'Area 2049',area_coach:'Scott Fiksdal',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039342': {name:'Rochester 52',area:'Area 2049',area_coach:'Scott Fiksdal',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039344': {name:'Spring Lake Park',area:'Area 2049',area_coach:'Scott Fiksdal',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039356': {name:'Mankato',area:'Area 2049',area_coach:'Scott Fiksdal',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039357': {name:'Rochester Broadway',area:'Area 2049',area_coach:'Scott Fiksdal',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039371': {name:'Faribault',area:'Area 2049',area_coach:'Scott Fiksdal',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039437': {name:'Austin',area:'Area 2049',area_coach:'Scott Fiksdal',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039464': {name:'Lakeville',area:'Area 2049',area_coach:'Scott Fiksdal',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039343': {name:'Shakopee',area:'Area 2044',area_coach:'Szymon Lubas',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039348': {name:'Portland',area:'Area 2044',area_coach:'Szymon Lubas',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039353': {name:'Burnsville',area:'Area 2044',area_coach:'Szymon Lubas',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039358': {name:'Apple Valley',area:'Area 2044',area_coach:'Szymon Lubas',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039360': {name:'New Bloomington',area:'Area 2044',area_coach:'Szymon Lubas',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039363': {name:'Cliff Road',area:'Area 2044',area_coach:'Szymon Lubas',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039368': {name:'Prior Lake',area:'Area 2044',area_coach:'Szymon Lubas',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039440': {name:'Downtown (Hennepin)',area:'Area 2044',area_coach:'Szymon Lubas',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039449': {name:'Columbia Heights',area:'Area 2044',area_coach:'Szymon Lubas',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039346': {name:'Brooklyn  Center',area:'Area 2012',area_coach:'Va Vang',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039347': {name:'Chicago Ave',area:'Area 2012',area_coach:'Va Vang',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039355': {name:'Uptown',area:'Area 2012',area_coach:'Va Vang',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039367': {name:'Champlin',area:'Area 2012',area_coach:'Va Vang',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039370': {name:'Delano',area:'Area 2012',area_coach:'Va Vang',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039439': {name:'St Cloud Bar',area:'Area 2012',area_coach:'Va Vang',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039459': {name:'Maple Grove',area:'Area 2012',area_coach:'Va Vang',region_coach:'Lori Schwartz',region:'MINNESOTA'},
+  'S039274': {name:'Fairmont',area:'Area 2054',area_coach:'Jeffrey Washburn',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039284': {name:'Seabrook',area:'Area 2054',area_coach:'Jeffrey Washburn',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039285': {name:'La Porte',area:'Area 2054',area_coach:'Jeffrey Washburn',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039294': {name:'Clear Lake',area:'Area 2054',area_coach:'Jeffrey Washburn',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039297': {name:'South Shaver',area:'Area 2054',area_coach:'Jeffrey Washburn',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039309': {name:'Spencer',area:'Area 2054',area_coach:'Jeffrey Washburn',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039463': {name:'Baycliff',area:'Area 2054',area_coach:'Jeffrey Washburn',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039515': {name:'Webster',area:'Area 2054',area_coach:'Jeffrey Washburn',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039255': {name:'Fondren',area:'Area 2006',area_coach:'Maria Delgado-Perez',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039271': {name:'Montrose',area:'Area 2006',area_coach:'Maria Delgado-Perez',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039288': {name:'Heights',area:'Area 2006',area_coach:'Maria Delgado-Perez',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039311': {name:'Chimney Rock',area:'Area 2006',area_coach:'Maria Delgado-Perez',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039322': {name:'Cullen Blvd',area:'Area 2006',area_coach:'Maria Delgado-Perez',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039444': {name:'Galleria',area:'Area 2006',area_coach:'Maria Delgado-Perez',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039520': {name:'Houston Loop 610',area:'Area 2006',area_coach:'Maria Delgado-Perez',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S042806': {name:'Shadow Creek',area:'Area 2006',area_coach:'Maria Delgado-Perez',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039269': {name:'Scarsdale',area:'Area 2045',area_coach:'Rachel Hightower',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039279': {name:'Silver Lake',area:'Area 2045',area_coach:'Rachel Hightower',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039280': {name:'Friendswood',area:'Area 2045',area_coach:'Rachel Hightower',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039286': {name:'Pearland Pkwy',area:'Area 2045',area_coach:'Rachel Hightower',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039290': {name:'Harkey Rd',area:'Area 2045',area_coach:'Rachel Hightower',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039312': {name:'League City',area:'Area 2045',area_coach:'Rachel Hightower',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039313': {name:'Fuqua',area:'Area 2045',area_coach:'Rachel Hightower',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039330': {name:'Manvel',area:'Area 2045',area_coach:'Rachel Hightower',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039247': {name:'Dairy Ashford',area:'Area 2051',area_coach:'Ravin Lott',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039252': {name:'Grayfalls',area:'Area 2051',area_coach:'Ravin Lott',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039260': {name:'San Felipe',area:'Area 2051',area_coach:'Ravin Lott',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039262': {name:'Jones Road',area:'Area 2051',area_coach:'Ravin Lott',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039268': {name:'Richmond',area:'Area 2051',area_coach:'Ravin Lott',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039277': {name:'Westheimer',area:'Area 2051',area_coach:'Ravin Lott',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039287': {name:'Kirkwood',area:'Area 2051',area_coach:'Ravin Lott',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039296': {name:'Bellaire',area:'Area 2051',area_coach:'Ravin Lott',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039307': {name:'Willow Brook',area:'Area 2051',area_coach:'Ravin Lott',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039246': {name:'Southside Place',area:'Area 2046',area_coach:'Reginald Brown',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039256': {name:'Bellfort',area:'Area 2046',area_coach:'Reginald Brown',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039257': {name:'TX Pkwy',area:'Area 2046',area_coach:'Reginald Brown',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039263': {name:'Medical Center',area:'Area 2046',area_coach:'Reginald Brown',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039265': {name:'Westbelfort',area:'Area 2046',area_coach:'Reginald Brown',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039270': {name:'Lake Olympia',area:'Area 2046',area_coach:'Reginald Brown',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039292': {name:'Fresno',area:'Area 2046',area_coach:'Reginald Brown',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S040395': {name:'Rosharon',area:'Area 2046',area_coach:'Reginald Brown',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039276': {name:'Texas City',area:'Area 2037',area_coach:'Robert Thomas',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039282': {name:'Alvin',area:'Area 2037',area_coach:'Robert Thomas',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039301': {name:'LaMarque',area:'Area 2037',area_coach:'Robert Thomas',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039306': {name:'Lake Jackson',area:'Area 2037',area_coach:'Robert Thomas',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039310': {name:'Angleton',area:'Area 2037',area_coach:'Robert Thomas',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039314': {name:'Dickinson',area:'Area 2037',area_coach:'Robert Thomas',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039328': {name:'Santa Fe',area:'Area 2037',area_coach:'Robert Thomas',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039334': {name:'Galveston',area:'Area 2037',area_coach:'Robert Thomas',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039258': {name:'First Colony',area:'Area 2059',area_coach:'Shayda Willison',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039259': {name:'Eldridge',area:'Area 2059',area_coach:'Shayda Willison',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039264': {name:'Beechnut',area:'Area 2059',area_coach:'Shayda Willison',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039273': {name:'Bissonet',area:'Area 2059',area_coach:'Shayda Willison',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039278': {name:'Meadows Place',area:'Area 2059',area_coach:'Shayda Willison',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039283': {name:'Mission Bend',area:'Area 2059',area_coach:'Shayda Willison',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039302': {name:'Oak Lake',area:'Area 2059',area_coach:'Shayda Willison',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S041467': {name:'Mason Rd',area:'Area 2059',area_coach:'Shayda Willison',region_coach:'Papa Diack',region:'HOUSTON SOUTH'},
+  'S039418': {name:'Riverside Dr',area:'Area 2017',area_coach:'Emmanuel Boateng',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039422': {name:'South Church',area:'Area 2017',area_coach:'Emmanuel Boateng',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039423': {name:'Graham',area:'Area 2017',area_coach:'Emmanuel Boateng',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039432': {name:'Mebane',area:'Area 2017',area_coach:'Emmanuel Boateng',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039433': {name:'Elton Way',area:'Area 2017',area_coach:'Emmanuel Boateng',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039455': {name:'Spring Garden',area:'Area 2017',area_coach:'Emmanuel Boateng',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039456': {name:'Whitsett',area:'Area 2017',area_coach:'Emmanuel Boateng',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039420': {name:'Harrisonburg',area:'Area 2004',area_coach:'Erin Pizzo',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039425': {name:'Elkton',area:'Area 2004',area_coach:'Erin Pizzo',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039426': {name:'Woodstock',area:'Area 2004',area_coach:'Erin Pizzo',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039428': {name:'Stuarts Draft',area:'Area 2004',area_coach:'Erin Pizzo',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039431': {name:'Staunton',area:'Area 2004',area_coach:'Erin Pizzo',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039435': {name:'Shoppers World',area:'Area 2004',area_coach:'Erin Pizzo',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039450': {name:'Orange',area:'Area 2004',area_coach:'Erin Pizzo',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039453': {name:'JMU/Market',area:'Area 2004',area_coach:'Erin Pizzo',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039466': {name:'Waynesboro ',area:'Area 2004',area_coach:'Erin Pizzo',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039397': {name:'Irby',area:'Area 2009',area_coach:'Royal Mitchell',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039400': {name:'E Palmetto',area:'Area 2009',area_coach:'Royal Mitchell',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039401': {name:'Darlington',area:'Area 2009',area_coach:'Royal Mitchell',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039402': {name:'2nd Loop',area:'Area 2009',area_coach:'Royal Mitchell',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039403': {name:'Marion',area:'Area 2009',area_coach:'Royal Mitchell',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039409': {name:'Hartsville',area:'Area 2009',area_coach:'Royal Mitchell',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039394': {name:'Elberton',area:'Area 2048',area_coach:'Russell Kowalczyk',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039395': {name:'Abbeville',area:'Area 2048',area_coach:'Russell Kowalczyk',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039396': {name:'Hartwell',area:'Area 2048',area_coach:'Russell Kowalczyk',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039398': {name:'Royston',area:'Area 2048',area_coach:'Russell Kowalczyk',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039399': {name:'Lavonia',area:'Area 2048',area_coach:'Russell Kowalczyk',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039404': {name:'Greenwood Bypass',area:'Area 2048',area_coach:'Russell Kowalczyk',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039405': {name:'Simpsonville',area:'Area 2048',area_coach:'Russell Kowalczyk',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039407': {name:'Newberry',area:'Area 2048',area_coach:'Russell Kowalczyk',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039408': {name:'Seneca',area:'Area 2048',area_coach:'Russell Kowalczyk',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039417': {name:'Collinsville',area:'Area 2041',area_coach:'Stepfen White',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039419': {name:'Martinsville',area:'Area 2041',area_coach:'Stepfen White',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039421': {name:'College Rd',area:'Area 2041',area_coach:'Stepfen White',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039424': {name:'Gate City Blvd',area:'Area 2041',area_coach:'Stepfen White',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039427': {name:'Pyramid Village',area:'Area 2041',area_coach:'Stepfen White',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039436': {name:'Battleground',area:'Area 2041',area_coach:'Stepfen White',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S039457': {name:'East Greensboro',area:'Area 2041',area_coach:'Stepfen White',region_coach:'Preston Arnwine',region:'MID-ATLANTIC'},
+  'S040090': {name:'Main',area:'Area 2002',area_coach:'Brenda Marta',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040091': {name:'Silver City',area:'Area 2002',area_coach:'Brenda Marta',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040093': {name:'Missouri ',area:'Area 2002',area_coach:'Brenda Marta',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040102': {name:'Deming',area:'Area 2002',area_coach:'Brenda Marta',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039180': {name:'Zaragosa',area:'Area 2010',area_coach:'Constance Miranda',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039182': {name:'Vista',area:'Area 2010',area_coach:'Constance Miranda',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039185': {name:'Gateway',area:'Area 2010',area_coach:'Constance Miranda',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039318': {name:'Socorro',area:'Area 2010',area_coach:'Constance Miranda',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039323': {name:'Tierre Este',area:'Area 2010',area_coach:'Constance Miranda',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S041651': {name:'Eastlake',area:'Area 2010',area_coach:'Constance Miranda',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040082': {name:'Taylor Ranch',area:'Area 2033',area_coach:'Eric Harstine',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040084': {name:'7th/Lomas',area:'Area 2033',area_coach:'Eric Harstine',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040095': {name:'Grants ',area:'Area 2033',area_coach:'Eric Harstine',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040101': {name:'Washinton/Zuni',area:'Area 2033',area_coach:'Eric Harstine',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040107': {name:'Coors/Barcelona',area:'Area 2033',area_coach:'Eric Harstine',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040108': {name:'Wyoming/Harper',area:'Area 2033',area_coach:'Eric Harstine',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040111': {name:'303 Coors- Central & Coors',area:'Area 2033',area_coach:'Eric Harstine',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S038729': {name:'Kenworthy',area:'Area 2024',area_coach:'Javier Martinez',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039174': {name:'University',area:'Area 2024',area_coach:'Javier Martinez',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039175': {name:'Airway',area:'Area 2024',area_coach:'Javier Martinez',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039178': {name:'CrossRds',area:'Area 2024',area_coach:'Javier Martinez',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039192': {name:'Resler',area:'Area 2024',area_coach:'Javier Martinez',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039324': {name:'Outlet Mall',area:'Area 2024',area_coach:'Javier Martinez',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039448': {name:'Dyer',area:'Area 2024',area_coach:'Javier Martinez',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040088': {name:'Los Lunas',area:'Area 2055',area_coach:'Kevin Dunn',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040089': {name:'Wyoming/Central',area:'Area 2055',area_coach:'Kevin Dunn',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040096': {name:'Belen',area:'Area 2055',area_coach:'Kevin Dunn',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040099': {name:'Candelaria ',area:'Area 2055',area_coach:'Kevin Dunn',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040100': {name:'T or C',area:'Area 2055',area_coach:'Kevin Dunn',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040110': {name:'Bull Chicks/Montgomery',area:'Area 2055',area_coach:'Kevin Dunn',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039589': {name:'Rio Rancho',area:'Area 2039',area_coach:'Max Losey',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040094': {name:'Villa Linda Mall',area:'Area 2039',area_coach:'Max Losey',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040104': {name:'Southern',area:'Area 2039',area_coach:'Max Losey',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040105': {name:'Las Vegas',area:'Area 2039',area_coach:'Max Losey',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040106': {name:'Espanola',area:'Area 2039',area_coach:'Max Losey',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040109': {name:'Unser & McMahon PH',area:'Area 2039',area_coach:'Max Losey',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039173': {name:'Yarbrough',area:'Area 2043',area_coach:'Oscar Gutierrez',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039176': {name:'Lovington',area:'Area 2043',area_coach:'Oscar Gutierrez',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039177': {name:'Hobbs',area:'Area 2043',area_coach:'Oscar Gutierrez',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039179': {name:'George Dieter',area:'Area 2043',area_coach:'Oscar Gutierrez',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039188': {name:'Carlsbad',area:'Area 2043',area_coach:'Oscar Gutierrez',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039518': {name:'Hobbs North',area:'Area 2043',area_coach:'Oscar Gutierrez',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039530': {name:'Montana',area:'Area 2043',area_coach:'Oscar Gutierrez',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040083': {name:'20th St',area:'Area 2008',area_coach:'Tami Elliott-Baker',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040085': {name:'North Gallup',area:'Area 2008',area_coach:'Tami Elliott-Baker',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040086': {name:'Main Street',area:'Area 2008',area_coach:'Tami Elliott-Baker',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040087': {name:'East Gallup',area:'Area 2008',area_coach:'Tami Elliott-Baker',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040092': {name:'Aztec',area:'Area 2008',area_coach:'Tami Elliott-Baker',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S040112': {name:'Durango',area:'Area 2008',area_coach:'Tami Elliott-Baker',region_coach:'Terrance Spillane',region:'NEW PASO'},
+  'S039224': {name:'Kenedy',area:'Area 2025',area_coach:'Bahram Kaman',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039235': {name:'WW White',area:'Area 2025',area_coach:'Bahram Kaman',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039237': {name:'Floresville',area:'Area 2025',area_coach:'Bahram Kaman',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039316': {name:'La Vernia',area:'Area 2025',area_coach:'Bahram Kaman',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S041058': {name:'Schertz',area:'Area 2025',area_coach:'Bahram Kaman',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039158': {name:'Mathis',area:'Area 2032',area_coach:'Brian Marzan',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039159': {name:'Sinton',area:'Area 2032',area_coach:'Brian Marzan',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039184': {name:'Portland',area:'Area 2032',area_coach:'Brian Marzan',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039187': {name:'Five Points',area:'Area 2032',area_coach:'Brian Marzan',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039189': {name:'Rockport',area:'Area 2032',area_coach:'Brian Marzan',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039193': {name:'Aransas Pass',area:'Area 2032',area_coach:'Brian Marzan',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039332': {name:'Ingleside',area:'Area 2032',area_coach:'Brian Marzan',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039374': {name:'Beeville',area:'Area 2032',area_coach:'Brian Marzan',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039167': {name:'Kingsville',area:'Area 2007',area_coach:'Cesar Robles',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039170': {name:'Annaville',area:'Area 2007',area_coach:'Cesar Robles',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039171': {name:'Robstown',area:'Area 2007',area_coach:'Cesar Robles',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039186': {name:'Hunt Square',area:'Area 2007',area_coach:'Cesar Robles',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039191': {name:'Alice',area:'Area 2007',area_coach:'Cesar Robles',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039194': {name:'Woodlawn',area:'Area 2007',area_coach:'Cesar Robles',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039222': {name:'Falfurrias',area:'Area 2007',area_coach:'Cesar Robles',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039447': {name:'Weber',area:'Area 2007',area_coach:'Cesar Robles',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S041956': {name:'Yorktown',area:'Area 2007',area_coach:'Cesar Robles',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039163': {name:'Castroville',area:'Area 2014',area_coach:'Donna Dittmar',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039223': {name:'Hondo',area:'Area 2014',area_coach:'Donna Dittmar',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039233': {name:'Westlakes',area:'Area 2014',area_coach:'Donna Dittmar',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039234': {name:'Gen McMullen',area:'Area 2014',area_coach:'Donna Dittmar',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039243': {name:'Pleasanton',area:'Area 2014',area_coach:'Donna Dittmar',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039315': {name:'Devine',area:'Area 2014',area_coach:'Donna Dittmar',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039333': {name:'Potranco',area:'Area 2014',area_coach:'Donna Dittmar',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039514': {name:'Red Bird',area:'Area 2014',area_coach:'Donna Dittmar',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039155': {name:'Cuero',area:'Area 2031',area_coach:'Freddy (Antonio) Sandoval',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039156': {name:'Gonzales',area:'Area 2031',area_coach:'Freddy (Antonio) Sandoval',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039157': {name:'Yoakum',area:'Area 2031',area_coach:'Freddy (Antonio) Sandoval',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039160': {name:'Edna',area:'Area 2031',area_coach:'Freddy (Antonio) Sandoval',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039161': {name:'Port Lavaca',area:'Area 2031',area_coach:'Freddy (Antonio) Sandoval',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039162': {name:'Navarro',area:'Area 2031',area_coach:'Freddy (Antonio) Sandoval',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039165': {name:'Zac Lentz',area:'Area 2031',area_coach:'Freddy (Antonio) Sandoval',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039445': {name:'Refugio',area:'Area 2031',area_coach:'Freddy (Antonio) Sandoval',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039166': {name:'Ayers',area:'Area 2028',area_coach:'Jesse Luna',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039172': {name:'Baldwin',area:'Area 2028',area_coach:'Jesse Luna',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039181': {name:'Hamlin',area:'Area 2028',area_coach:'Jesse Luna',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039183': {name:'Gulfway',area:'Area 2028',area_coach:'Jesse Luna',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S041042': {name:'Waldron',area:'Area 2028',area_coach:'Jesse Luna',region_coach:'Theresa McDaniel',region:'CORPUS CHRISTI'},
+  'S039164': {name:'Sonora',area:'Area 2056',area_coach:'Kyle Smith',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039225': {name:'Kerrville',area:'Area 2056',area_coach:'Kyle Smith',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039238': {name:'New Braunfels',area:'Area 2056',area_coach:'Kyle Smith',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039241': {name:'Bulverde',area:'Area 2056',area_coach:'Kyle Smith',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039242': {name:'Boerne',area:'Area 2056',area_coach:'Kyle Smith',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039327': {name:'Hunter\'s Creek',area:'Area 2056',area_coach:'Kyle Smith',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039226': {name:'Pearsall',area:'Area 2036',area_coach:'Luigi Andinolfi',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039229': {name:'SW Military',area:'Area 2036',area_coach:'Luigi Andinolfi',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039230': {name:'Goliad',area:'Area 2036',area_coach:'Luigi Andinolfi',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039231': {name:'Roosevelt',area:'Area 2036',area_coach:'Luigi Andinolfi',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039232': {name:'Hackberry',area:'Area 2036',area_coach:'Luigi Andinolfi',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039239': {name:'Santa Rosa',area:'Area 2036',area_coach:'Luigi Andinolfi',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039240': {name:'Zarzamora',area:'Area 2036',area_coach:'Luigi Andinolfi',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+  'S039319': {name:'Valley Hi',area:'Area 2036',area_coach:'Luigi Andinolfi',region_coach:'Theresa McDaniel',region:'SAN ANTONIO'},
+};
+
+function enrichStoreAlignment(stores) {
+  return stores.map(s => {
+    const sid = s.store_id || '';
+    const align = STORE_ALIGNMENT[sid];
+    if (align) {
+      return {
+        ...s,
+        name: s.name || align.name,
+        area: align.area,
+        area_coach: align.area_coach,
+        region_coach: align.region_coach,
+        region: align.region
+      };
+    }
+    return s;
+  });
+}
 
 // ==============================
 // HELPERS
@@ -514,7 +953,7 @@ async function processUpload() {
     document.getElementById('storeFilter').value = '';
 
     // Set new data
-    allWeeksData = result.data || []; currentWeekIdx = 0; currentData = allWeeksData[0] || null;
+    allWeeksData = (result.data || []).map(w => ({...w, stores: enrichStoreAlignment(w.stores || [])})); currentWeekIdx = 0; currentData = allWeeksData[0] || null;
 
     selectedFiles = [];
     document.getElementById('fileList').innerHTML = '';
@@ -564,20 +1003,21 @@ function showDashboard() {
   document.getElementById('userBadge').textContent = currentUser;
   document.getElementById('userBadge').style.display = 'inline';
 
-  // Period badge (P3W4 format)
-  if (currentData.period) {
-    document.getElementById('periodBadge').textContent = currentData.period;
+  // Period badge — show period + date range combined (e.g. "P30W1  3/24–3/30")
+  if (currentData.period || currentData.week || currentData.dateRange) {
+    let periodText = currentData.period || '';
+    let dateText = currentData.dateRange || '';
+    if (!dateText && currentData.week) {
+      const tue = new Date(currentData.week + 'T12:00:00Z');
+      const mon = new Date(tue);
+      mon.setUTCDate(tue.getUTCDate() + 6);
+      const fmt = d => d.toLocaleDateString('en-US',{month:'numeric',day:'numeric'});
+      dateText = `${fmt(tue)}–${fmt(mon)}`;
+    }
+    const combined = [periodText, dateText].filter(Boolean).join('  ');
+    document.getElementById('periodBadge').textContent = combined;
     document.getElementById('periodBadge').style.display = 'inline';
-  }
-
-  // Week badge — show Tue-Mon range
-  if (currentData.week) {
-    const tue = new Date(currentData.week + 'T12:00:00Z');
-    const mon = new Date(tue);
-    mon.setUTCDate(tue.getUTCDate() + 6);
-    const fmt = d => d.toLocaleDateString('en-US',{month:'numeric',day:'numeric'});
-    document.getElementById('weekBadge').textContent = currentData.dateRange || `${fmt(tue)}–${fmt(mon)}`;
-    document.getElementById('weekBadge').style.display = 'inline';
+    document.getElementById('weekBadge').style.display = 'none';
   }
 
   document.getElementById('daysBadge').textContent = `${currentData.days.length} day(s)`;
@@ -613,28 +1053,15 @@ function renderDayPills() {
   const days = currentData.days || [];
   let html = '';
 
-  // Week dropdown when multiple weeks loaded
+  // Week tabs when multiple weeks loaded
   if (allWeeksData.length > 1) {
-    const currentWeek = allWeeksData[currentWeekIdx];
-    const currentLabel = currentWeek.period ? `${currentWeek.period}` : (currentWeek.dateRange||currentWeek.week||'?');
-    const currentDate = currentWeek.dateRange || currentWeek.week || '';
-    
-    html += `<div class="week-dropdown">`;
-    html += `<button class="week-dropdown-btn" id="weekDropdownBtn" onclick="toggleWeekDropdown()">`;
-    html += `<span>${currentLabel}</span>`;
-    html += `</button>`;
-    html += `<div class="week-dropdown-menu" id="weekDropdownMenu">`;
+    html += '<span class="days-label">Week:</span>';
     allWeeksData.forEach((w, i) => {
-      const label = w.period ? `${w.period}` : (w.dateRange||w.week||'?');
-      const dateStr = w.dateRange || w.week || '';
+      const label = w.period ? `${w.period} (${w.dateRange||w.week||'?'})` : (w.dateRange||w.week||'?');
       const active = i===currentWeekIdx ? 'active' : '';
-      html += `<div class="week-dropdown-item ${active}" onclick="switchWeek(${i})">`;
-      html += `<span>${label}</span>`;
-      html += `<span class="week-date">${dateStr}</span>`;
-      html += `</div>`;
+      html += `<span class="day-pill ${active}" onclick="switchWeek(${i})">${label}</span>`;
     });
-    html += `</div></div>`;
-    html += '<span style="margin:0 10px;color:var(--muted);font-size:10px">|</span>';
+    html += '<span style="margin:0 8px;color:var(--muted);font-size:10px">|</span>';
   }
 
   html += '<span class="days-label">Day:</span>';
@@ -648,34 +1075,10 @@ function renderDayPills() {
   container.innerHTML = html;
 }
 
-function toggleWeekDropdown() {
-  const btn = document.getElementById('weekDropdownBtn');
-  const menu = document.getElementById('weekDropdownMenu');
-  if (btn && menu) {
-    btn.classList.toggle('open');
-    menu.classList.toggle('open');
-  }
-}
-
-// Close dropdown when clicking outside
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('.week-dropdown')) {
-    const btn = document.getElementById('weekDropdownBtn');
-    const menu = document.getElementById('weekDropdownMenu');
-    if (btn) btn.classList.remove('open');
-    if (menu) menu.classList.remove('open');
-  }
-});
-
 function switchWeek(idx) {
   currentWeekIdx = idx;
   currentData = allWeeksData[idx];
   activeDay = 'wtd';
-  // Close dropdown before re-rendering
-  const btn = document.getElementById('weekDropdownBtn');
-  const menu = document.getElementById('weekDropdownMenu');
-  if (btn) btn.classList.remove('open');
-  if (menu) menu.classList.remove('open');
   renderDayPills();
   renderAll();
 }
@@ -692,42 +1095,23 @@ function switchDay(day) {
 function renderScorecards() {
   const data = getDisplayStores();
   if (!data.length) return;
-  
-  // Check if any stores have data for each field
-  const hasIST = data.some(s => s.in_store != null);
-  const hasMake = data.some(s => s.make != null);
-  const hasPct4 = data.some(s => s.pct_lt4 != null);
-  const hasOT = data.some(s => s.on_time != null);
-  const hasISTBuckets = data.some(s => s.ist_lt10 != null || s.ist_1014 != null || s.ist_1518 != null || s.ist_1925 != null || s.ist_gt25 != null);
-  
-  // Calculate averages only from stores that have data
-  const storesWithIST = data.filter(s => s.in_store != null);
-  const avgIST = hasIST ? storesWithIST.reduce((a,s)=>a+s.in_store,0)/storesWithIST.length : null;
-  
-  const storesWithMake = data.filter(s => s.make != null);
-  const avgMk = hasMake ? storesWithMake.reduce((a,s)=>a+parseTime(s.make),0)/storesWithMake.length : null;
-  
-  const storesWithPct4 = data.filter(s => s.pct_lt4 != null);
-  const avgPct4 = hasPct4 ? storesWithPct4.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/storesWithPct4.length : null;
-  
-  const storesWithOT = data.filter(s => s.on_time != null);
-  const avgOT = hasOT ? storesWithOT.reduce((a,s)=>a+parsePct(s.on_time),0)/storesWithOT.length : null;
-  
-  // For IST buckets, only count stores that have bucket data
-  const storesWithBuckets = data.filter(s => s.ist_lt10 != null);
-  const totalLt10 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0) : null;
-  const total1014 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0) : null;
-  const total1518 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0) : null;
-  const total1925 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0) : null;
-  const totalGt25 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0) : null;
+  const avgIST = data.reduce((a,s)=>a+(s.in_store||0),0)/data.length;
+  const avgMk = data.reduce((a,s)=>a+parseTime(s.make),0)/data.length;
+  const avgPct4 = data.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/data.length;
+  const avgOT = data.reduce((a,s)=>a+parsePct(s.on_time),0)/data.length;
+  const totalLt10 = data.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0);
+  const total1014 = data.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0);
+  const total1518 = data.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0);
+  const total1925 = data.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0);
+  const totalGt25 = data.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0);
 
   document.getElementById('scorecardStrip').innerHTML = `
     <div class="score-tile"><div class="score-tile-label">Stores</div><div class="score-tile-value val-neutral">${data.length}</div><div class="score-tile-sub">${activeDay==='wtd'?'WTD view':'Day view'}</div></div>
-    <div class="score-tile"><div class="score-tile-label">Avg In-Store</div><div class="score-tile-value ${avgIST!=null?istColor(avgIST):'val-neutral'}">${avgIST!=null?avgIST.toFixed(1)+'m':'—'}</div><div class="score-tile-sub">Target <19m</div></div>
-    <div class="score-tile"><div class="score-tile-label">Avg Make</div><div class="score-tile-value ${avgMk!=null?mkColor(avgMk):'val-neutral'}">${avgMk!=null?fmtTime(avgMk):'—'}</div><div class="score-tile-sub">${avgPct4!=null?avgPct4.toFixed(0)+'% under 4:00':'Upload PDF for details'}</div></div>
-    <div class="score-tile"><div class="score-tile-label">On-Time %</div><div class="score-tile-value ${avgOT!=null?pctColor(avgOT,85,75):'val-neutral'}">${avgOT!=null?avgOT.toFixed(1)+'%':'—'}</div><div class="score-tile-sub">Target >85%</div></div>
-    <div class="score-tile"><div class="score-tile-label"><10# / 10-14# / 15-18#</div><div class="score-tile-value val-good" style="font-size:18px">${totalLt10!=null?totalLt10:'—'} / ${total1014!=null?total1014:'—'} / ${total1518!=null?total1518:'—'}</div><div class="score-tile-sub">Fast IST buckets</div></div>
-    <div class="score-tile"><div class="score-tile-label">19-25# / >25#</div><div class="score-tile-value ${total1925!=null&&totalGt25!=null?(total1925+totalGt25>data.length*3?'val-bad':total1925+totalGt25>data.length?'val-warn':'val-good'):'val-neutral'}" style="font-size:18px">${total1925!=null?total1925:'—'} / ${totalGt25!=null?totalGt25:'—'}</div><div class="score-tile-sub">Slow IST buckets</div></div>
+    <div class="score-tile"><div class="score-tile-label">Avg In-Store</div><div class="score-tile-value ${istColor(avgIST)}">${avgIST.toFixed(1)}m</div><div class="score-tile-sub">Target <19m</div></div>
+    <div class="score-tile"><div class="score-tile-label">Avg Make</div><div class="score-tile-value ${mkColor(avgMk)}">${fmtTime(avgMk)}</div><div class="score-tile-sub">${avgPct4.toFixed(0)}% under 4:00</div></div>
+    <div class="score-tile"><div class="score-tile-label">On-Time %</div><div class="score-tile-value ${pctColor(avgOT,85,75)}">${avgOT.toFixed(1)}%</div><div class="score-tile-sub">Target >85%</div></div>
+    <div class="score-tile"><div class="score-tile-label"><10# / 10-14# / 15-18#</div><div class="score-tile-value val-good" style="font-size:18px">${totalLt10} / ${total1014} / ${total1518}</div><div class="score-tile-sub">Fast IST buckets</div></div>
+    <div class="score-tile"><div class="score-tile-label">19-25# / >25#</div><div class="score-tile-value ${total1925+totalGt25>data.length*3?'val-bad':total1925+totalGt25>data.length?'val-warn':'val-good'}" style="font-size:18px">${total1925} / ${totalGt25}</div><div class="score-tile-sub">Slow IST buckets</div></div>
   `;
   document.getElementById('storeCount').textContent = `${data.length} stores`;
 }
@@ -760,77 +1144,47 @@ function renderTable() {
     const mm = parseTime(s.make);
     const lt4 = parsePct(s.pct_lt4), ot = parsePct(s.on_time);
     const wtdBadge = isWTD && s.days_reported > 1 ? `<span style="font-size:9px;color:var(--green);margin-left:4px">${s.days_reported}d avg</span>` : '';
-    // Show — for missing in_store (PDF not uploaded)
-    const istDisplay = s.in_store != null ? `${(s.in_store).toFixed(1)}m` : '—';
-    const istClass = s.in_store != null ? istColor(s.in_store) : 'val-neutral';
-    // Show — for missing IST bucket data (PDF not uploaded)
-    const lt10Display = s.ist_lt10 != null ? parseInt(s.ist_lt10) : '—';
-    const t1014Display = s.ist_1014 != null ? parseInt(s.ist_1014) : '—';
-    const t1518Display = s.ist_1518 != null ? parseInt(s.ist_1518) : '—';
-    const t1925Display = s.ist_1925 != null ? parseInt(s.ist_1925) : '—';
-    const gt25Display = s.ist_gt25 != null ? parseInt(s.ist_gt25) : '—';
     return `<tr>
       <td><div class="store-name">${s.name}${wtdBadge}</div><div class="store-id">${s.store_id}</div></td>
       <td style="font-size:11px;color:var(--muted)">${s.area||''}</td>
       <td style="font-size:10px;color:var(--muted2)">${s.region_coach||''}</td>
-      <td><span class="ist-val ${istClass}">${istDisplay}</span></td>
-      <td><span class="${mm!=null?mkColor(mm):'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.make||'\u2014'}</span></td>
-      <td><div class="pct-bar"><span class="${lt4!=null?pctColor(lt4,80,60):'val-neutral'}" style="font-size:11px;min-width:30px">${s.pct_lt4||'\u2014'}</span><div class="bar-track"><div class="bar-fill" style="width:${lt4||0}%;background:${lt4>=80?'var(--green)':lt4>=60?'var(--yellow)':'var(--red)'}"></div></div></div></td>
-      <td><span class="${typeof lt10Display==='number'&&(lt10Display)>0?'val-good':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${lt10Display}</span></td>
-      <td><span class="${typeof t1014Display==='number'&&(t1014Display)>0?'val-good':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${t1014Display}</span></td>
-      <td><span class="${typeof t1518Display==='number'&&(t1518Display)>0?'val-warn':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${t1518Display}</span></td>
-      <td><span class="${typeof t1925Display==='number'?(t1925Display)>3?'val-bad':(t1925Display)>1?'val-warn':'val-good':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${t1925Display}</span></td>
-      <td><span class="${typeof gt25Display==='number'?(gt25Display)>3?'val-bad':(gt25Display)>1?'val-warn':'val-good':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${gt25Display}</span></td>
-      <td><span class="${ot!=null?pctColor(ot,85,75):'val-neutral'}" style="font-size:11px">${s.on_time||'\u2014'}</span></td>
-      <td style="font-size:11px;color:var(--muted)">${s.deliveries!=null?s.deliveries:'—'}</td>
+      <td><span class="ist-val ${istColor(s.in_store||0)}">${(s.in_store||0).toFixed ? (s.in_store||0).toFixed(1) : s.in_store}m</span></td>
+      <td><span class="${mkColor(mm)}" style="font-family:'Space Mono',monospace;font-size:11px">${s.make||'\u2014'}</span></td>
+      <td><div class="pct-bar"><span class="${pctColor(lt4,80,60)}" style="font-size:11px;min-width:30px">${s.pct_lt4||'\u2014'}</span><div class="bar-track"><div class="bar-fill" style="width:${lt4}%;background:${lt4>=80?'var(--green)':lt4>=60?'var(--yellow)':'var(--red)'}"></div></div></div></td>
+      <td><span class="${(s.ist_lt10||0)>0?'val-good':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_lt10!=null?parseInt(s.ist_lt10):0}</span></td>
+      <td><span class="${(s.ist_1014||0)>0?'val-good':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_1014!=null?parseInt(s.ist_1014):0}</span></td>
+      <td><span class="${(s.ist_1518||0)>0?'val-warn':'val-neutral'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_1518!=null?parseInt(s.ist_1518):0}</span></td>
+      <td><span class="${(s.ist_1925||0)>3?'val-bad':(s.ist_1925||0)>1?'val-warn':'val-good'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_1925!=null?parseInt(s.ist_1925):0}</span></td>
+      <td><span class="${(s.ist_gt25||0)>3?'val-bad':(s.ist_gt25||0)>1?'val-warn':'val-good'}" style="font-family:'Space Mono',monospace;font-size:11px">${s.ist_gt25!=null?parseInt(s.ist_gt25):0}</span></td>
+      <td><span class="${pctColor(ot,85,75)}" style="font-size:11px">${s.on_time||'\u2014'}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${s.deliveries||0}</td>
     </tr>`;
   }
 
   function groupRow(stores, label, cls) {
     if (!stores.length) return '';
-    // Check if any stores have data for each field
-    const hasIST = stores.some(s => s.in_store != null);
-    const hasMake = stores.some(s => s.make != null);
-    const hasPct4 = stores.some(s => s.pct_lt4 != null);
-    const hasOT = stores.some(s => s.on_time != null);
-    const hasDel = stores.some(s => s.deliveries != null);
-    const hasISTBuckets = stores.some(s => s.ist_lt10 != null || s.ist_1014 != null || s.ist_1518 != null || s.ist_1925 != null || s.ist_gt25 != null);
-    
-    // Calculate averages only from stores that have data
-    const storesWithIST = stores.filter(s => s.in_store != null);
-    const avgIST = hasIST ? storesWithIST.reduce((a,s)=>a+s.in_store,0)/storesWithIST.length : null;
-    
-    const storesWithMake = stores.filter(s => s.make != null);
-    const avgMk = hasMake ? storesWithMake.reduce((a,s)=>a+parseTime(s.make),0)/storesWithMake.length : null;
-    
-    const storesWithPct4 = stores.filter(s => s.pct_lt4 != null);
-    const avgLt4 = hasPct4 ? storesWithPct4.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/storesWithPct4.length : null;
-    
-    const storesWithOT = stores.filter(s => s.on_time != null);
-    const avgOT = hasOT ? storesWithOT.reduce((a,s)=>a+parsePct(s.on_time),0)/storesWithOT.length : null;
-    
-    // For IST buckets, only count stores that have bucket data
-    const storesWithBuckets = stores.filter(s => s.ist_lt10 != null);
-    const totalLt10 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0) : null;
-    const total1014 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0) : null;
-    const total1518 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0) : null;
-    const total1925 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0) : null;
-    const totalGt25 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0) : null;
-    
-    const totalDel = hasDel ? stores.reduce((a,s)=>a+(s.deliveries||0),0) : null;
-    
+    const avgIST=stores.reduce((a,s)=>a+(s.in_store||0),0)/stores.length;
+    const avgMk=stores.reduce((a,s)=>a+parseTime(s.make),0)/stores.length;
+    const avgLt4=stores.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/stores.length;
+    const avgOT=stores.reduce((a,s)=>a+parsePct(s.on_time),0)/stores.length;
+    const totalLt10=stores.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0);
+    const total1014=stores.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0);
+    const total1518=stores.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0);
+    const total1925=stores.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0);
+    const totalGt25=stores.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0);
+    const mf=stores.filter(s=>parseTime(s.make)>4).length;
     return `<tr class="group-row ${cls}">
       <td colspan="3">${label} <span style="opacity:.4;font-size:9px">${stores.length} stores</span></td>
-      <td><span class="ist-val ${avgIST!=null?istColor(avgIST):'val-neutral'}">${avgIST!=null?avgIST.toFixed(1)+'m':'—'}</span></td>
-      <td class="${avgMk!=null?mkColor(avgMk):'val-neutral'}">${avgMk!=null?fmtTime(avgMk):'—'}</td>
-      <td class="${avgLt4!=null?pctColor(avgLt4,80,60):'val-neutral'}">${avgLt4!=null?avgLt4.toFixed(0)+'%':'—'}</td>
-      <td>${totalLt10!=null?totalLt10:'—'}</td>
-      <td>${total1014!=null?total1014:'—'}</td>
-      <td>${total1518!=null?total1518:'—'}</td>
-      <td class="${total1925!=null?(total1925>stores.length*3?'val-bad':total1925>stores.length?'val-warn':'val-good'):'val-neutral'}">${total1925!=null?total1925:'—'}</td>
-      <td class="${totalGt25!=null?(totalGt25>stores.length*2?'val-bad':totalGt25>stores.length?'val-warn':'val-good'):'val-neutral'}">${totalGt25!=null?totalGt25:'—'}</td>
-      <td class="${avgOT!=null?pctColor(avgOT,85,75):'val-neutral'}">${avgOT!=null?avgOT.toFixed(1)+'%':'—'}</td>
-      <td>${totalDel!=null?totalDel:'—'}</td>
+      <td><span class="ist-val ${istColor(avgIST)}">${avgIST.toFixed(1)}m</span></td>
+      <td class="${mkColor(avgMk)}">${fmtTime(avgMk)}</td>
+      <td class="${pctColor(avgLt4,80,60)}">${avgLt4.toFixed(0)}%</td>
+      <td>${totalLt10}</td>
+      <td>${total1014}</td>
+      <td>${total1518}</td>
+      <td class="${total1925>stores.length*3?'val-bad':total1925>stores.length?'val-warn':'val-good'}">${total1925}</td>
+      <td class="${totalGt25>stores.length*2?'val-bad':totalGt25>stores.length?'val-warn':'val-good'}">${totalGt25}</td>
+      <td class="${pctColor(avgOT,85,75)}">${avgOT.toFixed(1)}%</td>
+      <td>${stores.reduce((a,s)=>a+(s.deliveries||0),0)}</td>
     </tr>`;
   }
 
@@ -915,127 +1269,16 @@ async function askAI() {
 }
 async function autoAnalyze() {
   if(!currentData){alert('Upload a report first.');return;}
-
-  // Get ALL data from the reports, not just filtered view
-  const allStores = currentData.stores || [];
-  const days = currentData.days || [];
-  const period = currentData.period || '';
-
-  // Calculate comprehensive metrics
-  const totalStores = allStores.length;
-
-  // IST analysis
-  const storesByIST = [...allStores].sort((a,b)=>(b.in_store||0)-(a.in_store||0));
-  const worstIST = storesByIST.slice(0,5).map(s=>`${s.name||s.store_id}(${(s.in_store||0).toFixed(1)}m)`).join(', ');
-  const bestIST = storesByIST.slice(-5).reverse().map(s=>`${s.name||s.store_id}(${(s.in_store||0).toFixed(1)}m)`).join(', ');
-
-  // IST bucket totals
-  const totalLt10 = allStores.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0);
-  const total1014 = allStores.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0);
-  const total1518 = allStores.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0);
-  const total1925 = allStores.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0);
-  const totalGt25 = allStores.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0);
-  const totalOrders = totalLt10 + total1014 + total1518 + total1925 + totalGt25;
-
-  // Calculate IST <19%
-  const lt19Count = totalLt10 + total1014 + total1518;
-  const lt19Pct = totalOrders > 0 ? (lt19Count / totalOrders * 100).toFixed(1) : 0;
-
-  // Make time analysis
-  const storesWithMake = allStores.filter(s=>s.make);
-  const storesByMake = [...storesWithMake].sort((a,b)=>parseTime(b.make)-parseTime(a.make));
-  const worstMake = storesByMake.slice(0,5).map(s=>`${s.name||s.store_id}(${s.make})`).join(', ');
-
-  // Production time analysis (for future use)
-  const storesWithProd = allStores.filter(s=>s.production);
-  const avgProd = storesWithProd.length > 0 ?
-    storesWithProd.reduce((a,s)=>a+parseTime(s.production),0)/storesWithProd.length : 0;
-
-  // Pct <4min analysis
-  const storesWithPct4 = allStores.filter(s=>s.pct_lt4);
-  const avgPct4 = storesWithPct4.length > 0 ?
-    storesWithPct4.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/storesWithPct4.length : 0;
-
-  // Day-over-day trends if multiple days
-  let trendsStr = '';
-  if (days.length > 1) {
-    const dayData = {};
-    days.forEach(d => {
-      const dayStores = allStores.filter(s => s.daily && s.daily[d.date]);
-      const avgIST = dayStores.reduce((a,s)=>a+(s.daily[d.date]?.in_store||0),0)/dayStores.length || 0;
-      dayData[d.date] = avgIST;
-    });
-    const sortedDays = Object.keys(dayData).sort();
-    trendsStr = `Day-over-Day IST Trends:\n`;
-    sortedDays.forEach((d,i) => {
-      const label = new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'numeric',day:'numeric'});
-      if (i === 0) {
-        trendsStr += `- ${label}: ${dayData[d].toFixed(1)}m\n`;
-      } else {
-        const prev = dayData[sortedDays[i-1]];
-        const delta = dayData[d] - prev;
-        const arrow = delta > 0.5 ? '▲' : delta < -0.5 ? '▼' : '→';
-        trendsStr += `- ${label}: ${dayData[d].toFixed(1)}m (${arrow} ${Math.abs(delta).toFixed(1)})\n`;
-      }
-    });
-  }
-
-  // Area breakdown
-  const areas = {};
-  allStores.forEach(s => {
-    const area = s.area_coach || s.area || 'Unknown';
-    if (!areas[area]) areas[area] = { count: 0, istSum: 0, gt25Count: 0, orders: 0 };
-    areas[area].count++;
-    areas[area].istSum += s.in_store || 0;
-    areas[area].gt25Count += parseInt(s.ist_gt25) || 0;
-    areas[area].orders += (parseInt(s.ist_lt10)||0) + (parseInt(s.ist_1014)||0) + (parseInt(s.ist_1518)||0) +
-                          (parseInt(s.ist_1925)||0) + (parseInt(s.ist_gt25)||0);
-  });
-
-  const areaSummary = Object.entries(areas)
-    .map(([area, data]) => {
-      const avgIST = (data.istSum / data.count).toFixed(1);
-      return `${area}: ${data.count} stores, Avg IST ${avgIST}m, ${data.gt25Count} >25min orders`;
-    })
-    .join('\n');
-
-  const prompt = `You are Velocity, a Pizza Hut Speed of Service analyst AI. ${currentUser} is analyzing ${period} data with ${days.length} day(s) uploaded. Be direct, actionable, and operations-focused. No fluff.
-
-COMPREHENSIVE REPORT DATA (${totalStores} stores):
-
-IN-STORE TIME (IST) ANALYSIS:
-- Worst IST stores: ${worstIST}
-- Best IST stores: ${bestIST}
-- IST Bucket Distribution:
-  • <10 min: ${totalLt10} orders (${(totalLt10/totalOrders*100||0).toFixed(1)}%)
-  • 10-14 min: ${total1014} orders (${(total1014/totalOrders*100||0).toFixed(1)}%)
-  • 15-18 min: ${total1518} orders (${(total1518/totalOrders*100||0).toFixed(1)}%)
-  • 19-25 min: ${total1925} orders (${(total1925/totalOrders*100||0).toFixed(1)}%)
-  • >25 min: ${totalGt25} orders (${(totalGt25/totalOrders*100||0).toFixed(1)}%)
-- IST <19%: ${lt19Pct}%
-- Total Orders Analyzed: ${totalOrders}
-
-MAKE TIME ANALYSIS:
-- Worst Make Time stores: ${worstMake}
-- Average Pct <4min: ${(avgPct4).toFixed(1)}%
-
-PRODUCTION TIME (stored for analysis):
-- Average Production Time: ${avgProd.toFixed(1)} minutes
-
-AREA COACH BREAKDOWN:
-${areaSummary}
-
-${trendsStr}
-
-Provide a comprehensive analysis:
-1. CRITICAL FINDINGS: Top 3-5 issues requiring immediate attention
-2. IST BUCKET INSIGHTS: What the distribution tells us about operations
-3. COACHING PRIORITIES: Specific stores/areas to focus on with actionable guidance
-4. TREND ANALYSIS: What patterns emerge from the data
-5. SUCCESSES: What's working well that should be reinforced
-6. RECOMMENDATIONS: 3-5 specific actions for the next 24-48 hours`;
-
-  runAI(prompt);
+  const data=getDisplayStores();
+  const n=parseInt(document.getElementById('hypoCount').value)||2;
+  const wIST=[...data].sort((a,b)=>(b.in_store||0)-(a.in_store||0)).slice(0,5).map(s=>`${s.name}(${s.in_store}m)`).join(', ');
+  const wMk=[...data].sort((a,b)=>parseTime(b.make)-parseTime(a.make)).slice(0,5).map(s=>`${s.name}(${s.make})`).join(', ');
+  const days=currentData.days.length;
+  const period=currentData.period||'';
+  const dayLabel=activeDay==='wtd'?`${days}-day WTD average`:'single day';
+  const totalGt25=data.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0);
+  const total1925=data.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0);
+  runAI(`You are Velocity, a Pizza Hut Speed of Service agent. ${currentUser} is viewing ${dayLabel} data for ${period}. Be direct, ops-focused, no fluff.\n\nDATA (${data.length} stores, ${dayLabel}):\n- Worst In-Store Time: ${wIST}\n- Worst Make Time (threshold <4:00): ${wMk}\n- Stores with >25min IST orders: ${totalGt25} total, 19-25min: ${total1925} total\n\nGive: 1) Top 3 critical findings, 2) Immediate coaching priorities, 3) Make time pattern, 4) What's working.`);
 }
 async function runAI(prompt) {
   const out=document.getElementById('aiOutput');
@@ -1093,7 +1336,7 @@ function loadFromLocalStorage() {
     const parsed = JSON.parse(raw);
     if (!parsed.allWeeksData || !parsed.allWeeksData.length) return false;
     if (!parsed.allWeeksData[0].stores || !parsed.allWeeksData[0].stores.length) return false;
-    allWeeksData = parsed.allWeeksData;
+    allWeeksData = parsed.allWeeksData.map(w => ({...w, stores: enrichStoreAlignment(w.stores || [])}));
     currentWeekIdx = parsed.currentWeekIdx || 0;
     currentData = allWeeksData[currentWeekIdx];
     currentUser = parsed.currentUser || (currentData.days[0]?.uploader || '');
@@ -1191,84 +1434,61 @@ async function exportExcel() {
       const aStores = dataStores.filter(s => (s.area || s.area_coach || '') === area);
       if (!aStores.length) continue;
 
-      // Check if any stores have data for each field
-      const hasIST = aStores.some(s => s.in_store != null);
-      const hasMake = aStores.some(s => s.make != null);
-      const hasPct4 = aStores.some(s => s.pct_lt4 != null);
-      const hasOT = aStores.some(s => s.on_time != null);
-      const hasISTBuckets = aStores.some(s => s.ist_lt10 != null || s.ist_1014 != null || s.ist_1518 != null || s.ist_1925 != null || s.ist_gt25 != null);
-      const hasDel = aStores.some(s => s.deliveries != null);
-
-      // Area summary row - calculate averages only from stores with data
-      const storesWithIST = aStores.filter(s => s.in_store != null);
-      const avgIST  = hasIST ? storesWithIST.reduce((a,s)=>a+s.in_store,0)/storesWithIST.length : null;
-      
-      const storesWithMake = aStores.filter(s => s.make != null);
-      const avgMk   = hasMake ? storesWithMake.reduce((a,s)=>a+parseTime(s.make),0)/storesWithMake.length : null;
-      
-      const storesWithPct4 = aStores.filter(s => s.pct_lt4 != null);
-      const avgLt4  = hasPct4 ? storesWithPct4.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/storesWithPct4.length : null;
-      
-      const storesWithOT = aStores.filter(s => s.on_time != null);
-      const avgOT   = hasOT ? storesWithOT.reduce((a,s)=>a+parsePct(s.on_time),0)/storesWithOT.length : null;
-      
-      const storesWithBuckets = aStores.filter(s => s.ist_lt10 != null);
-      const totLt10 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0) : null;
-      const tot1014 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0) : null;
-      const tot1518 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0) : null;
-      const tot1925 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0) : null;
-      const totGt25 = hasISTBuckets ? storesWithBuckets.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0) : null;
-      const totDel  = hasDel ? aStores.reduce((a,s)=>a+(s.deliveries||0),0) : null;
+      // Area summary row
+      const avgIST  = aStores.reduce((a,s)=>a+(s.in_store||0),0)/aStores.length;
+      const avgMk   = aStores.reduce((a,s)=>a+parseTime(s.make),0)/aStores.length;
+      const avgLt4  = aStores.reduce((a,s)=>a+parsePct(s.pct_lt4),0)/aStores.length;
+      const avgOT   = aStores.reduce((a,s)=>a+parsePct(s.on_time),0)/aStores.length;
+      const tot1925 = aStores.reduce((a,s)=>a+(parseInt(s.ist_1925)||0),0);
+      const totGt25 = aStores.reduce((a,s)=>a+(parseInt(s.ist_gt25)||0),0);
+      const totDel  = aStores.reduce((a,s)=>a+(s.deliveries||0),0);
+      const mf = aStores.filter(s=>parseTime(s.make)>4).length;
 
       const coach = aStores[0]?.area_coach || area;
+      const totLt10 = aStores.reduce((a,s)=>a+(parseInt(s.ist_lt10)||0),0);
+      const tot1014 = aStores.reduce((a,s)=>a+(parseInt(s.ist_1014)||0),0);
+      const tot1518 = aStores.reduce((a,s)=>a+(parseInt(s.ist_1518)||0),0);
       const gr = ws.addRow([
         '', `${coach}  ${aStores.length} stores`, '',
-        avgIST!=null ? avgIST.toFixed(1)+'m' : '—', avgMk!=null ? fmtTime(avgMk) : '—', avgLt4!=null ? avgLt4/100 : '—',
-        totLt10!=null ? totLt10 : '—', tot1014!=null ? tot1014 : '—', tot1518!=null ? tot1518 : '—', 
-        tot1925!=null ? tot1925 : '—', totGt25!=null ? totGt25 : '—', avgOT!=null ? avgOT/100 : '—', totDel!=null ? totDel : '—'
+        avgIST.toFixed(1)+'m', fmtTime(avgMk), avgLt4/100,
+        totLt10, tot1014, tot1518, tot1925, totGt25, avgOT/100, totDel
       ]);
       gr.eachCell(c => { c.fill = BLUE_FILL; c.font = { bold: true, size: 10 }; });
-      if (avgIST!=null) gr.getCell(5).font  = { bold:true, size:10, color: istFontColor(avgIST) };
-      if (avgMk!=null) gr.getCell(6).font  = { bold:true, size:10, color: avgMk>4?RED:avgMk>3.5?ORANGE:GREEN };
-      if (avgLt4!=null) gr.getCell(7).numFmt  = '0%';
-      if (avgOT!=null) gr.getCell(13).numFmt = '0%';
+      gr.getCell(5).font  = { bold:true, size:10, color: istFontColor(avgIST) };
+      gr.getCell(6).font  = { bold:true, size:10, color: parseTime(avgMk)>4?RED:parseTime(avgMk)>3.5?ORANGE:GREEN };
+      gr.getCell(7).numFmt  = '0%';
+      gr.getCell(13).numFmt = '0%';
 
       // Store rows (Store ID now in first column, not as sub-row)
       for (const s of aStores) {
-        const ist   = s.in_store;
-        const mk    = s.make ? parseTime(s.make) : null;
-        const lt4   = s.pct_lt4 ? parsePct(s.pct_lt4) : null;
-        const ot    = s.on_time ? parsePct(s.on_time) : null;
-        const c1925 = s.ist_1925 != null ? parseInt(s.ist_1925) : null;
-        const cgt25 = s.ist_gt25 != null ? parseInt(s.ist_gt25) : null;
-        const clt10 = s.ist_lt10 != null ? parseInt(s.ist_lt10) : null;
-        const c1014 = s.ist_1014 != null ? parseInt(s.ist_1014) : null;
-        const c1518 = s.ist_1518 != null ? parseInt(s.ist_1518) : null;
-        const del   = s.deliveries != null ? s.deliveries : null;
+        const ist   = s.in_store || 0;
+        const mk    = parseTime(s.make);
+        const lt4   = parsePct(s.pct_lt4);
+        const ot    = parsePct(s.on_time);
+        const c1925 = parseInt(s.ist_1925)||0;
+        const cgt25 = parseInt(s.ist_gt25)||0;
 
+        const clt10 = parseInt(s.ist_lt10)||0;
+        const c1014 = parseInt(s.ist_1014)||0;
+        const c1518 = parseInt(s.ist_1518)||0;
         const sr = ws.addRow([
           s.store_id, s.name||s.store_id, s.area||s.area_coach||'', s.region_coach||'',
-          ist!=null ? ist.toFixed(1)+'m' : '—', s.make||'—', lt4!=null ? lt4/100 : '—',
-          clt10!=null ? clt10 : '—', c1014!=null ? c1014 : '—', c1518!=null ? c1518 : '—', 
-          c1925!=null ? c1925 : '—', cgt25!=null ? cgt25 : '—', ot!=null ? ot/100 : '—', del!=null ? del : '—'
+          ist.toFixed(1)+'m', s.make||'', lt4>0?lt4/100:null,
+          clt10, c1014, c1518, c1925, cgt25, ot>0?ot/100:null, s.deliveries||0
         ]);
         sr.getCell(1).font = { size:9, color: GRAY };
-        if (ist!=null) sr.getCell(5).font  = { bold:true, size:10, color: istFontColor(ist) };
-        if (mk!=null) sr.getCell(6).font  = { size:10, color: mk>4?RED:mk>3.5?ORANGE:GREEN };
-        if (lt4!=null) {
-          sr.getCell(7).font  = { size:10, color: pctFont(lt4) };
-          sr.getCell(7).numFmt  = '0%';
-        }
-        if (clt10!=null) sr.getCell(8).font  = { size:10, color: GREEN };
-        if (c1014!=null) sr.getCell(9).font  = { size:10, color: GREEN };
-        if (c1518!=null) sr.getCell(10).font = { size:10, color: YELLOW };
-        if (c1925!=null) sr.getCell(11).font = { size:10, color: countFont(c1925) };
-        if (cgt25!=null) sr.getCell(12).font = { size:10, color: countFont(cgt25) };
-        if (ot!=null) {
-          sr.getCell(13).font = { size:10, color: pctFont(ot,85,75) };
-          sr.getCell(13).numFmt = '0%';
-        }
-        if (del!=null) sr.getCell(14).font = { size:10, color: GRAY };
+        sr.getCell(5).font  = { bold:true, size:10, color: istFontColor(ist) };
+        sr.getCell(6).font  = { size:10, color: mk>4?RED:mk>3.5?ORANGE:GREEN };
+        sr.getCell(7).font  = { size:10, color: pctFont(lt4) };
+        sr.getCell(7).numFmt  = '0%';
+        sr.getCell(8).font  = { size:10, color: GREEN };
+        sr.getCell(9).font  = { size:10, color: GREEN };
+        sr.getCell(10).font = { size:10, color: YELLOW };
+        sr.getCell(11).font = { size:10, color: countFont(c1925) };
+        sr.getCell(12).font = { size:10, color: countFont(cgt25) };
+        sr.getCell(13).font = { size:10, color: pctFont(ot,85,75) };
+        sr.getCell(13).numFmt = '0%';
+        sr.getCell(14).font = { size:10, color: GRAY };
       }
     }
 
