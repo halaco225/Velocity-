@@ -623,20 +623,22 @@ function parseISTTrackerExcel(filePath) {
     
     stores.push({
       store_id: store_id,
-      in_store: inStore,
+      // Use ist_avg, NOT in_store — in_store is reserved for Above Store PDF only
+      ist_avg: inStore,
       deliveries: totalOrders,
       ist_lt19_pct: ist_lt19_pct_str,
       ist_gt25_count: istGt25,
-      ist_lt10_count: istLt10,
-      ist_10_14_count: ist10to14,
-      ist_15_18_count: ist15to18,
-      ist_19_25_count: ist19to25,
-      _source: 'ist_tracker'
+      // Use standard bucket field names matching the rest of the codebase
+      ist_lt10: istLt10,
+      ist_1014: ist10to14,
+      ist_1518: ist15to18,
+      ist_1925: ist19to25,
+      ist_gt25: istGt25
     });
   }
 
   console.log(`IST Tracker Excel parsed: ${stores.length} stores, date=${reportDate}`);
-  if (stores.length > 0) console.log(`  Sample: ${stores[0].store_id} InStore=${stores[0].in_store} Lt19%=${stores[0].ist_lt19_pct}`);
+  if (stores.length > 0) console.log(`  Sample: ${stores[0].store_id} IST_avg=${stores[0].ist_avg} Lt19%=${stores[0].ist_lt19_pct}`);
   return { stores, reportDate, reportType, source: 'ist_tracker' };
 }
 
@@ -938,6 +940,36 @@ app.post('/api/upload', upload.any(), async (req, res) => {
               ist_lt10: null, ist_1014: null, ist_1518: null,
               ist_1925: null, ist_gt25: null,
               ist_gt25_count: null, ist_lt19_pct: null
+            };
+          }
+        } else if (parsed.source === 'ist_tracker') {
+          // IST Tracker Excel: ONLY update IST bucket counts + ist_lt19_pct
+          // NEVER set in_store or ist_avg - those come from Above Store PDF only
+          if (existing[s.store_id]) {
+            // Only update bucket counts if we have them
+            if (s.ist_lt10 != null) existing[s.store_id].ist_lt10 = s.ist_lt10;
+            if (s.ist_1014 != null) existing[s.store_id].ist_1014 = s.ist_1014;
+            if (s.ist_1518 != null) existing[s.store_id].ist_1518 = s.ist_1518;
+            if (s.ist_1925 != null) existing[s.store_id].ist_1925 = s.ist_1925;
+            if (s.ist_gt25 != null) existing[s.store_id].ist_gt25 = s.ist_gt25;
+            if (s.ist_gt25_count != null) existing[s.store_id].ist_gt25_count = s.ist_gt25_count;
+            if (s.ist_lt19_pct != null) existing[s.store_id].ist_lt19_pct = s.ist_lt19_pct;
+            if (s.deliveries) existing[s.store_id].deliveries = s.deliveries;
+            // DO NOT set in_store or ist_avg - PDF is the source of truth for those
+          } else if (align) {
+            // No prior record: create stub. ist_avg only used as display fallback until PDF uploaded
+            existing[s.store_id] = {
+              store_id: s.store_id,
+              name: align.name, area: align.area_coach, area_coach: align.area_coach,
+              region_coach: align.region_coach,
+              ist_lt10: s.ist_lt10||0, ist_1014: s.ist_1014||0, ist_1518: s.ist_1518||0,
+              ist_1925: s.ist_1925||0, ist_gt25: s.ist_gt25||0,
+              ist_gt25_count: s.ist_gt25_count||0, ist_lt19_pct: s.ist_lt19_pct||null,
+              deliveries: s.deliveries||0,
+              // ist_avg as temporary fallback only — will be overwritten when PDF is uploaded
+              ist_avg: s.ist_avg || null,
+              in_store: null, make: null, production: null, pct_lt4: null,
+              pct_lt15: null, on_time: null, rack: null
             };
           }
         } else {
