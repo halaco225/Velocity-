@@ -917,6 +917,12 @@ async function processUpload() {
   const formData = new FormData();
   formData.append('uploaderName', name);
   selectedFiles.forEach(f => formData.append('files', f));
+  // Send existing weeks data so server can merge without losing history after deploys
+  if (allWeeksData && allWeeksData.length > 0) {
+    try {
+      formData.append('existingData', JSON.stringify(allWeeksData));
+    } catch(e) { console.warn('Could not serialize existing data:', e); }
+  }
 
   try {
     const resp = await fetch('/api/upload', { method: 'POST', body: formData });
