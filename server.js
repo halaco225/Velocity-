@@ -797,6 +797,13 @@ app.post('/api/upload', upload.any(), async (req, res) => {
     for (const file of req.files) {
       const isExcel = file.originalname.match(/\.xlsx?$/i);
       const isPdf = file.originalname.match(/\.pdf$/i);
+
+      // Block known export file names from being uploaded as source data
+      const isExportFile = file.originalname.match(/Velocity_IST|IST_Tracker/i);
+      if (isExportFile) {
+        errors.push(`${file.originalname}: This looks like an exported Velocity report. Only upload the Speed of Service Excel and Above Store PDF.`);
+        continue;
+      }
       let parsed = null;
       try {
         if (isExcel) {
@@ -808,10 +815,13 @@ app.post('/api/upload', upload.any(), async (req, res) => {
           const firstRow = raw2[0] && raw2[0].join(' ');
           
           if (typeof firstCell === 'string' && firstCell.includes('Delivery Performance')) {
-            parsed = parseDeliveryExcel(file.path);
-          } else if (typeof firstRow === 'string' && (firstRow.includes('IST <10 #') || firstRow.includes('IST Tracker'))) {
-            // IST Tracker by Territory format
-            parsed = parseISTTrackerExcel(file.path);
+            // Delivery Performance Excel is an EXPORT only - never import
+            errors.push(`${file.originalname}: This is an export report (Delivery Performance). Only upload the Speed of Service Excel and Above Store PDF.`);
+            continue;
+          } else if (typeof firstRow === 'string' && (firstRow.includes('IST <10 #') || firstRow.includes('IST Tracker') || firstRow.includes('Velocity_IST'))) {
+            // IST Tracker Excel is an EXPORT only - never import
+            errors.push(`${file.originalname}: This is an export report (IST Tracker). Only upload the Speed of Service Excel and Above Store PDF.`);
+            continue;
           } else {
             parsed = parseSOSExcel(file.path);
           }
