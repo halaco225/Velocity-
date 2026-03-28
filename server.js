@@ -780,52 +780,14 @@ app.post('/api/upload', upload.any(), async (req, res) => {
     const uploaderName = req.body.uploaderName || 'Unknown';
     let allData = loadData();
 
-    // If client sent existing weeks data (survives deploys), merge it in as baseline
-    if (req.body.existingData) {
+    // Client sends lightweight week keys so we know what weeks the client has
+    // (used for logging/diagnostics only - server manages its own data)
+    if (req.body.existingWeekKeys) {
       try {
-        const clientWeeks = JSON.parse(req.body.existingData);
-        // clientWeeks is array of computeWeek() results: [{week, period, days[], stores[]}]
-        // We need to reconstruct allData.weeks from it
-        if (Array.isArray(clientWeeks) && clientWeeks.length > 0) {
-          for (const w of clientWeeks) {
-            const weekKey = w.week;
-            if (!weekKey) continue;
-            if (!allData.weeks[weekKey]) {
-              // Reconstruct week from client data
-              const days = {};
-              (w.days || []).forEach(d => {
-                days[d.date] = {
-                  date: d.date, type: d.type, uploader: d.uploader,
-                  stores: [] // will be filled from stores[].daily below
-                };
-              });
-              // Rebuild day stores from store.daily[date]
-              (w.stores || []).forEach(s => {
-                if (!s.daily) return;
-                Object.entries(s.daily).forEach(([date, dayData]) => {
-                  if (!days[date]) days[date] = { date, type: 'daily', uploader: uploaderName, stores: [] };
-                  days[date].stores.push({
-                    store_id: s.store_id,
-                    name: s.name,
-                    area: s.area, area_coach: s.area_coach, region_coach: s.region_coach,
-                    in_store: dayData.in_store, make: dayData.make,
-                    on_time: dayData.on_time, deliveries: dayData.deliveries,
-                    pct_lt4: dayData.pct_lt4, pct_lt15: dayData.pct_lt15,
-                    production: dayData.production,
-                    ist_lt10: dayData.ist_lt10||0, ist_1014: dayData.ist_1014||0,
-                    ist_1518: dayData.ist_1518||0, ist_1925: dayData.ist_1925||0,
-                    ist_gt25: dayData.ist_gt25||0,
-                    ist_lt19_pct: dayData.ist_lt19_pct, ist_gt25_count: dayData.ist_gt25_count||0
-                  });
-                });
-              });
-              allData.weeks[weekKey] = { week: weekKey, period: w.period || '', days };
-            }
-          }
-          console.log(`Merged ${clientWeeks.length} weeks from client existingData`);
-        }
+        const clientWeekKeys = JSON.parse(req.body.existingWeekKeys);
+        console.log(`Client has ${clientWeekKeys.length} existing weeks: ${clientWeekKeys.map(w=>w.week).join(', ')}`);
       } catch(e) {
-        console.warn('Could not parse existingData from client:', e.message);
+        console.warn('Could not parse existingWeekKeys:', e.message);
       }
     }
     const results = [], errors = [];
