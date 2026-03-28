@@ -1726,15 +1726,8 @@ async function exportExcel() {
 
     // ─── Trend sheet: Avg IST by day across all uploaded days ───
     function writeTrendSheet(ws) {
-      // Collect all days across all weeks
-      const allDays = [];
-      for (const week of allWeeksData) {
-        const days = Object.values(week.days || {}).sort((a,b)=>a.date.localeCompare(b.date));
-        for (const day of days) {
-          if (!allDays.find(d=>d.date===day.date)) allDays.push(day);
-        }
-      }
-      allDays.sort((a,b)=>a.date.localeCompare(b.date));
+      // Collect days from CURRENT WEEK only
+      const allDays = Object.values(currentData.days || {}).sort((a,b)=>a.date.localeCompare(b.date));
 
       if (!allDays.length) return;
 
