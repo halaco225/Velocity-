@@ -804,27 +804,25 @@ app.post('/api/upload', upload.any(), async (req, res) => {
         errors.push(`${file.originalname}: This looks like an exported Velocity report. Only upload the Speed of Service Excel and Above Store PDF.`);
         continue;
       }
+
+      // Only accept known valid file types by name pattern
+      // Valid: "AboveStore*", "Above Store*", "PH_Speed*", "SpeedofService*", "Speed_of_Service*"
+      // Numbers in filename are fine: "AboveStore (1).pdf", "PH_Speed_Of_Service (2).xlsx"
+      const isAboveStore = file.originalname.match(/above.?store/i);
+      const isSOSExcel = file.originalname.match(/speed.?of.?service|PH_Speed/i);
+      if (isExcel && !isSOSExcel) {
+        errors.push(`${file.originalname}: Unrecognized Excel file. Only upload the PH Speed of Service Excel report.`);
+        continue;
+      }
+      if (isPdf && !isAboveStore) {
+        errors.push(`${file.originalname}: Unrecognized PDF file. Only upload the Above Store Report PDF.`);
+        continue;
+      }
       let parsed = null;
       try {
         if (isExcel) {
-          // Detect file type by peeking at content
-          const wb2 = XLSX.readFile(file.path, { cellDates: false });
-          const ws2 = wb2.Sheets[wb2.SheetNames[0]];
-          const raw2 = XLSX.utils.sheet_to_json(ws2, { header: 1, defval: null });
-          const firstCell = raw2[0] && raw2[0][0];
-          const firstRow = raw2[0] && raw2[0].join(' ');
-          
-          if (typeof firstCell === 'string' && firstCell.includes('Delivery Performance')) {
-            // Delivery Performance Excel is an EXPORT only - never import
-            errors.push(`${file.originalname}: This is an export report (Delivery Performance). Only upload the Speed of Service Excel and Above Store PDF.`);
-            continue;
-          } else if (typeof firstRow === 'string' && (firstRow.includes('IST <10 #') || firstRow.includes('IST Tracker') || firstRow.includes('Velocity_IST'))) {
-            // IST Tracker Excel is an EXPORT only - never import
-            errors.push(`${file.originalname}: This is an export report (IST Tracker). Only upload the Speed of Service Excel and Above Store PDF.`);
-            continue;
-          } else {
-            parsed = parseSOSExcel(file.path);
-          }
+          // Only SOS Excel is accepted (filename already validated above)
+          parsed = parseSOSExcel(file.path);
         }
         else if (isPdf) {
           // Try local pdftotext parser first (faster, no API needed)
