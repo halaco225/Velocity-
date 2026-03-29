@@ -1051,7 +1051,7 @@ function showDashboard() {
 
   const allStores = scopeStores(currentData.stores);
   const regions = [...new Set(allStores.map(s=>s.region_coach))].sort();
-  const areas = [...new Set(allStores.map(s=>s.area_coach))].sort();
+  const areas = [...new Set(allStores.map(s=>s.area))].sort();
   const stores = allStores.map(s=>({id:s.store_id,name:s.name})).sort((a,b)=>a.name.localeCompare(b.name));
 
   document.getElementById('regionFilter').innerHTML = '<option value="">All Regions</option>'+regions.map(r=>`<option>${r}</option>`).join('');
@@ -1268,13 +1268,13 @@ function renderTable() {
     html=`<table>${cols}<tbody>${regions.map(r=>groupRow(sorted.filter(s=>s.region_coach===r),`Region: ${r}`,'region-row')).join('')}</tbody></table>`;
   } else if (groupBy==='area_only') {
     const areas=[...new Set(sorted.map(s=>s.area))];
-    html=`<table>${cols}<tbody>${areas.map(a=>{const as=sorted.filter(s=>s.area===a);return as.length?groupRow(as,`${a}`,'area-row'):'';}).join('')}</tbody></table>`;
+    html=`<table>${cols}<tbody>${areas.map(a=>{const as=sorted.filter(s=>s.area===a);const coach=as[0]?.area_coach||'';return as.length?groupRow(as,`${a}${coach?' - '+coach:''}`,'area-row'):'';}).join('')}</tbody></table>`;
   } else if (groupBy==='store') {
     html=`<table>${cols}<tbody>${sorted.map(s=>storeRow(s)).join('')}</tbody></table>`;
   } else if (groupBy==='area') {
     const areas=[...new Set(sorted.map(s=>s.area))];
     html=`<table>${cols}<tbody>`;
-    areas.forEach(a=>{const as=sorted.filter(s=>s.area===a);if(as.length)html+=groupRow(as,`${a}`,'area-row')+as.map(s=>storeRow(s)).join('');});
+    areas.forEach(a=>{const as=sorted.filter(s=>s.area===a);if(as.length){const coach=as[0]?.area_coach||'';html+=groupRow(as,`${a}${coach?' - '+coach:''}`,'area-row')+as.map(s=>storeRow(s)).join('');}});
     html+='</tbody></table>';
   } else {
     const regions=[...new Set(sorted.map(s=>s.region_coach))];
@@ -1284,7 +1284,7 @@ function renderTable() {
       if(!rs.length) return;
       html+=groupRow(rs,`Region: ${r}`,'region-row');
       const areas=[...new Set(rs.map(s=>s.area))];
-      areas.forEach(a=>{const as=rs.filter(s=>s.area===a);if(as.length)html+=groupRow(as,`${a}`,'area-row')+as.map(s=>storeRow(s)).join('');});
+      areas.forEach(a=>{const as=rs.filter(s=>s.area===a);if(as.length){const coach=as[0]?.area_coach||'';html+=groupRow(as,`${a}${coach?' - '+coach:''}`,'area-row')+as.map(s=>storeRow(s)).join('');}});
     });
     html+='</tbody></table>';
   }
