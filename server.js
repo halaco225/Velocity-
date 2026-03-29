@@ -688,17 +688,13 @@ function parseAboveStorePDFLocal(filePath) {
       // Compute lt19 pct from actual counts
       const ist_lt19_pct = total > 0 ? parseFloat(((ist_lt10 + ist_1014 + ist_1518) / total * 100).toFixed(1)) : 0;
 
-      // Extract ist_avg from "Averages:" section
+      // Extract "In-Store Time" directly from "Averages:" section - no math, just read the value
       let ist_avg = null;
-      const avgMatch = block.match(/Averages:\s*\n\s*([\d.]+)/);
-      if (avgMatch) {
-        ist_avg = parseFloat(avgMatch[1]);
+      const inStoreMatch = block.match(/In-Store Time\s*:\s*(\d+(?:\.\d+)?)/i);
+      if (inStoreMatch) {
+        ist_avg = parseFloat(inStoreMatch[1]);
       }
-      // Fallback: estimate avg from bucket midpoints if not found
-      if (!ist_avg && total > 0) {
-        const weightedSum = (ist_lt10 * 8) + (ist_1014 * 12) + (ist_1518 * 16.5) + (ist_1925 * 22) + (ist_gt25 * 27);
-        ist_avg = Math.round((weightedSum / total) * 10) / 10;
-      }
+      // NO fallback calculation - if not found, leave as null (PDF should always have it)
 
       stores.push({
         store_id,
