@@ -689,10 +689,19 @@ function parseAboveStorePDFLocal(filePath) {
       const ist_lt19_pct = total > 0 ? parseFloat(((ist_lt10 + ist_1014 + ist_1518) / total * 100).toFixed(1)) : 0;
 
       // Extract "In-Store Time" directly from "Averages:" section - no math, just read the value
+      // The PDF format has labels and values separated, with "In-Store Time" label followed by its value "XX mins"
       let ist_avg = null;
-      const inStoreMatch = block.match(/In-Store Time\s*:\s*(\d+(?:\.\d+)?)/i);
-      if (inStoreMatch) {
-        ist_avg = parseFloat(inStoreMatch[1]);
+      // Match "In-Store Time" (label), then find the corresponding value line that ends with "mins"
+      // The value appears after a blank line and is in the format "XX mins"
+      const inStoreValueMatch = block.match(/In-Store Time[\s\S]*?\n\s*(\d+)\s+mins/i);
+      if (inStoreValueMatch) {
+        ist_avg = parseFloat(inStoreValueMatch[1]);
+      } else {
+        // Fallback: try same-line format
+        const sameLineMatch = block.match(/In-Store Time\s*:\s*(\d+(?:\.\d+)?)/i);
+        if (sameLineMatch) {
+          ist_avg = parseFloat(sameLineMatch[1]);
+        }
       }
       // NO fallback calculation - if not found, leave as null (PDF should always have it)
 
