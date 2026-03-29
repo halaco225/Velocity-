@@ -887,7 +887,7 @@ app.post('/api/upload', upload.any(), async (req, res) => {
             existing[s.store_id] = {
               store_id: s.store_id,
               name: align.name,
-              area: align.area_coach,
+              area: align.area,
               area_coach: align.area_coach,
               region_coach: align.region_coach,
               production: s.production,
@@ -912,7 +912,7 @@ app.post('/api/upload', upload.any(), async (req, res) => {
           } else if (align) {
             existing[s.store_id] = {
               store_id: s.store_id,
-              name: align.name, area: align.area_coach, area_coach: align.area_coach,
+              name: align.name, area: align.area, area_coach: align.area_coach,
               region_coach: align.region_coach,
               ist_lt10: s.ist_lt10, ist_1014: s.ist_1014, ist_1518: s.ist_1518,
               ist_1925: s.ist_1925, ist_gt25: s.ist_gt25,
@@ -937,7 +937,7 @@ app.post('/api/upload', upload.any(), async (req, res) => {
             existing[s.store_id] = {
               store_id: s.store_id,
               name: align.name,
-              area: align.area_coach,
+              area: align.area,
               area_coach: align.area_coach,
               region_coach: align.region_coach,
               on_time: s.on_time,
@@ -973,7 +973,7 @@ app.post('/api/upload', upload.any(), async (req, res) => {
             // No prior record: create stub. ist_avg only used as display fallback until PDF uploaded
             existing[s.store_id] = {
               store_id: s.store_id,
-              name: align.name, area: align.area_coach, area_coach: align.area_coach,
+              name: align.name, area: align.area, area_coach: align.area_coach,
               region_coach: align.region_coach,
               ist_lt10: s.ist_lt10||0, ist_1014: s.ist_1014||0, ist_1518: s.ist_1518||0,
               ist_1925: s.ist_1925||0, ist_gt25: s.ist_gt25||0,
@@ -1115,7 +1115,7 @@ function computeWeek(wtd) {
     if (!lastLt19 || lastLt19 === 0) { const ist = last.ist_avg||last.in_store; lastLt19 = ist<=19?85:ist<=22?60:ist<=25?40:25; }
 
     storeWTD.push({
-      store_id: sid, name: align.name, area: align.area_coach, area_coach: align.area_coach, region_coach: align.region_coach,
+      store_id: sid, name: align.name, area: align.area, area_coach: align.area_coach, region_coach: align.region_coach,
       days_reported: dd.length,
       wtd_in_store: Math.round(avgIST*10)/10, wtd_make: fmtTime(avgMk), wtd_pct_lt4: avgPct4.toFixed(1)+'%',
       wtd_production: fmtTime(avgPr), wtd_pct_lt15: avgPct15.toFixed(1)+'%', wtd_on_time: avgOT.toFixed(1)+'%',
