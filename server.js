@@ -909,6 +909,12 @@ app.post('/api/upload', upload.any(), async (req, res) => {
             existing[s.store_id].ist_lt19_pct = s.ist_lt19_pct;
             // Use PDF in-store average as the primary in_store value
             if (s.ist_avg) existing[s.store_id].in_store = s.ist_avg;
+            // Update area and coach info if available from alignment
+            if (align) {
+              existing[s.store_id].area = align.area;
+              existing[s.store_id].area_coach = align.area_coach;
+              existing[s.store_id].region_coach = align.region_coach;
+            }
           } else if (align) {
             existing[s.store_id] = {
               store_id: s.store_id,
@@ -932,6 +938,12 @@ app.post('/api/upload', upload.any(), async (req, res) => {
             existing[s.store_id].production = s.production;
             existing[s.store_id].pct_lt15 = s.pct_lt15;
             existing[s.store_id].rack = s.rack;
+            // Update area and coach info if available from alignment
+            if (align) {
+              existing[s.store_id].area = align.area;
+              existing[s.store_id].area_coach = align.area_coach;
+              existing[s.store_id].region_coach = align.region_coach;
+            }
             // DO NOT overwrite in_store, ist_lt19_pct, ist_gt25_count - those come from PDF
           } else if (align) {
             existing[s.store_id] = {
@@ -968,6 +980,12 @@ app.post('/api/upload', upload.any(), async (req, res) => {
             if (s.ist_gt25_count != null) existing[s.store_id].ist_gt25_count = s.ist_gt25_count;
             if (s.ist_lt19_pct != null) existing[s.store_id].ist_lt19_pct = s.ist_lt19_pct;
             if (s.deliveries) existing[s.store_id].deliveries = s.deliveries;
+            // Update area and coach info if available from alignment
+            if (align) {
+              existing[s.store_id].area = align.area;
+              existing[s.store_id].area_coach = align.area_coach;
+              existing[s.store_id].region_coach = align.region_coach;
+            }
             // DO NOT set in_store or ist_avg - PDF is the source of truth for those
           } else if (align) {
             // No prior record: create stub. ist_avg only used as display fallback until PDF uploaded
