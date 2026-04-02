@@ -1723,8 +1723,12 @@ async function exportExcel() {
         for (const s of (week.stores || [])) {
           if (!storeMap[s.store_id]) {
             storeMap[s.store_id] = {
-              ...s, _ist_sum: 0, _ist_count: 0,
-              ist_lt10: 0, ist_1014: 0, ist_1518: 0, ist_1925: 0, ist_gt25: 0
+              ...s,
+              _ist_sum: 0, _ist_count: 0,
+              _deliveries_sum: 0,
+              ist_lt10: 0, ist_1014: 0, ist_1518: 0, ist_1925: 0, ist_gt25: 0,
+              deliveries: 0,
+              days_reported: 0
             };
           }
           const sm = storeMap[s.store_id];
@@ -1732,7 +1736,17 @@ async function exportExcel() {
           for (const date of weekDays) {
             const d = s.daily && s.daily[date];
             if (!d) continue;
-            if (d.in_store != null) { sm._ist_sum += d.in_store; sm._ist_count++; }
+            sm.days_reported++;
+            // Sum deliveries for weighted average calculation
+            const dayDeliveries = d.deliveries || 0;
+            sm._deliveries_sum += dayDeliveries;
+            sm.deliveries += dayDeliveries;
+            // For IST average, use weighted sum (ist * deliveries)
+            if (d.in_store != null && dayDeliveries > 0) {
+              sm._ist_sum += d.in_store * dayDeliveries;
+              sm._ist_count += dayDeliveries;
+            }
+            // Sum IST bucket counts
             sm.ist_lt10 += d.ist_lt10||0;
             sm.ist_1014 += d.ist_1014||0;
             sm.ist_1518 += d.ist_1518||0;
@@ -1741,10 +1755,19 @@ async function exportExcel() {
           }
         }
       }
-      return Object.values(storeMap).map(s => ({
-        ...s,
-        in_store: s._ist_count ? +(s._ist_sum / s._ist_count).toFixed(1) : null
-      }));
+      return Object.values(storeMap).map(s => {
+        // Calculate PTD IST as weighted average (by deliveries/orders)
+        const ptd_ist = s._ist_count > 0 ? +(s._ist_sum / s._ist_count).toFixed(1) : null;
+        // Calculate PTD <19% from bucket totals
+        const totalBuckets = s.ist_lt10 + s.ist_1014 + s.ist_1518 + s.ist_1925 + s.ist_gt25;
+        const lt19Count = s.ist_lt10 + s.ist_1014 + s.ist_1518;
+        const ptd_lt19_pct = totalBuckets > 0 ? +((lt19Count / totalBuckets) * 100).toFixed(1) : null;
+        return {
+          ...s,
+          in_store: ptd_ist,
+          ist_lt19_pct: ptd_lt19_pct
+        };
+      });
     }
 
     // ─── Trend sheet: Avg IST by day across all uploaded days ───
