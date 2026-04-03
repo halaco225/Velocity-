@@ -423,27 +423,25 @@ function parseSOSExcel(filePath) {
     const row = raw[i];
     if (!row || !row[0] || typeof row[0] !== 'string') continue;
     if (!row[0].match(/^S0\d{5}$/) && !row[0].match(/^S\d{6}$/)) continue;
-    // Check row has valid data (use deliveries or make as indicator)
-    const deliveries = parseInt(row[9]) || 0;
+    
+    // ONLY extract Make time and %<4 from SOS Excel
+    // All other fields (IST, In-Store, deliveries) come from Above Store PDF
     const make = row[11] || null;
-    if (!deliveries && !make) continue;
+    const pctLt4 = row[13] || null;
+    
+    // Skip if no make time data
+    if (!make) continue;
+    
     stores.push({
-      store_id:       row[0].trim(),
-      on_time:        row[3]  || null,
-      // in_store comes ONLY from Above Store PDF, not from SOS Excel
-      deliveries:     deliveries,
-      make:           make,
-      pct_lt4:        row[13] || null,
-      oven_cut:       row[15] || null,
-      production:     row[17] || null,
-      pct_lt15:       row[19] || null,
-      rack:           row[24] || null
-      // ist_lt19_pct and ist_gt25_count come from PDF only
+      store_id: row[0].trim(),
+      make: make,
+      pct_lt4: pctLt4
+      // NOTE: In-Store Time comes ONLY from Above Store PDF, NOT from SOS Excel
     });
   }
 
-  console.log(`Excel parsed: ${stores.length} stores, date=${reportDate}`);
-  if (stores.length > 0) console.log(`  Sample: ${stores[0].store_id} Make=${stores[0].make} pct_lt4=${stores[0].pct_lt4}`);
+  console.log(`SOS Excel parsed: ${stores.length} stores, date=${reportDate}`);
+  if (stores.length > 0) console.log(`  Sample: ${stores[0].store_id} Make=${stores[0].make} %<4=${stores[0].pct_lt4}`);
   return { stores, reportDate, reportType, source: 'sos_excel' };
 }
 
@@ -928,43 +926,29 @@ app.post('/api/upload', upload.any(), async (req, res) => {
             };
           }
         } else if (parsed.source === 'sos_excel') {
-          // SOS Excel: merge only SOS-specific fields; don't overwrite PDF IST fields
+          // SOS Excel: ONLY merge make time and %<4 - nothing else
+          // In-Store Time comes ONLY from Above Store PDF
           if (existing[s.store_id]) {
-            existing[s.store_id].on_time = s.on_time;
-            existing[s.store_id].deliveries = s.deliveries;
+            // Only update make and pct_lt4 fields
             existing[s.store_id].make = s.make;
             existing[s.store_id].pct_lt4 = s.pct_lt4;
-            existing[s.store_id].oven_cut = s.oven_cut;
-            existing[s.store_id].production = s.production;
-            existing[s.store_id].pct_lt15 = s.pct_lt15;
-            existing[s.store_id].rack = s.rack;
-            // Update area and coach info if available from alignment
-            if (align) {
-              existing[s.store_id].area = align.area;
-              existing[s.store_id].area_coach = align.area_coach;
-              existing[s.store_id].region_coach = align.region_coach;
-            }
-            // DO NOT overwrite in_store, ist_lt19_pct, ist_gt25_count - those come from PDF
+            // DO NOT overwrite any other fields (IST, deliveries, on_time, etc.)
           } else if (align) {
+            // Create new store record with only make and pct_lt4
             existing[s.store_id] = {
               store_id: s.store_id,
               name: align.name,
               area: align.area,
               area_coach: align.area_coach,
               region_coach: align.region_coach,
-              on_time: s.on_time,
-              deliveries: s.deliveries,
               make: s.make,
               pct_lt4: s.pct_lt4,
-              oven_cut: s.oven_cut,
-              production: s.production,
-              pct_lt15: s.pct_lt15,
-              rack: s.rack,
-              // IST fields are null until PDF is uploaded
-              in_store: null,
+              // All other fields null until provided by other sources
+              in_store: null, ist_avg: null,
               ist_lt10: null, ist_1014: null, ist_1518: null,
               ist_1925: null, ist_gt25: null,
-              ist_gt25_count: null, ist_lt19_pct: null
+              ist_gt25_count: null, ist_lt19_pct: null,
+              deliveries: null, on_time: null, production: null, pct_lt15: null, rack: null
             };
           }
         } else if (parsed.source === 'ist_tracker') {

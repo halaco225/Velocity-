@@ -40588,7 +40588,9 @@
               "ist_1925": 1,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "make": "03:04",
+              "pct_lt4": "74.4%"
             },
             {
               "store_id": "S039377",
@@ -40603,7 +40605,9 @@
               "ist_1925": 1,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 77.8
+              "ist_lt19_pct": 77.8,
+              "make": "03:06",
+              "pct_lt4": "72.8%"
             },
             {
               "store_id": "S039378",
@@ -40618,7 +40622,9 @@
               "ist_1925": 8,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "make": "03:35",
+              "pct_lt4": "67.1%"
             },
             {
               "store_id": "S039379",
@@ -40633,7 +40639,9 @@
               "ist_1925": 8,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 72.7
+              "ist_lt19_pct": 72.7,
+              "make": "03:03",
+              "pct_lt4": "75.6%"
             },
             {
               "store_id": "S039384",
@@ -40648,7 +40656,9 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 82.6
+              "ist_lt19_pct": 82.6,
+              "make": "03:17",
+              "pct_lt4": "77.1%"
             },
             {
               "store_id": "S039454",
@@ -40663,7 +40673,9 @@
               "ist_1925": 4,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 70.8
+              "ist_lt19_pct": 70.8,
+              "make": "03:07",
+              "pct_lt4": "78.1%"
             },
             {
               "store_id": "S039465",
@@ -40678,7 +40690,9 @@
               "ist_1925": 4,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 68.2
+              "ist_lt19_pct": 68.2,
+              "make": "03:05",
+              "pct_lt4": "73.1%"
             },
             {
               "store_id": "S039383",
@@ -40693,7 +40707,9 @@
               "ist_1925": 5,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 77.8
+              "ist_lt19_pct": 77.8,
+              "make": "03:18",
+              "pct_lt4": "69.8%"
             },
             {
               "store_id": "S039388",
@@ -40708,7 +40724,9 @@
               "ist_1925": 7,
               "ist_gt25": 8,
               "ist_gt25_count": 8,
-              "ist_lt19_pct": 40
+              "ist_lt19_pct": 40,
+              "make": "02:41",
+              "pct_lt4": "84.9%"
             },
             {
               "store_id": "S039393",
@@ -40723,7 +40741,9 @@
               "ist_1925": 9,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 64.1
+              "ist_lt19_pct": 64.1,
+              "make": "08:04",
+              "pct_lt4": "58.6%"
             },
             {
               "store_id": "S039429",
@@ -40738,7 +40758,9 @@
               "ist_1925": 11,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 53.1
+              "ist_lt19_pct": 53.1,
+              "make": "02:29",
+              "pct_lt4": "77.9%"
             },
             {
               "store_id": "S039461",
@@ -40753,7 +40775,9 @@
               "ist_1925": 1,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": null
+              "ist_lt19_pct": null,
+              "make": "02:31",
+              "pct_lt4": "78.1%"
             },
             {
               "store_id": "S039513",
@@ -40768,7 +40792,9 @@
               "ist_1925": 5,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 57.1
+              "ist_lt19_pct": 57.1,
+              "make": "02:37",
+              "pct_lt4": "84.9%"
             },
             {
               "store_id": "S039521",
@@ -40783,7 +40809,9 @@
               "ist_1925": 5,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 61.5
+              "ist_lt19_pct": 61.5,
+              "make": "03:19",
+              "pct_lt4": "81.1%"
             },
             {
               "store_id": "S039522",
@@ -40798,7 +40826,9 @@
               "ist_1925": 7,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "make": "02:20",
+              "pct_lt4": "82.8%"
             },
             {
               "store_id": "S039375",
@@ -40813,7 +40843,9 @@
               "ist_1925": 2,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 69.2
+              "ist_lt19_pct": 69.2,
+              "make": "03:07",
+              "pct_lt4": "72.3%"
             },
             {
               "store_id": "S039376",
@@ -40828,7 +40860,9 @@
               "ist_1925": 7,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 11.1
+              "ist_lt19_pct": 11.1,
+              "make": "06:08",
+              "pct_lt4": "42.9%"
             },
             {
               "store_id": "S039382",
@@ -40858,7 +40892,9 @@
               "ist_1925": 2,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 68.8
+              "ist_lt19_pct": 68.8,
+              "make": "02:20",
+              "pct_lt4": "88.6%"
             },
             {
               "store_id": "S039392",
@@ -40873,7 +40909,9 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 83.3
+              "ist_lt19_pct": 83.3,
+              "make": "02:55",
+              "pct_lt4": "81.8%"
             },
             {
               "store_id": "S039462",
@@ -40888,7 +40926,9 @@
               "ist_1925": 4,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 44.4
+              "ist_lt19_pct": 44.4,
+              "make": "03:22",
+              "pct_lt4": "75.0%"
             },
             {
               "store_id": "S039380",
@@ -40903,7 +40943,9 @@
               "ist_1925": 1,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 94.4
+              "ist_lt19_pct": 94.4,
+              "make": "01:16",
+              "pct_lt4": "98.5%"
             },
             {
               "store_id": "S039386",
@@ -40918,7 +40960,9 @@
               "ist_1925": 2,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 76.5
+              "ist_lt19_pct": 76.5,
+              "make": "01:16",
+              "pct_lt4": "90.3%"
             },
             {
               "store_id": "S039389",
@@ -40933,7 +40977,9 @@
               "ist_1925": 11,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 58.5
+              "ist_lt19_pct": 58.5,
+              "make": "03:36",
+              "pct_lt4": "84.8%"
             },
             {
               "store_id": "S039410",
@@ -40948,7 +40994,9 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "make": "02:08",
+              "pct_lt4": "88.8%"
             },
             {
               "store_id": "S039451",
@@ -40963,7 +41011,9 @@
               "ist_1925": 1,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 72.2
+              "ist_lt19_pct": 72.2,
+              "make": "03:08",
+              "pct_lt4": "91.6%"
             },
             {
               "store_id": "S039525",
@@ -40978,7 +41028,9 @@
               "ist_1925": 4,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 30
+              "ist_lt19_pct": 30,
+              "make": "02:12",
+              "pct_lt4": "82.1%"
             },
             {
               "store_id": "S039527",
@@ -40993,7 +41045,9 @@
               "ist_1925": 3,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 53.3
+              "ist_lt19_pct": 53.3,
+              "make": "03:32",
+              "pct_lt4": "62.3%"
             },
             {
               "store_id": "S039412",
@@ -41008,7 +41062,9 @@
               "ist_1925": 2,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 80
+              "ist_lt19_pct": 80,
+              "make": "03:22",
+              "pct_lt4": "79.5%"
             },
             {
               "store_id": "S039413",
@@ -41023,7 +41079,9 @@
               "ist_1925": 4,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "make": "02:51",
+              "pct_lt4": "75.8%"
             },
             {
               "store_id": "S039414",
@@ -41038,7 +41096,9 @@
               "ist_1925": 1,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 90
+              "ist_lt19_pct": 90,
+              "make": "01:25",
+              "pct_lt4": "93.8%"
             },
             {
               "store_id": "S039415",
@@ -41053,7 +41113,9 @@
               "ist_1925": 4,
               "ist_gt25": 11,
               "ist_gt25_count": 11,
-              "ist_lt19_pct": 28.6
+              "ist_lt19_pct": 28.6,
+              "make": "02:26",
+              "pct_lt4": "80.2%"
             },
             {
               "store_id": "S039416",
@@ -41068,7 +41130,9 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 76.5
+              "ist_lt19_pct": 76.5,
+              "make": "02:49",
+              "pct_lt4": "79.3%"
             },
             {
               "store_id": "S039430",
@@ -41083,7 +41147,9 @@
               "ist_1925": 3,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 78.3
+              "ist_lt19_pct": 78.3,
+              "make": "02:45",
+              "pct_lt4": "83.8%"
             },
             {
               "store_id": "S039529",
@@ -41098,7 +41164,9 @@
               "ist_1925": 13,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 41.2
+              "ist_lt19_pct": 41.2,
+              "make": "01:47",
+              "pct_lt4": "86.2%"
             },
             {
               "store_id": "S039381",
@@ -41113,7 +41181,9 @@
               "ist_1925": 6,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "make": "03:37",
+              "pct_lt4": "65.4%"
             },
             {
               "store_id": "S039385",
@@ -41128,7 +41198,9 @@
               "ist_1925": 4,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 79.2
+              "ist_lt19_pct": 79.2,
+              "make": "02:46",
+              "pct_lt4": "87.4%"
             },
             {
               "store_id": "S039390",
@@ -41143,7 +41215,9 @@
               "ist_1925": 6,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 35.3
+              "ist_lt19_pct": 35.3,
+              "make": "03:22",
+              "pct_lt4": "74.0%"
             },
             {
               "store_id": "S039391",
@@ -41158,7 +41232,9 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 76.5
+              "ist_lt19_pct": 76.5,
+              "make": "04:09",
+              "pct_lt4": "59.1%"
             },
             {
               "store_id": "S039526",
@@ -41173,7 +41249,9 @@
               "ist_1925": 10,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 38.1
+              "ist_lt19_pct": 38.1,
+              "make": "04:32",
+              "pct_lt4": "52.1%"
             },
             {
               "store_id": "S039418",
@@ -41188,7 +41266,9 @@
               "ist_1925": 7,
               "ist_gt25": 9,
               "ist_gt25_count": 9,
-              "ist_lt19_pct": 52.9
+              "ist_lt19_pct": 52.9,
+              "make": "04:04",
+              "pct_lt4": "61.2%"
             },
             {
               "store_id": "S039422",
@@ -41203,7 +41283,9 @@
               "ist_1925": 4,
               "ist_gt25": 11,
               "ist_gt25_count": 11,
-              "ist_lt19_pct": 46.4
+              "ist_lt19_pct": 46.4,
+              "make": "01:29",
+              "pct_lt4": "97.2%"
             },
             {
               "store_id": "S039423",
@@ -41218,7 +41300,9 @@
               "ist_1925": 4,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 59.3
+              "ist_lt19_pct": 59.3,
+              "make": "05:16",
+              "pct_lt4": "63.0%"
             },
             {
               "store_id": "S039432",
@@ -41233,7 +41317,9 @@
               "ist_1925": 0,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 65
+              "ist_lt19_pct": 65,
+              "make": "02:54",
+              "pct_lt4": "82.4%"
             },
             {
               "store_id": "S039433",
@@ -41248,7 +41334,9 @@
               "ist_1925": 6,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 45
+              "ist_lt19_pct": 45,
+              "make": "02:51",
+              "pct_lt4": "81.1%"
             },
             {
               "store_id": "S039455",
@@ -41263,7 +41351,9 @@
               "ist_1925": 5,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 73.9
+              "ist_lt19_pct": 73.9,
+              "make": "02:30",
+              "pct_lt4": "93.5%"
             },
             {
               "store_id": "S039456",
@@ -41278,7 +41368,9 @@
               "ist_1925": 6,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "make": "01:35",
+              "pct_lt4": "89.2%"
             },
             {
               "store_id": "S039420",
@@ -41293,7 +41385,9 @@
               "ist_1925": 0,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 100
+              "ist_lt19_pct": 100,
+              "make": "02:20",
+              "pct_lt4": "96.8%"
             },
             {
               "store_id": "S039425",
@@ -41308,7 +41402,9 @@
               "ist_1925": 0,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 100
+              "ist_lt19_pct": 100,
+              "make": "02:02",
+              "pct_lt4": "94.5%"
             },
             {
               "store_id": "S039426",
@@ -41323,7 +41419,9 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "make": "04:21",
+              "pct_lt4": "57.6%"
             },
             {
               "store_id": "S039428",
@@ -41338,7 +41436,9 @@
               "ist_1925": 2,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": null
+              "ist_lt19_pct": null,
+              "make": "06:00",
+              "pct_lt4": "40.0%"
             },
             {
               "store_id": "S039431",
@@ -41353,7 +41453,9 @@
               "ist_1925": 5,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 33.3
+              "ist_lt19_pct": 33.3,
+              "make": "03:40",
+              "pct_lt4": "60.0%"
             },
             {
               "store_id": "S039435",
@@ -41368,7 +41470,9 @@
               "ist_1925": 8,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 21.1
+              "ist_lt19_pct": 21.1,
+              "make": "06:15",
+              "pct_lt4": "35.7%"
             },
             {
               "store_id": "S039450",
@@ -41383,7 +41487,9 @@
               "ist_1925": 0,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "make": "03:18",
+              "pct_lt4": "68.1%"
             },
             {
               "store_id": "S039453",
@@ -41398,7 +41504,9 @@
               "ist_1925": 2,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 63.6
+              "ist_lt19_pct": 63.6,
+              "make": "05:02",
+              "pct_lt4": "52.9%"
             },
             {
               "store_id": "S039466",
@@ -41413,7 +41521,9 @@
               "ist_1925": 3,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 44.4
+              "ist_lt19_pct": 44.4,
+              "make": "02:20",
+              "pct_lt4": "95.7%"
             },
             {
               "store_id": "S039400",
@@ -41428,7 +41538,9 @@
               "ist_1925": 7,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 42.9
+              "ist_lt19_pct": 42.9,
+              "make": "04:26",
+              "pct_lt4": "57.9%"
             },
             {
               "store_id": "S039401",
@@ -41443,7 +41555,9 @@
               "ist_1925": 4,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 26.7
+              "ist_lt19_pct": 26.7,
+              "make": "03:39",
+              "pct_lt4": "93.0%"
             },
             {
               "store_id": "S039402",
@@ -41458,7 +41572,9 @@
               "ist_1925": 21,
               "ist_gt25": 30,
               "ist_gt25_count": 30,
-              "ist_lt19_pct": 12.1
+              "ist_lt19_pct": 12.1,
+              "make": "01:05",
+              "pct_lt4": "46.5%"
             },
             {
               "store_id": "S039403",
@@ -41473,7 +41589,9 @@
               "ist_1925": 6,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 38.9
+              "ist_lt19_pct": 38.9,
+              "make": "03:24",
+              "pct_lt4": "63.6%"
             },
             {
               "store_id": "S039394",
@@ -41488,7 +41606,9 @@
               "ist_1925": 3,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 56.3
+              "ist_lt19_pct": 56.3,
+              "make": "03:13",
+              "pct_lt4": "80.6%"
             },
             {
               "store_id": "S039395",
@@ -41503,7 +41623,9 @@
               "ist_1925": 1,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 68.8
+              "ist_lt19_pct": 68.8,
+              "make": "03:27",
+              "pct_lt4": "68.8%"
             },
             {
               "store_id": "S039396",
@@ -41518,7 +41640,9 @@
               "ist_1925": 6,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 64.7
+              "ist_lt19_pct": 64.7,
+              "make": "02:36",
+              "pct_lt4": "83.6%"
             },
             {
               "store_id": "S039398",
@@ -41533,7 +41657,9 @@
               "ist_1925": 2,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 55.6
+              "ist_lt19_pct": 55.6,
+              "make": "04:32",
+              "pct_lt4": "56.1%"
             },
             {
               "store_id": "S039399",
@@ -41548,7 +41674,9 @@
               "ist_1925": 0,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 100
+              "ist_lt19_pct": 100,
+              "make": "03:05",
+              "pct_lt4": "82.8%"
             },
             {
               "store_id": "S039404",
@@ -41563,7 +41691,9 @@
               "ist_1925": 3,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 80
+              "ist_lt19_pct": 80,
+              "make": "03:33",
+              "pct_lt4": "80.2%"
             },
             {
               "store_id": "S039405",
@@ -41578,7 +41708,9 @@
               "ist_1925": 8,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "make": "02:47",
+              "pct_lt4": "80.0%"
             },
             {
               "store_id": "S039407",
@@ -41593,7 +41725,9 @@
               "ist_1925": 6,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 46.2
+              "ist_lt19_pct": 46.2,
+              "make": "02:28",
+              "pct_lt4": "81.2%"
             },
             {
               "store_id": "S039408",
@@ -41608,7 +41742,9 @@
               "ist_1925": 4,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 52.9
+              "ist_lt19_pct": 52.9,
+              "make": "03:27",
+              "pct_lt4": "72.1%"
             },
             {
               "store_id": "S039417",
@@ -41623,7 +41759,9 @@
               "ist_1925": 1,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "make": "02:15",
+              "pct_lt4": "84.0%"
             },
             {
               "store_id": "S039419",
@@ -41638,7 +41776,9 @@
               "ist_1925": 5,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 65.4
+              "ist_lt19_pct": 65.4,
+              "make": "01:52",
+              "pct_lt4": "87.1%"
             },
             {
               "store_id": "S039421",
@@ -41653,7 +41793,9 @@
               "ist_1925": 3,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 64.3
+              "ist_lt19_pct": 64.3,
+              "make": "04:09",
+              "pct_lt4": "69.0%"
             },
             {
               "store_id": "S039424",
@@ -41668,7 +41810,9 @@
               "ist_1925": 9,
               "ist_gt25": 8,
               "ist_gt25_count": 8,
-              "ist_lt19_pct": 32
+              "ist_lt19_pct": 32,
+              "make": "03:21",
+              "pct_lt4": "79.8%"
             },
             {
               "store_id": "S039427",
@@ -41683,7 +41827,9 @@
               "ist_1925": 7,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "make": "04:44",
+              "pct_lt4": "54.6%"
             },
             {
               "store_id": "S039436",
@@ -41698,7 +41844,9 @@
               "ist_1925": 5,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 37.5
+              "ist_lt19_pct": 37.5,
+              "make": "04:35",
+              "pct_lt4": "54.2%"
             },
             {
               "store_id": "S039457",
@@ -41713,7 +41861,9 @@
               "ist_1925": 6,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 47.1
+              "ist_lt19_pct": 47.1,
+              "make": "04:32",
+              "pct_lt4": "48.5%"
             },
             {
               "store_id": "S040090",
@@ -41728,7 +41878,9 @@
               "ist_1925": 8,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 71.4
+              "ist_lt19_pct": 71.4,
+              "make": "03:23",
+              "pct_lt4": "69.3%"
             },
             {
               "store_id": "S040091",
@@ -41743,7 +41895,9 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 80
+              "ist_lt19_pct": 80,
+              "make": "04:34",
+              "pct_lt4": "50.0%"
             },
             {
               "store_id": "S040093",
@@ -41758,7 +41912,9 @@
               "ist_1925": 4,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "make": "02:09",
+              "pct_lt4": "91.1%"
             },
             {
               "store_id": "S040102",
@@ -41773,7 +41929,9 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "make": "03:13",
+              "pct_lt4": "69.2%"
             },
             {
               "store_id": "S039180",
@@ -41788,7 +41946,9 @@
               "ist_1925": 4,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "make": "03:41",
+              "pct_lt4": "57.0%"
             },
             {
               "store_id": "S039182",
@@ -41803,7 +41963,9 @@
               "ist_1925": 3,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 69.6
+              "ist_lt19_pct": 69.6,
+              "make": "01:04",
+              "pct_lt4": "96.5%"
             },
             {
               "store_id": "S039185",
@@ -41818,7 +41980,9 @@
               "ist_1925": 5,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 58.3
+              "ist_lt19_pct": 58.3,
+              "make": "03:45",
+              "pct_lt4": "75.0%"
             },
             {
               "store_id": "S039318",
@@ -41833,7 +41997,9 @@
               "ist_1925": 3,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "make": "01:47",
+              "pct_lt4": "94.4%"
             },
             {
               "store_id": "S039323",
@@ -41848,7 +42014,9 @@
               "ist_1925": 11,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 52.6
+              "ist_lt19_pct": 52.6,
+              "make": "02:26",
+              "pct_lt4": "79.2%"
             },
             {
               "store_id": "S041651",
@@ -41863,7 +42031,9 @@
               "ist_1925": 8,
               "ist_gt25": 11,
               "ist_gt25_count": 11,
-              "ist_lt19_pct": 40.6
+              "ist_lt19_pct": 40.6,
+              "make": "03:05",
+              "pct_lt4": "82.8%"
             },
             {
               "store_id": "S040082",
@@ -41878,7 +42048,9 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "make": "03:23",
+              "pct_lt4": "68.6%"
             },
             {
               "store_id": "S040084",
@@ -41893,7 +42065,9 @@
               "ist_1925": 7,
               "ist_gt25": 10,
               "ist_gt25_count": 10,
-              "ist_lt19_pct": 29.2
+              "ist_lt19_pct": 29.2,
+              "make": "07:34",
+              "pct_lt4": "44.9%"
             },
             {
               "store_id": "S040101",
@@ -41908,7 +42082,9 @@
               "ist_1925": 8,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 58.1
+              "ist_lt19_pct": 58.1,
+              "make": "03:13",
+              "pct_lt4": "69.1%"
             },
             {
               "store_id": "S040107",
@@ -41923,7 +42099,9 @@
               "ist_1925": 10,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 64.3
+              "ist_lt19_pct": 64.3,
+              "make": "03:06",
+              "pct_lt4": "75.3%"
             },
             {
               "store_id": "S040108",
@@ -41938,7 +42116,9 @@
               "ist_1925": 4,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 72.7
+              "ist_lt19_pct": 72.7,
+              "make": "02:39",
+              "pct_lt4": "76.8%"
             },
             {
               "store_id": "S040111",
@@ -41953,7 +42133,9 @@
               "ist_1925": 10,
               "ist_gt25": 10,
               "ist_gt25_count": 10,
-              "ist_lt19_pct": 44.4
+              "ist_lt19_pct": 44.4,
+              "make": "03:13",
+              "pct_lt4": "73.7%"
             },
             {
               "store_id": "S038729",
@@ -41968,7 +42150,9 @@
               "ist_1925": 11,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 54.1
+              "ist_lt19_pct": 54.1,
+              "make": "06:26",
+              "pct_lt4": "48.7%"
             },
             {
               "store_id": "S039174",
@@ -41983,7 +42167,9 @@
               "ist_1925": 5,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 73.9
+              "ist_lt19_pct": 73.9,
+              "make": "04:21",
+              "pct_lt4": "58.3%"
             },
             {
               "store_id": "S039175",
@@ -41998,7 +42184,9 @@
               "ist_1925": 1,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 76.9
+              "ist_lt19_pct": 76.9,
+              "make": "01:56",
+              "pct_lt4": "88.4%"
             },
             {
               "store_id": "S039178",
@@ -42013,7 +42201,9 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 76.5
+              "ist_lt19_pct": 76.5,
+              "make": "06:02",
+              "pct_lt4": "65.0%"
             },
             {
               "store_id": "S039192",
@@ -42028,7 +42218,9 @@
               "ist_1925": 8,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 41.7
+              "ist_lt19_pct": 41.7,
+              "make": "03:20",
+              "pct_lt4": "68.5%"
             },
             {
               "store_id": "S039324",
@@ -42043,7 +42235,9 @@
               "ist_1925": 2,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 55.6
+              "ist_lt19_pct": 55.6,
+              "make": "-12:22",
+              "pct_lt4": "70.7%"
             },
             {
               "store_id": "S039448",
@@ -42058,7 +42252,9 @@
               "ist_1925": 5,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "make": "03:11",
+              "pct_lt4": "70.9%"
             },
             {
               "store_id": "S040088",
@@ -42073,7 +42269,9 @@
               "ist_1925": 3,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 61.1
+              "ist_lt19_pct": 61.1,
+              "make": "03:11",
+              "pct_lt4": "79.3%"
             },
             {
               "store_id": "S040096",
@@ -42088,7 +42286,9 @@
               "ist_1925": 5,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 55.6
+              "ist_lt19_pct": 55.6,
+              "make": "02:45",
+              "pct_lt4": "76.7%"
             },
             {
               "store_id": "S040099",
@@ -42103,7 +42303,9 @@
               "ist_1925": 14,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 57.6
+              "ist_lt19_pct": 57.6,
+              "make": "01:37",
+              "pct_lt4": "87.9%"
             },
             {
               "store_id": "S040100",
@@ -42118,7 +42320,9 @@
               "ist_1925": 5,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 47.1
+              "ist_lt19_pct": 47.1,
+              "make": "04:02",
+              "pct_lt4": "74.2%"
             },
             {
               "store_id": "S040110",
@@ -42133,7 +42337,9 @@
               "ist_1925": 14,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 34.4
+              "ist_lt19_pct": 34.4,
+              "make": "02:43",
+              "pct_lt4": "82.4%"
             },
             {
               "store_id": "S039589",
@@ -42148,7 +42354,9 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 83.3
+              "ist_lt19_pct": 83.3,
+              "make": "02:07",
+              "pct_lt4": "93.6%"
             },
             {
               "store_id": "S040094",
@@ -42163,7 +42371,9 @@
               "ist_1925": 9,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 70.2
+              "ist_lt19_pct": 70.2,
+              "make": "02:30",
+              "pct_lt4": "85.0%"
             },
             {
               "store_id": "S040104",
@@ -42178,7 +42388,9 @@
               "ist_1925": 10,
               "ist_gt25": 12,
               "ist_gt25_count": 12,
-              "ist_lt19_pct": 58.5
+              "ist_lt19_pct": 58.5,
+              "make": "03:26",
+              "pct_lt4": "72.4%"
             },
             {
               "store_id": "S040105",
@@ -42193,7 +42405,9 @@
               "ist_1925": 7,
               "ist_gt25": 8,
               "ist_gt25_count": 8,
-              "ist_lt19_pct": 44.4
+              "ist_lt19_pct": 44.4,
+              "make": "02:39",
+              "pct_lt4": "81.9%"
             },
             {
               "store_id": "S040106",
@@ -42208,7 +42422,9 @@
               "ist_1925": 0,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 33.3
+              "ist_lt19_pct": 33.3,
+              "make": "02:53",
+              "pct_lt4": "74.6%"
             },
             {
               "store_id": "S040109",
@@ -42223,7 +42439,9 @@
               "ist_1925": 8,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 61.8
+              "ist_lt19_pct": 61.8,
+              "make": "01:06",
+              "pct_lt4": "95.2%"
             },
             {
               "store_id": "S039173",
@@ -42238,7 +42456,9 @@
               "ist_1925": 5,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 64.7
+              "ist_lt19_pct": 64.7,
+              "make": "02:25",
+              "pct_lt4": "91.7%"
             },
             {
               "store_id": "S039176",
@@ -42253,7 +42473,9 @@
               "ist_1925": 6,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "make": "02:47",
+              "pct_lt4": "82.9%"
             },
             {
               "store_id": "S039177",
@@ -42268,7 +42490,9 @@
               "ist_1925": 7,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 64
+              "ist_lt19_pct": 64,
+              "make": "00:57",
+              "pct_lt4": "96.6%"
             },
             {
               "store_id": "S039179",
@@ -42283,7 +42507,9 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "make": "03:20",
+              "pct_lt4": "81.4%"
             },
             {
               "store_id": "S039188",
@@ -42298,7 +42524,9 @@
               "ist_1925": 1,
               "ist_gt25": 14,
               "ist_gt25_count": 14,
-              "ist_lt19_pct": 37.5
+              "ist_lt19_pct": 37.5,
+              "make": "03:42",
+              "pct_lt4": "70.5%"
             },
             {
               "store_id": "S039518",
@@ -42313,7 +42541,9 @@
               "ist_1925": 7,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "make": "01:11",
+              "pct_lt4": "92.1%"
             },
             {
               "store_id": "S039530",
@@ -42328,7 +42558,9 @@
               "ist_1925": 4,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "make": "03:40",
+              "pct_lt4": "64.4%"
             },
             {
               "store_id": "S040083",
@@ -42343,7 +42575,9 @@
               "ist_1925": 4,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 45
+              "ist_lt19_pct": 45,
+              "make": "06:44",
+              "pct_lt4": "55.7%"
             },
             {
               "store_id": "S040085",
@@ -42358,7 +42592,9 @@
               "ist_1925": 4,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 28.6
+              "ist_lt19_pct": 28.6,
+              "make": "03:12",
+              "pct_lt4": "64.8%"
             },
             {
               "store_id": "S040086",
@@ -42373,7 +42609,9 @@
               "ist_1925": 5,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 63.6
+              "ist_lt19_pct": 63.6,
+              "make": "02:31",
+              "pct_lt4": "85.0%"
             },
             {
               "store_id": "S040087",
@@ -42388,7 +42626,9 @@
               "ist_1925": 3,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 11.1
+              "ist_lt19_pct": 11.1,
+              "make": "12:22",
+              "pct_lt4": "21.0%"
             },
             {
               "store_id": "S040092",
@@ -42403,7 +42643,9 @@
               "ist_1925": 4,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 40
+              "ist_lt19_pct": 40,
+              "make": "05:11",
+              "pct_lt4": "44.8%"
             },
             {
               "store_id": "S040112",
@@ -42418,7 +42660,9 @@
               "ist_1925": 2,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 78.6
+              "ist_lt19_pct": 78.6,
+              "make": "02:33",
+              "pct_lt4": "93.5%"
             }
           ]
         },
@@ -42440,7 +42684,10 @@
               "ist_1925": 3,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 22.2
+              "ist_lt19_pct": 22.2,
+              "area": "Area 2011",
+              "area_coach": "Darian Spikes",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039377",
@@ -42455,7 +42702,10 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 83.3
+              "ist_lt19_pct": 83.3,
+              "area": "Area 2011",
+              "area_coach": "Darian Spikes",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039378",
@@ -42470,7 +42720,10 @@
               "ist_1925": 4,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 57.1
+              "ist_lt19_pct": 57.1,
+              "area": "Area 2011",
+              "area_coach": "Darian Spikes",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039379",
@@ -42485,7 +42738,10 @@
               "ist_1925": 15,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 30.4
+              "ist_lt19_pct": 30.4,
+              "area": "Area 2011",
+              "area_coach": "Darian Spikes",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039384",
@@ -42500,7 +42756,10 @@
               "ist_1925": 2,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 81.3
+              "ist_lt19_pct": 81.3,
+              "area": "Area 2011",
+              "area_coach": "Darian Spikes",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039454",
@@ -42515,7 +42774,10 @@
               "ist_1925": 4,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 68.8
+              "ist_lt19_pct": 68.8,
+              "area": "Area 2011",
+              "area_coach": "Darian Spikes",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039465",
@@ -42530,7 +42792,10 @@
               "ist_1925": 3,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 57.1
+              "ist_lt19_pct": 57.1,
+              "area": "Area 2011",
+              "area_coach": "Darian Spikes",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039383",
@@ -42545,7 +42810,10 @@
               "ist_1925": 2,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 63.6
+              "ist_lt19_pct": 63.6,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039388",
@@ -42560,7 +42828,10 @@
               "ist_1925": 12,
               "ist_gt25": 14,
               "ist_gt25_count": 14,
-              "ist_lt19_pct": 21.2
+              "ist_lt19_pct": 21.2,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039393",
@@ -42575,7 +42846,10 @@
               "ist_1925": 6,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 70.8
+              "ist_lt19_pct": 70.8,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039429",
@@ -42590,7 +42864,10 @@
               "ist_1925": 5,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 65
+              "ist_lt19_pct": 65,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039461",
@@ -42605,7 +42882,10 @@
               "ist_1925": 3,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 58.3
+              "ist_lt19_pct": 58.3,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039513",
@@ -42620,7 +42900,10 @@
               "ist_1925": 1,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 87.5
+              "ist_lt19_pct": 87.5,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039521",
@@ -42635,7 +42918,10 @@
               "ist_1925": 3,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 82.4
+              "ist_lt19_pct": 82.4,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039522",
@@ -42650,7 +42936,10 @@
               "ist_1925": 4,
               "ist_gt25": 12,
               "ist_gt25_count": 12,
-              "ist_lt19_pct": 11.1
+              "ist_lt19_pct": 11.1,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039375",
@@ -42665,7 +42954,10 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 55.6
+              "ist_lt19_pct": 55.6,
+              "area": "Area 2022",
+              "area_coach": "Ja'Don McNeil",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039376",
@@ -42680,7 +42972,10 @@
               "ist_1925": 4,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "area": "Area 2022",
+              "area_coach": "Ja'Don McNeil",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039382",
@@ -42695,7 +42990,10 @@
               "ist_1925": 6,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 23.1
+              "ist_lt19_pct": 23.1,
+              "area": "Area 2022",
+              "area_coach": "Ja'Don McNeil",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039387",
@@ -42710,7 +43008,10 @@
               "ist_1925": 1,
               "ist_gt25": 8,
               "ist_gt25_count": 8,
-              "ist_lt19_pct": 52.6
+              "ist_lt19_pct": 52.6,
+              "area": "Area 2022",
+              "area_coach": "Ja'Don McNeil",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039392",
@@ -42725,7 +43026,10 @@
               "ist_1925": 0,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 100
+              "ist_lt19_pct": 100,
+              "area": "Area 2022",
+              "area_coach": "Ja'Don McNeil",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039462",
@@ -42740,7 +43044,10 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 63.6
+              "ist_lt19_pct": 63.6,
+              "area": "Area 2022",
+              "area_coach": "Ja'Don McNeil",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039380",
@@ -42755,7 +43062,10 @@
               "ist_1925": 1,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 94.1
+              "ist_lt19_pct": 94.1,
+              "area": "Area 2000",
+              "area_coach": "Jorge Garcia",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039386",
@@ -42770,7 +43080,10 @@
               "ist_1925": 3,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 18.2
+              "ist_lt19_pct": 18.2,
+              "area": "Area 2000",
+              "area_coach": "Jorge Garcia",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039389",
@@ -42785,7 +43098,10 @@
               "ist_1925": 3,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 86.4
+              "ist_lt19_pct": 86.4,
+              "area": "Area 2000",
+              "area_coach": "Jorge Garcia",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039410",
@@ -42800,7 +43116,10 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 87.5
+              "ist_lt19_pct": 87.5,
+              "area": "Area 2000",
+              "area_coach": "Jorge Garcia",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039451",
@@ -42815,7 +43134,10 @@
               "ist_1925": 1,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 70.6
+              "ist_lt19_pct": 70.6,
+              "area": "Area 2000",
+              "area_coach": "Jorge Garcia",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039525",
@@ -42830,7 +43152,10 @@
               "ist_1925": 1,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "area": "Area 2000",
+              "area_coach": "Jorge Garcia",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039527",
@@ -42845,7 +43170,10 @@
               "ist_1925": 1,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 57.1
+              "ist_lt19_pct": 57.1,
+              "area": "Area 2000",
+              "area_coach": "Jorge Garcia",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039412",
@@ -42860,7 +43188,10 @@
               "ist_1925": 4,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 76.2
+              "ist_lt19_pct": 76.2,
+              "area": "Area 2015",
+              "area_coach": "Marc Gannon",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039413",
@@ -42875,7 +43206,10 @@
               "ist_1925": 4,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "area": "Area 2015",
+              "area_coach": "Marc Gannon",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039414",
@@ -42890,7 +43224,10 @@
               "ist_1925": 1,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 62.5
+              "ist_lt19_pct": 62.5,
+              "area": "Area 2015",
+              "area_coach": "Marc Gannon",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039415",
@@ -42905,7 +43242,10 @@
               "ist_1925": 4,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 62.5
+              "ist_lt19_pct": 62.5,
+              "area": "Area 2015",
+              "area_coach": "Marc Gannon",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039416",
@@ -42920,7 +43260,10 @@
               "ist_1925": 2,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "area": "Area 2015",
+              "area_coach": "Marc Gannon",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039430",
@@ -42935,7 +43278,10 @@
               "ist_1925": 7,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 59.3
+              "ist_lt19_pct": 59.3,
+              "area": "Area 2015",
+              "area_coach": "Marc Gannon",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039529",
@@ -42950,7 +43296,10 @@
               "ist_1925": 4,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 65
+              "ist_lt19_pct": 65,
+              "area": "Area 2015",
+              "area_coach": "Marc Gannon",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039381",
@@ -42965,7 +43314,10 @@
               "ist_1925": 6,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "area": "Area 2034",
+              "area_coach": "Michelle Meehan",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039385",
@@ -42980,7 +43332,10 @@
               "ist_1925": 6,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "area": "Area 2034",
+              "area_coach": "Michelle Meehan",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039390",
@@ -42995,7 +43350,10 @@
               "ist_1925": 5,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 15.4
+              "ist_lt19_pct": 15.4,
+              "area": "Area 2034",
+              "area_coach": "Michelle Meehan",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039391",
@@ -43010,7 +43368,10 @@
               "ist_1925": 9,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "area": "Area 2034",
+              "area_coach": "Michelle Meehan",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039526",
@@ -43025,7 +43386,10 @@
               "ist_1925": 9,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 55
+              "ist_lt19_pct": 55,
+              "area": "Area 2034",
+              "area_coach": "Michelle Meehan",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039418",
@@ -43040,7 +43404,10 @@
               "ist_1925": 6,
               "ist_gt25": 10,
               "ist_gt25_count": 10,
-              "ist_lt19_pct": 27.3
+              "ist_lt19_pct": 27.3,
+              "area": "Area 2017",
+              "area_coach": "Emmanuel Boateng",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039422",
@@ -43055,7 +43422,10 @@
               "ist_1925": 8,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 45.8
+              "ist_lt19_pct": 45.8,
+              "area": "Area 2017",
+              "area_coach": "Emmanuel Boateng",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039423",
@@ -43070,7 +43440,10 @@
               "ist_1925": 4,
               "ist_gt25": 9,
               "ist_gt25_count": 9,
-              "ist_lt19_pct": 53.6
+              "ist_lt19_pct": 53.6,
+              "area": "Area 2017",
+              "area_coach": "Emmanuel Boateng",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039432",
@@ -43085,7 +43458,10 @@
               "ist_1925": 1,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 90
+              "ist_lt19_pct": 90,
+              "area": "Area 2017",
+              "area_coach": "Emmanuel Boateng",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039433",
@@ -43100,7 +43476,10 @@
               "ist_1925": 7,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 42.9
+              "ist_lt19_pct": 42.9,
+              "area": "Area 2017",
+              "area_coach": "Emmanuel Boateng",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039455",
@@ -43115,7 +43494,10 @@
               "ist_1925": 4,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 72.2
+              "ist_lt19_pct": 72.2,
+              "area": "Area 2017",
+              "area_coach": "Emmanuel Boateng",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039456",
@@ -43130,7 +43512,10 @@
               "ist_1925": 2,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "area": "Area 2017",
+              "area_coach": "Emmanuel Boateng",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039420",
@@ -43145,7 +43530,10 @@
               "ist_1925": 0,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 80
+              "ist_lt19_pct": 80,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039425",
@@ -43160,7 +43548,10 @@
               "ist_1925": 4,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 14.3
+              "ist_lt19_pct": 14.3,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039426",
@@ -43175,7 +43566,10 @@
               "ist_1925": 3,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 62.5
+              "ist_lt19_pct": 62.5,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039428",
@@ -43190,7 +43584,10 @@
               "ist_1925": 2,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": null
+              "ist_lt19_pct": 0,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039431",
@@ -43205,7 +43602,10 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 80
+              "ist_lt19_pct": 80,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039435",
@@ -43220,7 +43620,10 @@
               "ist_1925": 2,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 38.5
+              "ist_lt19_pct": 38.5,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039450",
@@ -43235,7 +43638,10 @@
               "ist_1925": 1,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039453",
@@ -43250,7 +43656,10 @@
               "ist_1925": 3,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039466",
@@ -43265,7 +43674,10 @@
               "ist_1925": 2,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 58.8
+              "ist_lt19_pct": 58.8,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039400",
@@ -43280,7 +43692,10 @@
               "ist_1925": 1,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 71.4
+              "ist_lt19_pct": 71.4,
+              "area": "Area 2009",
+              "area_coach": "Royal Mitchell",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039401",
@@ -43295,7 +43710,10 @@
               "ist_1925": 6,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 70
+              "ist_lt19_pct": 70,
+              "area": "Area 2009",
+              "area_coach": "Royal Mitchell",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039402",
@@ -43310,7 +43728,10 @@
               "ist_1925": 7,
               "ist_gt25": 9,
               "ist_gt25_count": 9,
-              "ist_lt19_pct": 52.9
+              "ist_lt19_pct": 52.9,
+              "area": "Area 2009",
+              "area_coach": "Royal Mitchell",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039403",
@@ -43325,7 +43746,10 @@
               "ist_1925": 4,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 73.3
+              "ist_lt19_pct": 73.3,
+              "area": "Area 2009",
+              "area_coach": "Royal Mitchell",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039394",
@@ -43340,7 +43764,10 @@
               "ist_1925": 2,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 55.6
+              "ist_lt19_pct": 55.6,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039395",
@@ -43355,7 +43782,10 @@
               "ist_1925": 3,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 36.4
+              "ist_lt19_pct": 36.4,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039396",
@@ -43370,7 +43800,10 @@
               "ist_1925": 0,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 71.4
+              "ist_lt19_pct": 71.4,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039398",
@@ -43385,7 +43818,10 @@
               "ist_1925": 0,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039399",
@@ -43400,7 +43836,10 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039404",
@@ -43415,7 +43854,10 @@
               "ist_1925": 2,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039405",
@@ -43430,7 +43872,10 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 73.3
+              "ist_lt19_pct": 73.3,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039407",
@@ -43445,7 +43890,10 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 77.8
+              "ist_lt19_pct": 77.8,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039408",
@@ -43460,7 +43908,10 @@
               "ist_1925": 0,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 71.4
+              "ist_lt19_pct": 71.4,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039417",
@@ -43475,7 +43926,10 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "area": "Area 2041",
+              "area_coach": "ARNWINE-OPEN",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039419",
@@ -43490,7 +43944,10 @@
               "ist_1925": 4,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 55
+              "ist_lt19_pct": 55,
+              "area": "Area 2041",
+              "area_coach": "ARNWINE-OPEN",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039421",
@@ -43505,7 +43962,10 @@
               "ist_1925": 4,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "area": "Area 2041",
+              "area_coach": "ARNWINE-OPEN",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039424",
@@ -43520,7 +43980,10 @@
               "ist_1925": 2,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "area": "Area 2041",
+              "area_coach": "ARNWINE-OPEN",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039427",
@@ -43535,7 +43998,10 @@
               "ist_1925": 3,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "area": "Area 2041",
+              "area_coach": "ARNWINE-OPEN",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039436",
@@ -43550,7 +44016,10 @@
               "ist_1925": 4,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 30.8
+              "ist_lt19_pct": 30.8,
+              "area": "Area 2041",
+              "area_coach": "ARNWINE-OPEN",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039457",
@@ -43565,7 +44034,10 @@
               "ist_1925": 4,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": null
+              "ist_lt19_pct": 0,
+              "area": "Area 2041",
+              "area_coach": "ARNWINE-OPEN",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S040090",
@@ -43580,7 +44052,10 @@
               "ist_1925": 5,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 59.1
+              "ist_lt19_pct": 59.1,
+              "area": "Area 2002",
+              "area_coach": "Brenda Marta",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040091",
@@ -43595,7 +44070,10 @@
               "ist_1925": 1,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "area": "Area 2002",
+              "area_coach": "Brenda Marta",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040093",
@@ -43610,7 +44088,10 @@
               "ist_1925": 9,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 47.1
+              "ist_lt19_pct": 47.1,
+              "area": "Area 2002",
+              "area_coach": "Brenda Marta",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040102",
@@ -43625,7 +44106,10 @@
               "ist_1925": 0,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 100
+              "ist_lt19_pct": 100,
+              "area": "Area 2002",
+              "area_coach": "Brenda Marta",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039180",
@@ -43640,7 +44124,10 @@
               "ist_1925": 0,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 100
+              "ist_lt19_pct": 100,
+              "area": "Area 2010",
+              "area_coach": "Constance Miranda",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039182",
@@ -43655,7 +44142,10 @@
               "ist_1925": 7,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 52.9
+              "ist_lt19_pct": 52.9,
+              "area": "Area 2010",
+              "area_coach": "Constance Miranda",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039185",
@@ -43670,7 +44160,10 @@
               "ist_1925": 1,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "area": "Area 2010",
+              "area_coach": "Constance Miranda",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039318",
@@ -43685,7 +44178,10 @@
               "ist_1925": 1,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 92.9
+              "ist_lt19_pct": 92.9,
+              "area": "Area 2010",
+              "area_coach": "Constance Miranda",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039323",
@@ -43700,7 +44196,10 @@
               "ist_1925": 2,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 68.4
+              "ist_lt19_pct": 68.4,
+              "area": "Area 2010",
+              "area_coach": "Constance Miranda",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S041651",
@@ -43715,7 +44214,10 @@
               "ist_1925": 3,
               "ist_gt25": 12,
               "ist_gt25_count": 12,
-              "ist_lt19_pct": 34.8
+              "ist_lt19_pct": 34.8,
+              "area": "Area 2010",
+              "area_coach": "Constance Miranda",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040082",
@@ -43730,7 +44232,10 @@
               "ist_1925": 9,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 43.5
+              "ist_lt19_pct": 43.5,
+              "area": "Area 2033",
+              "area_coach": "Eric Harstine",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040084",
@@ -43745,7 +44250,10 @@
               "ist_1925": 4,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "area": "Area 2033",
+              "area_coach": "Eric Harstine",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040101",
@@ -43760,7 +44268,10 @@
               "ist_1925": 12,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 68.1
+              "ist_lt19_pct": 68.1,
+              "area": "Area 2033",
+              "area_coach": "Eric Harstine",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040107",
@@ -43775,7 +44286,10 @@
               "ist_1925": 6,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "area": "Area 2033",
+              "area_coach": "Eric Harstine",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040108",
@@ -43790,7 +44304,10 @@
               "ist_1925": 2,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 80
+              "ist_lt19_pct": 80,
+              "area": "Area 2033",
+              "area_coach": "Eric Harstine",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040111",
@@ -43805,7 +44322,10 @@
               "ist_1925": 10,
               "ist_gt25": 8,
               "ist_gt25_count": 8,
-              "ist_lt19_pct": 41.9
+              "ist_lt19_pct": 41.9,
+              "area": "Area 2033",
+              "area_coach": "Eric Harstine",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S038729",
@@ -43820,7 +44340,10 @@
               "ist_1925": 9,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "area": "Area 2024",
+              "area_coach": "Javier Martinez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039174",
@@ -43835,7 +44358,10 @@
               "ist_1925": 4,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "area": "Area 2024",
+              "area_coach": "Javier Martinez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039175",
@@ -43850,7 +44376,10 @@
               "ist_1925": 2,
               "ist_gt25": 14,
               "ist_gt25_count": 14,
-              "ist_lt19_pct": 36
+              "ist_lt19_pct": 36,
+              "area": "Area 2024",
+              "area_coach": "Javier Martinez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039178",
@@ -43865,7 +44394,10 @@
               "ist_1925": 6,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "area": "Area 2024",
+              "area_coach": "Javier Martinez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039192",
@@ -43880,7 +44412,10 @@
               "ist_1925": 3,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 61.5
+              "ist_lt19_pct": 61.5,
+              "area": "Area 2024",
+              "area_coach": "Javier Martinez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039324",
@@ -43895,7 +44430,10 @@
               "ist_1925": 1,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "area": "Area 2024",
+              "area_coach": "Javier Martinez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039448",
@@ -43910,7 +44448,10 @@
               "ist_1925": 1,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 77.8
+              "ist_lt19_pct": 77.8,
+              "area": "Area 2024",
+              "area_coach": "Javier Martinez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040088",
@@ -43925,7 +44466,10 @@
               "ist_1925": 3,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "area": "Area 2055",
+              "area_coach": "Kevin Dunn",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040096",
@@ -43940,7 +44484,10 @@
               "ist_1925": 1,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 61.1
+              "ist_lt19_pct": 61.1,
+              "area": "Area 2055",
+              "area_coach": "Kevin Dunn",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040099",
@@ -43955,7 +44502,10 @@
               "ist_1925": 11,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 51.9
+              "ist_lt19_pct": 51.9,
+              "area": "Area 2055",
+              "area_coach": "Kevin Dunn",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040100",
@@ -43970,7 +44520,10 @@
               "ist_1925": 7,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 56
+              "ist_lt19_pct": 56,
+              "area": "Area 2055",
+              "area_coach": "Kevin Dunn",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040110",
@@ -43985,7 +44538,10 @@
               "ist_1925": 17,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 45.5
+              "ist_lt19_pct": 45.5,
+              "area": "Area 2055",
+              "area_coach": "Kevin Dunn",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039589",
@@ -44000,7 +44556,10 @@
               "ist_1925": 6,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 63.6
+              "ist_lt19_pct": 63.6,
+              "area": "Area 2039",
+              "area_coach": "Max Losey",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040094",
@@ -44015,7 +44574,10 @@
               "ist_1925": 7,
               "ist_gt25": 17,
               "ist_gt25_count": 17,
-              "ist_lt19_pct": 36.8
+              "ist_lt19_pct": 36.8,
+              "area": "Area 2039",
+              "area_coach": "Max Losey",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040104",
@@ -44030,7 +44592,10 @@
               "ist_1925": 6,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 71.1
+              "ist_lt19_pct": 71.1,
+              "area": "Area 2039",
+              "area_coach": "Max Losey",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040105",
@@ -44045,7 +44610,10 @@
               "ist_1925": 8,
               "ist_gt25": 10,
               "ist_gt25_count": 10,
-              "ist_lt19_pct": 30.8
+              "ist_lt19_pct": 30.8,
+              "area": "Area 2039",
+              "area_coach": "Max Losey",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040106",
@@ -44060,7 +44628,10 @@
               "ist_1925": 1,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 76.9
+              "ist_lt19_pct": 76.9,
+              "area": "Area 2039",
+              "area_coach": "Max Losey",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040109",
@@ -44075,7 +44646,10 @@
               "ist_1925": 3,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 70
+              "ist_lt19_pct": 70,
+              "area": "Area 2039",
+              "area_coach": "Max Losey",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039173",
@@ -44090,7 +44664,10 @@
               "ist_1925": 3,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 44.4
+              "ist_lt19_pct": 44.4,
+              "area": "Area 2043",
+              "area_coach": "Oscar Gutierrez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039176",
@@ -44105,7 +44682,10 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 77.8
+              "ist_lt19_pct": 77.8,
+              "area": "Area 2043",
+              "area_coach": "Oscar Gutierrez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039177",
@@ -44120,7 +44700,10 @@
               "ist_1925": 4,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 71.4
+              "ist_lt19_pct": 71.4,
+              "area": "Area 2043",
+              "area_coach": "Oscar Gutierrez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039179",
@@ -44135,7 +44718,10 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "area": "Area 2043",
+              "area_coach": "Oscar Gutierrez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039188",
@@ -44150,7 +44736,10 @@
               "ist_1925": 6,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 72.7
+              "ist_lt19_pct": 72.7,
+              "area": "Area 2043",
+              "area_coach": "Oscar Gutierrez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039518",
@@ -44165,7 +44754,10 @@
               "ist_1925": 12,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 40.6
+              "ist_lt19_pct": 40.6,
+              "area": "Area 2043",
+              "area_coach": "Oscar Gutierrez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039530",
@@ -44180,7 +44772,10 @@
               "ist_1925": 1,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 83.3
+              "ist_lt19_pct": 83.3,
+              "area": "Area 2043",
+              "area_coach": "Oscar Gutierrez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040083",
@@ -44195,7 +44790,10 @@
               "ist_1925": 5,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 45.5
+              "ist_lt19_pct": 45.5,
+              "area": "Area 2008",
+              "area_coach": "Tami Elliott-Baker",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040085",
@@ -44210,7 +44808,10 @@
               "ist_1925": 4,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 55.6
+              "ist_lt19_pct": 55.6,
+              "area": "Area 2008",
+              "area_coach": "Tami Elliott-Baker",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040086",
@@ -44225,7 +44826,10 @@
               "ist_1925": 3,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 72.2
+              "ist_lt19_pct": 72.2,
+              "area": "Area 2008",
+              "area_coach": "Tami Elliott-Baker",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040087",
@@ -44240,7 +44844,10 @@
               "ist_1925": 1,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 83.3
+              "ist_lt19_pct": 83.3,
+              "area": "Area 2008",
+              "area_coach": "Tami Elliott-Baker",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040092",
@@ -44255,7 +44862,10 @@
               "ist_1925": 5,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": null
+              "ist_lt19_pct": 0,
+              "area": "Area 2008",
+              "area_coach": "Tami Elliott-Baker",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040112",
@@ -44270,7 +44880,10 @@
               "ist_1925": 4,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 42.9
+              "ist_lt19_pct": 42.9,
+              "area": "Area 2008",
+              "area_coach": "Tami Elliott-Baker",
+              "region_coach": "Terrance Spillane"
             }
           ]
         },
@@ -44292,7 +44905,10 @@
               "ist_1925": 2,
               "ist_gt25": 13,
               "ist_gt25_count": 13,
-              "ist_lt19_pct": 25
+              "ist_lt19_pct": 25,
+              "area": "Area 2011",
+              "area_coach": "Darian Spikes",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039378",
@@ -44307,7 +44923,10 @@
               "ist_1925": 4,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "area": "Area 2011",
+              "area_coach": "Darian Spikes",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039379",
@@ -44322,7 +44941,10 @@
               "ist_1925": 7,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 72.4
+              "ist_lt19_pct": 72.4,
+              "area": "Area 2011",
+              "area_coach": "Darian Spikes",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039384",
@@ -44337,7 +44959,10 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 77.8
+              "ist_lt19_pct": 77.8,
+              "area": "Area 2011",
+              "area_coach": "Darian Spikes",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039454",
@@ -44352,7 +44977,10 @@
               "ist_1925": 3,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 81.3
+              "ist_lt19_pct": 81.3,
+              "area": "Area 2011",
+              "area_coach": "Darian Spikes",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039465",
@@ -44367,7 +44995,10 @@
               "ist_1925": 3,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "area": "Area 2011",
+              "area_coach": "Darian Spikes",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039383",
@@ -44382,7 +45013,10 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 80
+              "ist_lt19_pct": 80,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039388",
@@ -44397,7 +45031,10 @@
               "ist_1925": 7,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 31.3
+              "ist_lt19_pct": 31.3,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039393",
@@ -44412,7 +45049,10 @@
               "ist_1925": 7,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 64
+              "ist_lt19_pct": 64,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039429",
@@ -44427,7 +45067,10 @@
               "ist_1925": 4,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 73.9
+              "ist_lt19_pct": 73.9,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039461",
@@ -44442,7 +45085,10 @@
               "ist_1925": 5,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 41.2
+              "ist_lt19_pct": 41.2,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039513",
@@ -44457,7 +45103,10 @@
               "ist_1925": 7,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 57.1
+              "ist_lt19_pct": 57.1,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039521",
@@ -44472,7 +45121,10 @@
               "ist_1925": 2,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 78.6
+              "ist_lt19_pct": 78.6,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039522",
@@ -44487,7 +45139,10 @@
               "ist_1925": 4,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 68.4
+              "ist_lt19_pct": 68.4,
+              "area": "Area 2016",
+              "area_coach": "Ebony Simmons",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039375",
@@ -44502,7 +45157,10 @@
               "ist_1925": 2,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 77.8
+              "ist_lt19_pct": 77.8,
+              "area": "Area 2022",
+              "area_coach": "Ja'Don McNeil",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039376",
@@ -44517,7 +45175,10 @@
               "ist_1925": 6,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 57.1
+              "ist_lt19_pct": 57.1,
+              "area": "Area 2022",
+              "area_coach": "Ja'Don McNeil",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039382",
@@ -44532,7 +45193,10 @@
               "ist_1925": 4,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 26.7
+              "ist_lt19_pct": 26.7,
+              "area": "Area 2022",
+              "area_coach": "Ja'Don McNeil",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039387",
@@ -44547,7 +45211,10 @@
               "ist_1925": 3,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "area": "Area 2022",
+              "area_coach": "Ja'Don McNeil",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039392",
@@ -44562,7 +45229,10 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 83.3
+              "ist_lt19_pct": 83.3,
+              "area": "Area 2022",
+              "area_coach": "Ja'Don McNeil",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039462",
@@ -44577,7 +45247,10 @@
               "ist_1925": 2,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "area": "Area 2022",
+              "area_coach": "Ja'Don McNeil",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039380",
@@ -44592,7 +45265,10 @@
               "ist_1925": 0,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 88.2
+              "ist_lt19_pct": 88.2,
+              "area": "Area 2000",
+              "area_coach": "Jorge Garcia",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039386",
@@ -44607,7 +45283,10 @@
               "ist_1925": 0,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 100
+              "ist_lt19_pct": 100,
+              "area": "Area 2000",
+              "area_coach": "Jorge Garcia",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039389",
@@ -44622,7 +45301,10 @@
               "ist_1925": 12,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 48.3
+              "ist_lt19_pct": 48.3,
+              "area": "Area 2000",
+              "area_coach": "Jorge Garcia",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039410",
@@ -44637,7 +45319,10 @@
               "ist_1925": 6,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 46.7
+              "ist_lt19_pct": 46.7,
+              "area": "Area 2000",
+              "area_coach": "Jorge Garcia",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039451",
@@ -44652,7 +45337,10 @@
               "ist_1925": 8,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 47.6
+              "ist_lt19_pct": 47.6,
+              "area": "Area 2000",
+              "area_coach": "Jorge Garcia",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039525",
@@ -44667,7 +45355,10 @@
               "ist_1925": 5,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 36.4
+              "ist_lt19_pct": 36.4,
+              "area": "Area 2000",
+              "area_coach": "Jorge Garcia",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039527",
@@ -44682,7 +45373,10 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "area": "Area 2000",
+              "area_coach": "Jorge Garcia",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039412",
@@ -44697,7 +45391,10 @@
               "ist_1925": 5,
               "ist_gt25": 11,
               "ist_gt25_count": 11,
-              "ist_lt19_pct": 40.7
+              "ist_lt19_pct": 40.7,
+              "area": "Area 2015",
+              "area_coach": "Marc Gannon",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039414",
@@ -44712,7 +45409,10 @@
               "ist_1925": 3,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 70
+              "ist_lt19_pct": 70,
+              "area": "Area 2015",
+              "area_coach": "Marc Gannon",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039415",
@@ -44727,7 +45427,10 @@
               "ist_1925": 6,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 31.3
+              "ist_lt19_pct": 31.3,
+              "area": "Area 2015",
+              "area_coach": "Marc Gannon",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039416",
@@ -44742,7 +45445,10 @@
               "ist_1925": 2,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 55.6
+              "ist_lt19_pct": 55.6,
+              "area": "Area 2015",
+              "area_coach": "Marc Gannon",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039430",
@@ -44757,7 +45463,10 @@
               "ist_1925": 8,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 48.3
+              "ist_lt19_pct": 48.3,
+              "area": "Area 2015",
+              "area_coach": "Marc Gannon",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039529",
@@ -44772,7 +45481,10 @@
               "ist_1925": 6,
               "ist_gt25": 13,
               "ist_gt25_count": 13,
-              "ist_lt19_pct": 38.7
+              "ist_lt19_pct": 38.7,
+              "area": "Area 2015",
+              "area_coach": "Marc Gannon",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039381",
@@ -44787,7 +45499,10 @@
               "ist_1925": 8,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 42.9
+              "ist_lt19_pct": 42.9,
+              "area": "Area 2034",
+              "area_coach": "Michelle Meehan",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039385",
@@ -44802,7 +45517,10 @@
               "ist_1925": 8,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 62.9
+              "ist_lt19_pct": 62.9,
+              "area": "Area 2034",
+              "area_coach": "Michelle Meehan",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039390",
@@ -44817,7 +45535,10 @@
               "ist_1925": 5,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 26.7
+              "ist_lt19_pct": 26.7,
+              "area": "Area 2034",
+              "area_coach": "Michelle Meehan",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039391",
@@ -44832,7 +45553,10 @@
               "ist_1925": 3,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 77.3
+              "ist_lt19_pct": 77.3,
+              "area": "Area 2034",
+              "area_coach": "Michelle Meehan",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039526",
@@ -44847,7 +45571,10 @@
               "ist_1925": 7,
               "ist_gt25": 20,
               "ist_gt25_count": 20,
-              "ist_lt19_pct": 15.6
+              "ist_lt19_pct": 15.6,
+              "area": "Area 2034",
+              "area_coach": "Michelle Meehan",
+              "region_coach": "Harold Lacoste"
             },
             {
               "store_id": "S039418",
@@ -44862,7 +45589,10 @@
               "ist_1925": 10,
               "ist_gt25": 10,
               "ist_gt25_count": 10,
-              "ist_lt19_pct": 28.6
+              "ist_lt19_pct": 28.6,
+              "area": "Area 2017",
+              "area_coach": "Emmanuel Boateng",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039422",
@@ -44877,7 +45607,10 @@
               "ist_1925": 4,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "area": "Area 2017",
+              "area_coach": "Emmanuel Boateng",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039423",
@@ -44892,7 +45625,10 @@
               "ist_1925": 9,
               "ist_gt25": 10,
               "ist_gt25_count": 10,
-              "ist_lt19_pct": 45.7
+              "ist_lt19_pct": 45.7,
+              "area": "Area 2017",
+              "area_coach": "Emmanuel Boateng",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039432",
@@ -44907,7 +45643,10 @@
               "ist_1925": 3,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 62.5
+              "ist_lt19_pct": 62.5,
+              "area": "Area 2017",
+              "area_coach": "Emmanuel Boateng",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039433",
@@ -44922,7 +45661,10 @@
               "ist_1925": 2,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "area": "Area 2017",
+              "area_coach": "Emmanuel Boateng",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039455",
@@ -44937,7 +45679,10 @@
               "ist_1925": 4,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 37.5
+              "ist_lt19_pct": 37.5,
+              "area": "Area 2017",
+              "area_coach": "Emmanuel Boateng",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039456",
@@ -44952,7 +45697,10 @@
               "ist_1925": 0,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 87.5
+              "ist_lt19_pct": 87.5,
+              "area": "Area 2017",
+              "area_coach": "Emmanuel Boateng",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039420",
@@ -44967,7 +45715,10 @@
               "ist_1925": 0,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 83.3
+              "ist_lt19_pct": 83.3,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039425",
@@ -44982,7 +45733,10 @@
               "ist_1925": 1,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039426",
@@ -44997,7 +45751,10 @@
               "ist_1925": 1,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": null
+              "ist_lt19_pct": 0,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039428",
@@ -45012,7 +45769,10 @@
               "ist_1925": 4,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 20
+              "ist_lt19_pct": 20,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039431",
@@ -45027,7 +45787,10 @@
               "ist_1925": 2,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 42.9
+              "ist_lt19_pct": 42.9,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039435",
@@ -45042,7 +45805,10 @@
               "ist_1925": 8,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 21.1
+              "ist_lt19_pct": 21.1,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039450",
@@ -45057,7 +45823,10 @@
               "ist_1925": 0,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": null
+              "ist_lt19_pct": 0,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039453",
@@ -45072,7 +45841,10 @@
               "ist_1925": 2,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039466",
@@ -45087,7 +45859,10 @@
               "ist_1925": 2,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 73.9
+              "ist_lt19_pct": 73.9,
+              "area": "Area 2004",
+              "area_coach": "Erin Pizzo",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039400",
@@ -45102,7 +45877,10 @@
               "ist_1925": 5,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 30.8
+              "ist_lt19_pct": 30.8,
+              "area": "Area 2009",
+              "area_coach": "Royal Mitchell",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039401",
@@ -45117,7 +45895,10 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 84.6
+              "ist_lt19_pct": 84.6,
+              "area": "Area 2009",
+              "area_coach": "Royal Mitchell",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039402",
@@ -45132,7 +45913,10 @@
               "ist_1925": 14,
               "ist_gt25": 9,
               "ist_gt25_count": 9,
-              "ist_lt19_pct": 39.5
+              "ist_lt19_pct": 39.5,
+              "area": "Area 2009",
+              "area_coach": "Royal Mitchell",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039403",
@@ -45147,7 +45931,10 @@
               "ist_1925": 5,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 40
+              "ist_lt19_pct": 40,
+              "area": "Area 2009",
+              "area_coach": "Royal Mitchell",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039394",
@@ -45162,7 +45949,10 @@
               "ist_1925": 3,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 44.4
+              "ist_lt19_pct": 44.4,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039395",
@@ -45177,7 +45967,10 @@
               "ist_1925": 1,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 72.7
+              "ist_lt19_pct": 72.7,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039396",
@@ -45192,7 +45985,10 @@
               "ist_1925": 3,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 68.8
+              "ist_lt19_pct": 68.8,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039398",
@@ -45207,7 +46003,10 @@
               "ist_1925": 1,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 62.5
+              "ist_lt19_pct": 62.5,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039399",
@@ -45222,7 +46021,10 @@
               "ist_1925": 1,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039404",
@@ -45237,7 +46039,10 @@
               "ist_1925": 8,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 56.5
+              "ist_lt19_pct": 56.5,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039405",
@@ -45252,7 +46057,10 @@
               "ist_1925": 1,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 81.3
+              "ist_lt19_pct": 81.3,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039407",
@@ -45267,7 +46075,10 @@
               "ist_1925": 5,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 20
+              "ist_lt19_pct": 20,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039408",
@@ -45282,7 +46093,10 @@
               "ist_1925": 1,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 70
+              "ist_lt19_pct": 70,
+              "area": "Area 2048",
+              "area_coach": "Russell Kowalczyk",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039417",
@@ -45297,7 +46111,10 @@
               "ist_1925": 4,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 33.3
+              "ist_lt19_pct": 33.3,
+              "area": "Area 2041",
+              "area_coach": "ARNWINE-OPEN",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039419",
@@ -45312,7 +46129,10 @@
               "ist_1925": 2,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 64.7
+              "ist_lt19_pct": 64.7,
+              "area": "Area 2041",
+              "area_coach": "ARNWINE-OPEN",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039421",
@@ -45327,7 +46147,10 @@
               "ist_1925": 3,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 53.8
+              "ist_lt19_pct": 53.8,
+              "area": "Area 2041",
+              "area_coach": "ARNWINE-OPEN",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039424",
@@ -45342,7 +46165,10 @@
               "ist_1925": 7,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 65
+              "ist_lt19_pct": 65,
+              "area": "Area 2041",
+              "area_coach": "ARNWINE-OPEN",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039427",
@@ -45357,7 +46183,10 @@
               "ist_1925": 4,
               "ist_gt25": 17,
               "ist_gt25_count": 17,
-              "ist_lt19_pct": 27.6
+              "ist_lt19_pct": 27.6,
+              "area": "Area 2041",
+              "area_coach": "ARNWINE-OPEN",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039436",
@@ -45372,7 +46201,10 @@
               "ist_1925": 4,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 58.3
+              "ist_lt19_pct": 58.3,
+              "area": "Area 2041",
+              "area_coach": "ARNWINE-OPEN",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S039457",
@@ -45387,7 +46219,10 @@
               "ist_1925": 4,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 14.3
+              "ist_lt19_pct": 14.3,
+              "area": "Area 2041",
+              "area_coach": "ARNWINE-OPEN",
+              "region_coach": "Preston Arnwine"
             },
             {
               "store_id": "S040090",
@@ -45402,7 +46237,10 @@
               "ist_1925": 4,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 83.3
+              "ist_lt19_pct": 83.3,
+              "area": "Area 2002",
+              "area_coach": "Brenda Marta",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040091",
@@ -45417,7 +46255,10 @@
               "ist_1925": 3,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 37.5
+              "ist_lt19_pct": 37.5,
+              "area": "Area 2002",
+              "area_coach": "Brenda Marta",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040093",
@@ -45432,7 +46273,10 @@
               "ist_1925": 8,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 35
+              "ist_lt19_pct": 35,
+              "area": "Area 2002",
+              "area_coach": "Brenda Marta",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040102",
@@ -45447,7 +46291,10 @@
               "ist_1925": 10,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 41.2
+              "ist_lt19_pct": 41.2,
+              "area": "Area 2002",
+              "area_coach": "Brenda Marta",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039180",
@@ -45462,7 +46309,10 @@
               "ist_1925": 1,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 91.7
+              "ist_lt19_pct": 91.7,
+              "area": "Area 2010",
+              "area_coach": "Constance Miranda",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039182",
@@ -45477,7 +46327,10 @@
               "ist_1925": 6,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "area": "Area 2010",
+              "area_coach": "Constance Miranda",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039185",
@@ -45492,7 +46345,10 @@
               "ist_1925": 1,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 76.9
+              "ist_lt19_pct": 76.9,
+              "area": "Area 2010",
+              "area_coach": "Constance Miranda",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039318",
@@ -45507,7 +46363,10 @@
               "ist_1925": 2,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "area": "Area 2010",
+              "area_coach": "Constance Miranda",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039323",
@@ -45522,7 +46381,10 @@
               "ist_1925": 3,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 73.7
+              "ist_lt19_pct": 73.7,
+              "area": "Area 2010",
+              "area_coach": "Constance Miranda",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S041651",
@@ -45537,7 +46399,10 @@
               "ist_1925": 5,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 53.8
+              "ist_lt19_pct": 53.8,
+              "area": "Area 2010",
+              "area_coach": "Constance Miranda",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040082",
@@ -45552,7 +46417,10 @@
               "ist_1925": 5,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 63
+              "ist_lt19_pct": 63,
+              "area": "Area 2033",
+              "area_coach": "Eric Harstine",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040084",
@@ -45567,7 +46435,10 @@
               "ist_1925": 10,
               "ist_gt25": 15,
               "ist_gt25_count": 15,
-              "ist_lt19_pct": 16.7
+              "ist_lt19_pct": 16.7,
+              "area": "Area 2033",
+              "area_coach": "Eric Harstine",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040101",
@@ -45582,7 +46453,10 @@
               "ist_1925": 7,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 72.2
+              "ist_lt19_pct": 72.2,
+              "area": "Area 2033",
+              "area_coach": "Eric Harstine",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040107",
@@ -45597,7 +46471,10 @@
               "ist_1925": 10,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 52
+              "ist_lt19_pct": 52,
+              "area": "Area 2033",
+              "area_coach": "Eric Harstine",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040108",
@@ -45612,7 +46489,10 @@
               "ist_1925": 5,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 65.2
+              "ist_lt19_pct": 65.2,
+              "area": "Area 2033",
+              "area_coach": "Eric Harstine",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040111",
@@ -45627,7 +46507,10 @@
               "ist_1925": 10,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 56.7
+              "ist_lt19_pct": 56.7,
+              "area": "Area 2033",
+              "area_coach": "Eric Harstine",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S038729",
@@ -45642,7 +46525,10 @@
               "ist_1925": 4,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 75.9
+              "ist_lt19_pct": 75.9,
+              "area": "Area 2024",
+              "area_coach": "Javier Martinez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039174",
@@ -45657,7 +46543,10 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 60
+              "ist_lt19_pct": 60,
+              "area": "Area 2024",
+              "area_coach": "Javier Martinez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039175",
@@ -45672,7 +46561,10 @@
               "ist_1925": 4,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 69.2
+              "ist_lt19_pct": 69.2,
+              "area": "Area 2024",
+              "area_coach": "Javier Martinez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039178",
@@ -45687,7 +46579,10 @@
               "ist_1925": 5,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 68.4
+              "ist_lt19_pct": 68.4,
+              "area": "Area 2024",
+              "area_coach": "Javier Martinez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039192",
@@ -45702,7 +46597,10 @@
               "ist_1925": 5,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 68.4
+              "ist_lt19_pct": 68.4,
+              "area": "Area 2024",
+              "area_coach": "Javier Martinez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039324",
@@ -45717,7 +46615,10 @@
               "ist_1925": 4,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "area": "Area 2024",
+              "area_coach": "Javier Martinez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039448",
@@ -45732,7 +46633,10 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 89.5
+              "ist_lt19_pct": 89.5,
+              "area": "Area 2024",
+              "area_coach": "Javier Martinez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040088",
@@ -45747,7 +46651,10 @@
               "ist_1925": 6,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 53.8
+              "ist_lt19_pct": 53.8,
+              "area": "Area 2055",
+              "area_coach": "Kevin Dunn",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040096",
@@ -45762,7 +46669,10 @@
               "ist_1925": 5,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 20
+              "ist_lt19_pct": 20,
+              "area": "Area 2055",
+              "area_coach": "Kevin Dunn",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040099",
@@ -45777,7 +46687,10 @@
               "ist_1925": 7,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 74.2
+              "ist_lt19_pct": 74.2,
+              "area": "Area 2055",
+              "area_coach": "Kevin Dunn",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040100",
@@ -45792,7 +46705,10 @@
               "ist_1925": 6,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 64
+              "ist_lt19_pct": 64,
+              "area": "Area 2055",
+              "area_coach": "Kevin Dunn",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040110",
@@ -45807,7 +46723,10 @@
               "ist_1925": 5,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 52.2
+              "ist_lt19_pct": 52.2,
+              "area": "Area 2055",
+              "area_coach": "Kevin Dunn",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039589",
@@ -45822,7 +46741,10 @@
               "ist_1925": 6,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 73.9
+              "ist_lt19_pct": 73.9,
+              "area": "Area 2039",
+              "area_coach": "Max Losey",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040094",
@@ -45837,7 +46759,10 @@
               "ist_1925": 10,
               "ist_gt25": 12,
               "ist_gt25_count": 12,
-              "ist_lt19_pct": 48.8
+              "ist_lt19_pct": 48.8,
+              "area": "Area 2039",
+              "area_coach": "Max Losey",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040104",
@@ -45852,7 +46777,10 @@
               "ist_1925": 10,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 66.7
+              "ist_lt19_pct": 66.7,
+              "area": "Area 2039",
+              "area_coach": "Max Losey",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040105",
@@ -45867,7 +46795,10 @@
               "ist_1925": 14,
               "ist_gt25": 9,
               "ist_gt25_count": 9,
-              "ist_lt19_pct": 37.8
+              "ist_lt19_pct": 37.8,
+              "area": "Area 2039",
+              "area_coach": "Max Losey",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040106",
@@ -45882,7 +46813,10 @@
               "ist_1925": 2,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 40
+              "ist_lt19_pct": 40,
+              "area": "Area 2039",
+              "area_coach": "Max Losey",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040109",
@@ -45897,7 +46831,10 @@
               "ist_1925": 4,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 65.4
+              "ist_lt19_pct": 65.4,
+              "area": "Area 2039",
+              "area_coach": "Max Losey",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039173",
@@ -45912,7 +46849,10 @@
               "ist_1925": 4,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 58.3
+              "ist_lt19_pct": 58.3,
+              "area": "Area 2043",
+              "area_coach": "Oscar Gutierrez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039176",
@@ -45927,7 +46867,10 @@
               "ist_1925": 3,
               "ist_gt25": 5,
               "ist_gt25_count": 5,
-              "ist_lt19_pct": 55.6
+              "ist_lt19_pct": 55.6,
+              "area": "Area 2043",
+              "area_coach": "Oscar Gutierrez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039177",
@@ -45942,7 +46885,10 @@
               "ist_1925": 3,
               "ist_gt25": 2,
               "ist_gt25_count": 2,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "area": "Area 2043",
+              "area_coach": "Oscar Gutierrez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039179",
@@ -45957,7 +46903,10 @@
               "ist_1925": 1,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 75
+              "ist_lt19_pct": 75,
+              "area": "Area 2043",
+              "area_coach": "Oscar Gutierrez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039188",
@@ -45972,7 +46921,10 @@
               "ist_1925": 7,
               "ist_gt25": 9,
               "ist_gt25_count": 9,
-              "ist_lt19_pct": 40.7
+              "ist_lt19_pct": 40.7,
+              "area": "Area 2043",
+              "area_coach": "Oscar Gutierrez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039518",
@@ -45987,7 +46939,10 @@
               "ist_1925": 4,
               "ist_gt25": 7,
               "ist_gt25_count": 7,
-              "ist_lt19_pct": 62.1
+              "ist_lt19_pct": 62.1,
+              "area": "Area 2043",
+              "area_coach": "Oscar Gutierrez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S039530",
@@ -46002,7 +46957,10 @@
               "ist_1925": 2,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 84.6
+              "ist_lt19_pct": 84.6,
+              "area": "Area 2043",
+              "area_coach": "Oscar Gutierrez",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040083",
@@ -46017,7 +46975,10 @@
               "ist_1925": 4,
               "ist_gt25": 3,
               "ist_gt25_count": 3,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "area": "Area 2008",
+              "area_coach": "Tami Elliott-Baker",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040085",
@@ -46032,7 +46993,10 @@
               "ist_1925": 3,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 62.5
+              "ist_lt19_pct": 62.5,
+              "area": "Area 2008",
+              "area_coach": "Tami Elliott-Baker",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040086",
@@ -46047,7 +47011,10 @@
               "ist_1925": 5,
               "ist_gt25": 6,
               "ist_gt25_count": 6,
-              "ist_lt19_pct": 52.2
+              "ist_lt19_pct": 52.2,
+              "area": "Area 2008",
+              "area_coach": "Tami Elliott-Baker",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040087",
@@ -46062,7 +47029,10 @@
               "ist_1925": 7,
               "ist_gt25": 4,
               "ist_gt25_count": 4,
-              "ist_lt19_pct": 21.4
+              "ist_lt19_pct": 21.4,
+              "area": "Area 2008",
+              "area_coach": "Tami Elliott-Baker",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040092",
@@ -46077,7 +47047,10 @@
               "ist_1925": 3,
               "ist_gt25": 1,
               "ist_gt25_count": 1,
-              "ist_lt19_pct": 50
+              "ist_lt19_pct": 50,
+              "area": "Area 2008",
+              "area_coach": "Tami Elliott-Baker",
+              "region_coach": "Terrance Spillane"
             },
             {
               "store_id": "S040112",
@@ -46092,7 +47065,10 @@
               "ist_1925": 6,
               "ist_gt25": 0,
               "ist_gt25_count": 0,
-              "ist_lt19_pct": 45.5
+              "ist_lt19_pct": 45.5,
+              "area": "Area 2008",
+              "area_coach": "Tami Elliott-Baker",
+              "region_coach": "Terrance Spillane"
             }
           ]
         }
