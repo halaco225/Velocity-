@@ -1763,7 +1763,10 @@ function generateExcelExport(weekData, allData = null) {
   const period = weekData.period || 'P4W3';
   const weekStart = weekData.weekStart || '';
   const weekEnd = weekData.weekEnd || '';
-  const dayData = weekData.days || {};
+  // weekData.days is now a summary array; get raw day data from allData for per-day store access
+  const rawWeekDays = (allData && allData.weeks && weekData.week && allData.weeks[weekData.week])
+    ? (allData.weeks[weekData.week].days || {}) : {};
+  const dayData = (typeof rawWeekDays === 'object' && !Array.isArray(rawWeekDays)) ? rawWeekDays : {};
   const dayKeys = Object.keys(dayData).sort();
 
   const round1 = v => v != null && !isNaN(v) ? Math.round(v * 10) / 10 : null;
