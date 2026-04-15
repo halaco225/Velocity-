@@ -2097,19 +2097,44 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
     const ODS_ORG  = process.env.ODS_ORG      || 'dgi';
     const ODS_USER = process.env.ODS_USER      || 'hlacoste';
     const ODS_PASS = process.env.ODS_PASSWORD || process.env.ODS_Password;
-    if (!ODS_PASS) return res.status(500).json({ error: 'ODS_PASSWORD env variable not set on Render' });
+    if (\!ODS_PASS) return res.status(500).json({ error: 'ODS_PASSWORD env variable not set on Render' });
 
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const dateStr = yesterday.toISOString().split('T')[0];
     console.log(`[ODS Pull] Fetching Daily Dispatch Performance for ${dateStr}`);
 
-    function httpsReq(options, postData) {
+    // httpsReq that optionally follows redirects
+    function httpsReq(options, postData, maxRedirects) {
+      maxRedirects = (maxRedirects === undefined) ? 5 : maxRedirects;
       return new Promise((resolve, reject) => {
         const req = https.request(options, (r) => {
           const chunks = [];
           r.on('data', d => chunks.push(d));
-          r.on('end', () => resolve({ body: Buffer.concat(chunks), headers: r.headers, statusCode: r.statusCode }));
+          r.on('end', () => {
+            const result = { body: Buffer.concat(chunks), headers: r.headers, statusCode: r.statusCode };
+            // Follow redirects automatically
+            if ((r.statusCode === 301 || r.statusCode === 302 || r.statusCode === 303) && r.headers.location && maxRedirects > 0) {
+              const loc = r.headers.location;
+              const url = new URL(loc, `https://${options.hostname}`);
+              const newOpts = {
+                hostname: url.hostname,
+                path: url.pathname + url.search,
+                method: 'GET',
+                headers: { 'User-Agent': options.headers['User-Agent'] || '', 'Cookie': options.headers['Cookie'] || '' }
+              };
+              // Merge any new cookies from this redirect response
+              if (r.headers['set-cookie']) {
+                const map = {};
+                (options.headers['Cookie'] || '').split('; ').forEach(c => { const [k,v] = c.split('='); if (k&&v) map[k.trim()]=v.trim(); });
+                [].concat(r.headers['set-cookie']).forEach(c => { const p = c.split(';')[0]; const [k,v] = p.split('='); if (k&&v) map[k.trim()]=v.trim(); });
+                newOpts.headers['Cookie'] = Object.entries(map).map(([k,v]) => `${k}=${v}`).join('; ');
+              }
+              resolve(httpsReq(newOpts, null, maxRedirects - 1));
+            } else {
+              resolve(result);
+            }
+          });
         });
         req.on('error', reject);
         if (postData) req.write(postData);
@@ -2127,16 +2152,18 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
     const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36';
 
     // Step 1: GET login page for initial cookie
-    const r1 = await httpsReq({ hostname:'bi.onedatasource.com', path:'/asp/login.html', method:'GET', headers:{'User-Agent':UA} });
+    const r1 = await httpsReq({ hostname:'bi.onedatasource.com', path:'/asp/login.html', method:'GET', headers:{'User-Agent':UA,'Cookie':''} }, null, 0);
     let cookie = mergeCookies('', r1.headers['set-cookie']);
+    console.log(`[ODS Pull] Step1: HTTP ${r1.statusCode}, cookie=${cookie.substring(0,40)}`);
 
-    // Step 2: POST login
+    // Step 2: POST login (follow redirects to establish session)
     const loginBody = querystring.stringify({ orgCode:ODS_ORG, userId:ODS_USER, password:ODS_PASS, _eventId:'login', locale:'en_US', timezone:'America/New_York' });
     const r2 = await httpsReq({
       hostname:'bi.onedatasource.com', path:'/asp/login.html', method:'POST',
       headers:{ 'Content-Type':'application/x-www-form-urlencoded','Content-Length':Buffer.byteLength(loginBody),'Cookie':cookie,'User-Agent':UA }
     }, loginBody);
     cookie = mergeCookies(cookie, r2.headers['set-cookie']);
+    console.log(`[ODS Pull] Step2 (login): HTTP ${r2.statusCode}, finalCookie len=${cookie.length}`);
     if (r2.statusCode >= 400) return res.status(500).json({ error:`ODS login failed: HTTP ${r2.statusCode}` });
 
     // Step 3: GET report parameters page to get CSRF + flowExecutionKey
@@ -2144,32 +2171,41 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
       hostname:'bi.onedatasource.com',
       path:'/asp/flow.html?_flowId=aboveStoreInStoreReportsFlow&_eventId=selectParameters&selectedReportId=457',
       method:'GET', headers:{'Cookie':cookie,'User-Agent':UA}
-    });
+    }, null, 0);
     cookie = mergeCookies(cookie, r3.headers['set-cookie']);
     const html3 = r3.body.toString();
+    console.log(`[ODS Pull] Step3: HTTP ${r3.statusCode}, bodyLen=${html3.length}, has_form=${html3.includes('OWASP_CSRFTOKEN')}`);
+
+    if (r3.statusCode === 302 || r3.statusCode === 301) {
+      return res.status(500).json({ error:`ODS session not established after login, redirecting to: ${r3.headers.location}` });
+    }
+    if (html3.includes('login') && html3.length < 5000) {
+      return res.status(500).json({ error:'ODS redirected to login page — credentials may be wrong', preview: html3.substring(0,200) });
+    }
+
     const csrfMatch = html3.match(/name="OWASP_CSRFTOKEN"\s+value="([^"]+)"/);
     const csrfToken = csrfMatch ? csrfMatch[1] : '';
     const flowKeyMatch = html3.match(/_flowExecutionKey=([^"&\s]+)/);
     const flowKey = flowKeyMatch ? flowKeyMatch[1] : 'e1s1';
     console.log(`[ODS Pull] flowKey=${flowKey} csrf=${csrfToken?'ok':'missing'}`);
 
-    // Step 4: POST form to get PDF
+    // Step 4: POST form to get PDF (no redirect following — we want the raw response)
     const reportBody = querystring.stringify({
       _eventId:'retrieveReports', orgTypes:'territory', orgTypeValues:'26',
       storesInOrgType:'all', selectedDate:dateStr, exportFormat:'pdf', OWASP_CSRFTOKEN:csrfToken
     });
     const r4 = await httpsReq({
       hostname:'bi.onedatasource.com',
-      path:`/asp/flow.html?_flowId=aboveStoreInStoreReportsFlow&_flowExecutionKey=${flowKey}&_eventId=selectParameters&selectedReportId=457`,
+      path:`/asp/flow.html?_flowId=aboveStoreInStoreReportsFlow&_flowExecutionKey=${flowKey}&_eventId=retrieveReports&selectedReportId=457`,
       method:'POST',
-      headers:{ 'Content-Type':'application/x-www-form-urlencoded','Content-Length':Buffer.byteLength(reportBody),'Cookie':cookie,'User-Agent':UA,'Referer':'https://bi.onedatasource.com/' }
-    }, reportBody);
+      headers:{ 'Content-Type':'application/x-www-form-urlencoded','Content-Length':Buffer.byteLength(reportBody),'Cookie':cookie,'User-Agent':UA,'Referer':'https://bi.onedatasource.com/asp/flow.html' }
+    }, reportBody, 0);
     cookie = mergeCookies(cookie, r4.headers['set-cookie']);
     const ct = r4.headers['content-type'] || '';
-    console.log(`[ODS Pull] Report response: HTTP ${r4.statusCode}, type=${ct}, size=${r4.body.length}`);
+    console.log(`[ODS Pull] Step4: HTTP ${r4.statusCode}, type=${ct}, size=${r4.body.length}, location=${r4.headers.location||'none'}`);
 
-    if (!ct.includes('pdf') && r4.body.length < 5000) {
-      return res.status(500).json({ error:'Did not receive PDF', statusCode:r4.statusCode, contentType:ct, preview:r4.body.toString().substring(0,300) });
+    if (\!ct.includes('pdf') && r4.body.length < 50000) {
+      return res.status(500).json({ error:'Did not receive PDF', statusCode:r4.statusCode, contentType:ct, location:r4.headers.location||'', preview:r4.body.toString().substring(0,500) });
     }
 
     // Step 5: Save PDF and parse
@@ -2178,20 +2214,20 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
     const parsed = parseAboveStorePDFLocal(tmpPdf);
     try { fs.unlinkSync(tmpPdf); } catch(e) {}
 
-    if (!parsed.stores || !parsed.stores.length) {
+    if (\!parsed.stores || \!parsed.stores.length) {
       return res.status(200).json({ success:false, message:'PDF downloaded but no stores parsed', date:dateStr, pdfBytes:r4.body.length });
     }
 
     // Step 6: Merge into wtd_data
     const weekKey = getWeekKey(dateStr);
     const allData2 = loadData();
-    if (!allData2.weeks[weekKey]) allData2.weeks[weekKey] = { week:weekKey, period:FISCAL_CALENDAR[weekKey]||'', days:{} };
-    if (!allData2.weeks[weekKey].days[dateStr]) allData2.weeks[weekKey].days[dateStr] = { date:dateStr, type:'ods_auto', stores:[], uploader:'ODS Auto' };
+    if (\!allData2.weeks[weekKey]) allData2.weeks[weekKey] = { week:weekKey, period:FISCAL_CALENDAR[weekKey]||'', days:{} };
+    if (\!allData2.weeks[weekKey].days[dateStr]) allData2.weeks[weekKey].days[dateStr] = { date:dateStr, type:'ods_auto', stores:[], uploader:'ODS Auto' };
     const existing = {};
     (allData2.weeks[weekKey].days[dateStr].stores||[]).forEach(s => { existing[s.store_id]=s; });
     parsed.stores.forEach(s => {
       const align = ALIGNMENT[s.store_id];
-      if (!align && !existing[s.store_id]) return;
+      if (\!align && \!existing[s.store_id]) return;
       if (existing[s.store_id]) Object.assign(existing[s.store_id], s);
       else existing[s.store_id] = { ...s, ...(align||{}) };
     });
