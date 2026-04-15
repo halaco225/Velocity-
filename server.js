@@ -36,7 +36,32 @@ app.use(express.static(path.join(__dirname, 'public'), {
   }
 }));
 
-const DATA_FILE = path.join(__dirname, 'wtd_data.json');
+// =====================
+// PERSISTENT STORAGE SETUP
+// Uses Render Disk at /var/data if available, falls back to local directory.
+// On first run with a fresh disk, seeds data from the bundled wtd_data.json.
+// =====================
+const DISK_PATH = process.env.RENDER_DISK_PATH || '/var/data';
+const DISK_DATA_FILE = path.join(DISK_PATH, 'wtd_data.json');
+const BUNDLED_DATA_FILE = path.join(__dirname, 'wtd_data.json');
+
+function getDataFilePath() {
+  try {
+    if (!fs.existsSync(DISK_PATH)) fs.mkdirSync(DISK_PATH, { recursive: true });
+    // Seed disk from bundled data on first startup
+    if (!fs.existsSync(DISK_DATA_FILE) && fs.existsSync(BUNDLED_DATA_FILE)) {
+      console.log('Seeding persistent disk from bundled wtd_data.json...');
+      fs.copyFileSync(BUNDLED_DATA_FILE, DISK_DATA_FILE);
+      console.log('Disk seeded successfully.');
+    }
+    return DISK_DATA_FILE;
+  } catch(e) {
+    console.warn('Disk path not available, using local file:', e.message);
+    return BUNDLED_DATA_FILE;
+  }
+}
+
+const DATA_FILE = getDataFilePath();
 
 // =====================
 // DATA STORAGE - Multi-week
@@ -2228,39 +2253,4 @@ app.post('/api/automation/test-email', verifyAutomationAuth, async (req, res) =>
 
     res.json({ success: true, messageId: info.messageId, response: info.response });
   } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
-// Get automation status
-app.get('/api/automation/status', verifyAutomationAuth, (req, res) => {
-  try {
-    const allData = loadData();
-    const weeks = Object.keys(allData.weeks || {}).sort((a, b) => b.localeCompare(a));
-    
-    // Get last upload info
-    let lastUpload = null;
-    if (weeks.length > 0) {
-      const latestWeek = allData.weeks[weeks[0]];
-      const days = Object.keys(latestWeek.days || {}).sort((a, b) => b.localeCompare(a));
-      if (days.length > 0) {
-        lastUpload = {
-          date: days[0],
-          week: weeks[0],
-          storeCount: latestWeek.days[days[0]].stores?.length || 0
-        };
-      }
-    }
-
-    res.json({
-      status: 'active',
-      lastUpload,
-      totalWeeks: weeks.length
-    });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => console.log(`Velocity running on port ${PORT}`));
+  
