@@ -48,7 +48,16 @@ const BUNDLED_DATA_FILE = path.join(__dirname, 'wtd_data.json');
 function getDataFilePath() {
   try {
     if (!fs.existsSync(DISK_PATH)) fs.mkdirSync(DISK_PATH, { recursive: true });
-    if (!fs.existsSync(DISK_DATA_FILE) && fs.existsSync(BUNDLED_DATA_FILE)) {
+    // Seed if disk file missing, empty, or has no weeks (e.g. from a failed deploy)
+    let needsSeed = !fs.existsSync(DISK_DATA_FILE);
+    if (!needsSeed) {
+      try {
+        const raw = fs.readFileSync(DISK_DATA_FILE, 'utf8');
+        const parsed = JSON.parse(raw);
+        if (!parsed.weeks || Object.keys(parsed.weeks).length === 0) needsSeed = true;
+      } catch(e) { needsSeed = true; }
+    }
+    if (needsSeed && fs.existsSync(BUNDLED_DATA_FILE)) {
       console.log('Seeding persistent disk from bundled wtd_data.json...');
       fs.copyFileSync(BUNDLED_DATA_FILE, DISK_DATA_FILE);
       console.log('Disk seeded successfully.');
