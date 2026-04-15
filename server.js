@@ -2126,8 +2126,8 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
               // Merge any new cookies from this redirect response
               if (r.headers['set-cookie']) {
                 const map = {};
-                (options.headers['Cookie'] || '').split('; ').forEach(c => { const [k,v] = c.split('='); if (k&&v) map[k.trim()]=v.trim(); });
-                [].concat(r.headers['set-cookie']).forEach(c => { const p = c.split(';')[0]; const [k,v] = p.split('='); if (k&&v) map[k.trim()]=v.trim(); });
+                (options.headers['Cookie'] || '').split('; ').forEach(c => { const idx=c.indexOf('='); if(idx>0) map[c.substring(0,idx).trim()]=c.substring(idx+1).trim(); });
+                [].concat(r.headers['set-cookie']).forEach(c => { const p=c.split(';')[0]; const idx=p.indexOf('='); if(idx>0) map[p.substring(0,idx).trim()]=p.substring(idx+1).trim(); });
                 newOpts.headers['Cookie'] = Object.entries(map).map(([k,v]) => `${k}=${v}`).join('; ');
               }
               resolve(httpsReq(newOpts, null, maxRedirects - 1));
@@ -2144,8 +2144,8 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
 
     function mergeCookies(existing, newSetCookies) {
       const map = {};
-      (existing || '').split('; ').forEach(c => { const [k,v] = c.split('='); if (k&&v) map[k.trim()]=v.trim(); });
-      [].concat(newSetCookies||[]).forEach(c => { const p = c.split(';')[0]; const [k,v] = p.split('='); if (k&&v) map[k.trim()]=v.trim(); });
+      (existing || '').split('; ').forEach(c => { const idx=c.indexOf('='); if(idx>0) map[c.substring(0,idx).trim()]=c.substring(idx+1).trim(); });
+      [].concat(newSetCookies||[]).forEach(c => { const p=c.split(';')[0]; const idx=p.indexOf('='); if(idx>0) map[p.substring(0,idx).trim()]=p.substring(idx+1).trim(); });
       return Object.entries(map).map(([k,v]) => `${k}=${v}`).join('; ');
     }
 
@@ -2156,15 +2156,30 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
     let cookie = mergeCookies('', r1.headers['set-cookie']);
     console.log(`[ODS Pull] Step1: HTTP ${r1.statusCode}, cookie=${cookie.substring(0,40)}`);
 
-    // Step 2: POST login (follow redirects to establish session)
+    // Step 2: POST login (manually follow redirects to capture ALL intermediate cookies)
     const loginBody = querystring.stringify({ orgCode:ODS_ORG, userId:ODS_USER, password:ODS_PASS, _eventId:'login', locale:'en_US', timezone:'America/New_York' });
-    const r2 = await httpsReq({
+    const r2a = await httpsReq({
       hostname:'bi.onedatasource.com', path:'/asp/login.html', method:'POST',
       headers:{ 'Content-Type':'application/x-www-form-urlencoded','Content-Length':Buffer.byteLength(loginBody),'Cookie':cookie,'User-Agent':UA }
-    }, loginBody);
-    cookie = mergeCookies(cookie, r2.headers['set-cookie']);
-    console.log(`[ODS Pull] Step2 (login): HTTP ${r2.statusCode}, finalCookie len=${cookie.length}`);
-    if (r2.statusCode >= 400) return res.status(500).json({ error:`ODS login failed: HTTP ${r2.statusCode}` });
+    }, loginBody, 0);
+    cookie = mergeCookies(cookie, r2a.headers['set-cookie']);
+    console.log(`[ODS Pull] Step2a (login POST): HTTP ${r2a.statusCode}, cookie len=${cookie.length}, location=${r2a.headers.location||'none'}`);
+    if (r2a.statusCode >= 400) return res.status(500).json({ error:`ODS login POST failed: HTTP ${r2a.statusCode}` });
+
+    // Step 2b: Follow login redirect manually to capture authenticated session cookie
+    if ((r2a.statusCode===301||r2a.statusCode===302||r2a.statusCode===303) && r2a.headers.location) {
+      const loc2b = new URL(r2a.headers.location, 'https://bi.onedatasource.com');
+      const r2b = await httpsReq({ hostname:loc2b.hostname, path:loc2b.pathname+loc2b.search, method:'GET', headers:{'Cookie':cookie,'User-Agent':UA} }, null, 0);
+      cookie = mergeCookies(cookie, r2b.headers['set-cookie']);
+      console.log(`[ODS Pull] Step2b (login redirect GET): HTTP ${r2b.statusCode}, cookie len=${cookie.length}, location=${r2b.headers.location||'none'}`);
+      // Follow one more redirect if needed
+      if ((r2b.statusCode===301||r2b.statusCode===302||r2b.statusCode===303) && r2b.headers.location) {
+        const loc2c = new URL(r2b.headers.location, 'https://bi.onedatasource.com');
+        const r2c = await httpsReq({ hostname:loc2c.hostname, path:loc2c.pathname+loc2c.search, method:'GET', headers:{'Cookie':cookie,'User-Agent':UA} }, null, 0);
+        cookie = mergeCookies(cookie, r2c.headers['set-cookie']);
+        console.log(`[ODS Pull] Step2c (login redirect2 GET): HTTP ${r2c.statusCode}, cookie len=${cookie.length}`);
+      }
+    }
 
     // Step 3: GET report parameters page to get CSRF + flowExecutionKey
     const r3 = await httpsReq({
