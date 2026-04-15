@@ -2159,9 +2159,23 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
     const hiddenFields = [...html1.matchAll(/<input[^>]+type="hidden"[^>]+name="([^"]+)"[^>]+value="([^"]*)"/gi)].map(m => m[1]+'='+m[2]);
     console.log(`[ODS Pull] Step1: HTTP ${r1.statusCode}, cookie=${cookie.substring(0,40)}, formAction=${formActionMatch?formActionMatch[1]:'NOT FOUND'}, hiddenFields=${hiddenFields.join('|')}`);
 
-    // Step 2: POST login using the actual form action discovered from Step 1
-    const loginPath = (formActionMatch && formActionMatch[1].startsWith('/')) ? formActionMatch[1] : '/asp/login.html';
-    const loginBody = querystring.stringify({ orgCode:ODS_ORG, userId:ODS_USER, password:ODS_PASS, _eventId:'login', locale:'en_US', timezone:'America/New_York' });
+    // Step 2: POST login using the actual form action and Spring Security field names
+    // formAction is relative (e.g. 'j_spring_security_check') so resolve to /asp/<action>
+    let loginPath = '/asp/login.html';
+    if (formActionMatch) {
+      const fa = formActionMatch[1];
+      if (fa.startsWith('/')) loginPath = fa;
+      else if (fa.startsWith('http')) loginPath = new URL(fa).pathname;
+      else loginPath = '/asp/' + fa;
+    }
+    console.log(`[ODS Pull] Using loginPath=${loginPath}`);
+
+    // Extract hidden form fields to include in POST
+    const hiddenFieldData = {};
+    [...html1.matchAll(/<input[^>]+type="hidden"[^>]+name="([^"]+)"[^>]+value="([^"]*)"/gi)].forEach(m => { hiddenFieldData[m[1]] = m[2]; });
+
+    // Spring Security uses j_username / j_password field names
+    const loginBody = querystring.stringify({ ...hiddenFieldData, orgCode:ODS_ORG, j_username:ODS_USER, j_password:ODS_PASS, _eventId:'login', locale:'en_US', timezone:'America/New_York' });
     const r2a = await httpsReq({
       hostname:'bi.onedatasource.com', path:loginPath, method:'POST',
       headers:{ 'Content-Type':'application/x-www-form-urlencoded','Content-Length':Buffer.byteLength(loginBody),'Cookie':cookie,'User-Agent':UA,'Referer':'https://bi.onedatasource.com/asp/login.html' }
