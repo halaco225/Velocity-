@@ -1750,469 +1750,170 @@ app.post('/api/automation/send-emails', verifyAutomationAuth, async (req, res) =
 function generateExcelExport(weekData, allData = null) {
   const wb = XLSX.utils.book_new();
   const stores = weekData.stores || [];
-  
-  // Get period/week info
   const period = weekData.period || 'P4W3';
-  const weekStart = weekData.weekStart || '4/7';
-  const weekEnd = weekData.weekEnd || '4/13';
+  const weekStart = weekData.weekStart || '';
+  const weekEnd = weekData.weekEnd || '';
   const dayData = weekData.days || {};
   const dayKeys = Object.keys(dayData).sort();
-  
-  // Helper to calculate totals
-  function calculateTotals(storeList) {
-    const totalOrders = storeList.reduce((sum, s) => sum + (s.total_orders || s.wtd_deliveries || 0), 0);
-    const avgIST = storeList.reduce((sum, s) => sum + (s.wtd_in_store || s.ist_avg || 0), 0) / storeList.length;
-    const istLt10 = storeList.reduce((sum, s) => sum + (s.ist_lt10 || 0), 0);
-    const ist1014 = storeList.reduce((sum, s) => sum + (s.ist_1014 || 0), 0);
-    const ist1518 = storeList.reduce((sum, s) => sum + (s.ist_1518 || 0), 0);
-    const ist1925 = storeList.reduce((sum, s) => sum + (s.ist_1925 || 0), 0);
-    const istGt25 = storeList.reduce((sum, s) => sum + (s.ist_gt25 || 0), 0);
-    const lt19Pct = storeList.reduce((sum, s) => sum + (parseFloat(s.ist_lt19_pct) || 0), 0) / storeList.length;
-    
-    return {
-      totalOrders,
-      avgIST,
-      istLt10,
-      ist1014,
-      ist1518,
-      ist1925,
-      istGt25,
-      lt19Pct
-    };
+
+  const round1 = v => v != null && !isNaN(v) ? Math.round(v * 10) / 10 : null;
+
+  // Weighted average IST by order count
+  function calcTotals(storeList) {
+    const totalOrders = storeList.reduce((s, x) => s + (x.total_orders || x.wtd_deliveries || 0), 0);
+    const weightedIST = storeList.reduce((s, x) => {
+      const orders = x.total_orders || x.wtd_deliveries || 0;
+      const ist = x.wtd_in_store || x.ist_avg || 0;
+      return s + ist * orders;
+    }, 0);
+    const avgIST = totalOrders > 0 ? round1(weightedIST / totalOrders) : null;
+    const lt10   = storeList.reduce((s, x) => s + (x.ist_lt10  || 0), 0);
+    const i1014  = storeList.reduce((s, x) => s + (x.ist_1014  || 0), 0);
+    const i1518  = storeList.reduce((s, x) => s + (x.ist_1518  || 0), 0);
+    const i1925  = storeList.reduce((s, x) => s + (x.ist_1925  || 0), 0);
+    const gt25   = storeList.reduce((s, x) => s + (x.ist_gt25  || 0), 0);
+    const lt19   = lt10 + i1014 + i1518;
+    const lt19Pct = totalOrders > 0 ? lt19 / totalOrders : null;
+    return { totalOrders, avgIST, lt10, i1014, i1518, i1925, gt25, lt19Pct };
   }
-  
-  // === WTD IST Sheet ===
-  const wtdRows = [
-    [`WTD IST — ${period} ${weekStart}-${weekEnd}`],
-    ['Level', 'Region', 'Area Coach', 'Store #', 'Store Name', 'Avg IST (mins)', 'Total Orders', 
-     'IST <10 #', 'IST <10 %', 'IST 10-14 #', 'IST 10-14 %', 'IST 15-18 #', 'IST 15-18 %', 
-     'IST 19-25 #', 'IST 19-25 %', 'IST >25 #', 'IST >25 %', 'IST <19 %']
-  ];
-  
-  // TOTAL row
-  const totals = calculateTotals(stores);
-  wtdRows.push([
-    'TOTAL', 'ALL REGIONS', '', '', `${stores.length} Stores`,
-    totals.avgIST, totals.totalOrders,
-    totals.istLt10, totals.istLt10 / totals.totalOrders,
-    totals.ist1014, totals.ist1014 / totals.totalOrders,
-    totals.ist1518, totals.ist1518 / totals.totalOrders,
-    totals.ist1925, totals.ist1925 / totals.totalOrders,
-    totals.istGt25, totals.istGt25 / totals.totalOrders,
-    totals.lt19Pct
-  ]);
-  
-  // Group by region
-  const byRegion = {};
-  stores.forEach(s => {
-    const region = s.region_coach || 'Unknown';
-    if (!byRegion[region]) byRegion[region] = [];
-    byRegion[region].push(s);
-  });
-  
-  // REGION rows
-  for (const [region, regionStores] of Object.entries(byRegion)) {
-    const regionTotals = calculateTotals(regionStores);
-    wtdRows.push([
-      'REGION', region, '', '', `${regionStores.length} Stores`,
-      regionTotals.avgIST, regionTotals.totalOrders,
-      regionTotals.istLt10, regionTotals.istLt10 / regionTotals.totalOrders,
-      regionTotals.ist1014, regionTotals.ist1014 / regionTotals.totalOrders,
-      regionTotals.ist1518, regionTotals.ist1518 / regionTotals.totalOrders,
-      regionTotals.ist1925, regionTotals.ist1925 / regionTotals.totalOrders,
-      regionTotals.istGt25, regionTotals.istGt25 / regionTotals.totalOrders,
-      regionTotals.lt19Pct
-    ]);
-    
-    // Group by area within region
-    const byArea = {};
-    regionStores.forEach(s => {
-      const area = s.area_coach || 'Unknown';
-      if (!byArea[area]) byArea[area] = [];
-      byArea[area].push(s);
+
+  function pct(n, d) { return d > 0 ? n / d : null; }
+
+  const HEADERS = ['Level','Region','Area Coach','Store #','Store Name','Avg IST (mins)',
+    'Total Orders','IST <10 #','IST <10 %','IST 10-14 #','IST 10-14 %',
+    'IST 15-18 #','IST 15-18 %','IST 19-25 #','IST 19-25 %',
+    'IST >25 #','IST >25 %','IST <19 %'];
+
+  // Group stores: byArea keyed on area (e.g. "Area 2011"), also track area_coach name
+  function groupStores(storeList) {
+    const byRegion = {};
+    storeList.forEach(s => {
+      const r = s.region_coach || 'Unknown';
+      if (!byRegion[r]) byRegion[r] = { stores: [], byArea: {} };
+      byRegion[r].stores.push(s);
+      const a = s.area || s.area_coach || 'Unknown';
+      if (!byRegion[r].byArea[a]) byRegion[r].byArea[a] = { stores: [], coach: s.area_coach || '' };
+      byRegion[r].byArea[a].stores.push(s);
     });
-    
-    // AREA rows
-    for (const [area, areaStores] of Object.entries(byArea)) {
-      const areaTotals = calculateTotals(areaStores);
-      wtdRows.push([
-        'AREA', region, area, '', `${areaStores.length} Stores`,
-        areaTotals.avgIST, areaTotals.totalOrders,
-        areaTotals.istLt10, areaTotals.istLt10 / areaTotals.totalOrders,
-        areaTotals.ist1014, areaTotals.ist1014 / areaTotals.totalOrders,
-        areaTotals.ist1518, areaTotals.ist1518 / areaTotals.totalOrders,
-        areaTotals.ist1925, areaTotals.ist1925 / areaTotals.totalOrders,
-        areaTotals.istGt25, areaTotals.istGt25 / areaTotals.totalOrders,
-        areaTotals.lt19Pct
-      ]);
-      
-      // STORE rows
-      areaStores.forEach(s => {
-        const totalOrders = s.total_orders || s.wtd_deliveries || 0;
-        wtdRows.push([
-          'STORE', s.region_coach || '', s.area_coach || '', s.store_id || '', s.name || '',
-          s.wtd_in_store || '', totalOrders,
-          s.ist_lt10 || '', s.ist_lt10_pct || '',
-          s.ist_1014 || '', s.ist_1014_pct || '',
-          s.ist_1518 || '', s.ist_1518_pct || '',
-          s.ist_1925 || '', s.ist_1925_pct || '',
-          s.ist_gt25 || '', s.ist_gt25_pct || '',
-          s.ist_lt19_pct || ''
-        ]);
-      });
-    }
+    return byRegion;
   }
-  
-  const wtdWs = XLSX.utils.aoa_to_sheet(wtdRows);
+
+  function buildRows(title, storeList, heading) {
+    const rows = [[title], HEADERS];
+    const t = calcTotals(storeList);
+    rows.push(['TOTAL','ALL REGIONS','','',`${storeList.length} Stores`,
+      t.avgIST, t.totalOrders,
+      t.lt10, pct(t.lt10,t.totalOrders), t.i1014, pct(t.i1014,t.totalOrders),
+      t.i1518, pct(t.i1518,t.totalOrders), t.i1925, pct(t.i1925,t.totalOrders),
+      t.gt25, pct(t.gt25,t.totalOrders), t.lt19Pct]);
+
+    const byRegion = groupStores(storeList);
+    for (const [region, rdata] of Object.entries(byRegion)) {
+      const rt = calcTotals(rdata.stores);
+      rows.push(['REGION', region, '','',`${rdata.stores.length} Stores`,
+        rt.avgIST, rt.totalOrders,
+        rt.lt10, pct(rt.lt10,rt.totalOrders), rt.i1014, pct(rt.i1014,rt.totalOrders),
+        rt.i1518, pct(rt.i1518,rt.totalOrders), rt.i1925, pct(rt.i1925,rt.totalOrders),
+        rt.gt25, pct(rt.gt25,rt.totalOrders), rt.lt19Pct]);
+
+      for (const [areaKey, adata] of Object.entries(rdata.byArea)) {
+        const at = calcTotals(adata.stores);
+        rows.push(['AREA', region, adata.coach, areaKey, `${adata.stores.length} Stores`,
+          at.avgIST, at.totalOrders,
+          at.lt10, pct(at.lt10,at.totalOrders), at.i1014, pct(at.i1014,at.totalOrders),
+          at.i1518, pct(at.i1518,at.totalOrders), at.i1925, pct(at.i1925,at.totalOrders),
+          at.gt25, pct(at.gt25,at.totalOrders), at.lt19Pct]);
+
+        adata.stores.forEach(s => {
+          const orders = s.total_orders || s.wtd_deliveries || 0;
+          const ist = round1(s.wtd_in_store || s.ist_avg || null);
+          rows.push(['STORE', s.region_coach||'', s.area_coach||'', s.store_id||'', s.name||'',
+            ist, orders,
+            s.ist_lt10||0, s.ist_lt10_pct||pct(s.ist_lt10,orders),
+            s.ist_1014||0, s.ist_1014_pct||pct(s.ist_1014,orders),
+            s.ist_1518||0, s.ist_1518_pct||pct(s.ist_1518,orders),
+            s.ist_1925||0, s.ist_1925_pct||pct(s.ist_1925,orders),
+            s.ist_gt25||0, s.ist_gt25_pct||pct(s.ist_gt25,orders),
+            s.ist_lt19_pct||null]);
+        });
+      }
+    }
+    return rows;
+  }
+
+  // Day name helpers
+  const DAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const MON_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function dayLabel(dateStr) {
+    const [y,m,d] = dateStr.split('-').map(Number);
+    const dt = new Date(y, m-1, d);
+    return `${DAY_SHORT[dt.getDay()]}, ${MON_SHORT[m-1]} ${d}`;
+  }
+  function dayLabelShort(dateStr) {
+    const [y,m,d] = dateStr.split('-').map(Number);
+    const dt = new Date(y, m-1, d);
+    return `${DAY_SHORT[dt.getDay()]}, ${m}/${d}`;
+  }
+
+  // WTD sheet
+  const wtdWs = XLSX.utils.aoa_to_sheet(buildRows(`WTD IST — ${period} ${weekStart}-${weekEnd}`, stores));
   XLSX.utils.book_append_sheet(wb, wtdWs, 'WTD IST');
-  
-  // === PTD IST Sheet ===
-  const ptdRows = [
-    [`PTD IST — ${period.split('W')[0]} (Period To Date)`],
-    ['Level', 'Region', 'Area Coach', 'Store #', 'Store Name', 'Avg IST (mins)', 'Total Orders', 
-     'IST <10 #', 'IST <10 %', 'IST 10-14 #', 'IST 10-14 %', 'IST 15-18 #', 'IST 15-18 %', 
-     'IST 19-25 #', 'IST 19-25 %', 'IST >25 #', 'IST >25 %', 'IST <19 %']
-  ];
-  
-  // Use same structure as WTD
-  ptdRows.push([
-    'TOTAL', 'ALL REGIONS', '', '', `${stores.length} Stores`,
-    totals.avgIST, totals.totalOrders,
-    totals.istLt10, totals.istLt10 / totals.totalOrders,
-    totals.ist1014, totals.ist1014 / totals.totalOrders,
-    totals.ist1518, totals.ist1518 / totals.totalOrders,
-    totals.ist1925, totals.ist1925 / totals.totalOrders,
-    totals.istGt25, totals.istGt25 / totals.totalOrders,
-    totals.lt19Pct
-  ]);
-  
-  for (const [region, regionStores] of Object.entries(byRegion)) {
-    const regionTotals = calculateTotals(regionStores);
-    ptdRows.push([
-      'REGION', region, '', '', `${regionStores.length} Stores`,
-      regionTotals.avgIST, regionTotals.totalOrders,
-      regionTotals.istLt10, regionTotals.istLt10 / regionTotals.totalOrders,
-      regionTotals.ist1014, regionTotals.ist1014 / regionTotals.totalOrders,
-      regionTotals.ist1518, regionTotals.ist1518 / regionTotals.totalOrders,
-      regionTotals.ist1925, regionTotals.ist1925 / regionTotals.totalOrders,
-      regionTotals.istGt25, regionTotals.istGt25 / regionTotals.totalOrders,
-      regionTotals.lt19Pct
-    ]);
-    
-    const byArea = {};
-    regionStores.forEach(s => {
-      const area = s.area_coach || 'Unknown';
-      if (!byArea[area]) byArea[area] = [];
-      byArea[area].push(s);
-    });
-    
-    for (const [area, areaStores] of Object.entries(byArea)) {
-      const areaTotals = calculateTotals(areaStores);
-      ptdRows.push([
-        'AREA', region, area, '', `${areaStores.length} Stores`,
-        areaTotals.avgIST, areaTotals.totalOrders,
-        areaTotals.istLt10, areaTotals.istLt10 / areaTotals.totalOrders,
-        areaTotals.ist1014, areaTotals.ist1014 / areaTotals.totalOrders,
-        areaTotals.ist1518, areaTotals.ist1518 / areaTotals.totalOrders,
-        areaTotals.ist1925, areaTotals.ist1925 / areaTotals.totalOrders,
-        areaTotals.istGt25, areaTotals.istGt25 / areaTotals.totalOrders,
-        areaTotals.lt19Pct
-      ]);
-      
-      areaStores.forEach(s => {
-        const totalOrders = s.total_orders || s.wtd_deliveries || 0;
-        ptdRows.push([
-          'STORE', s.region_coach || '', s.area_coach || '', s.store_id || '', s.name || '',
-          s.wtd_in_store || '', totalOrders,
-          s.ist_lt10 || '', s.ist_lt10_pct || '',
-          s.ist_1014 || '', s.ist_1014_pct || '',
-          s.ist_1518 || '', s.ist_1518_pct || '',
-          s.ist_1925 || '', s.ist_1925_pct || '',
-          s.ist_gt25 || '', s.ist_gt25_pct || '',
-          s.ist_lt19_pct || ''
-        ]);
-      });
-    }
-  }
-  
-  const ptdWs = XLSX.utils.aoa_to_sheet(ptdRows);
+
+  // PTD sheet (same data for now — full PTD would need all weeks in period)
+  const ptdWs = XLSX.utils.aoa_to_sheet(buildRows(`PTD IST — ${period.split('W')[0]} (Period To Date)`, stores));
   XLSX.utils.book_append_sheet(wb, ptdWs, 'PTD IST');
-  
-  // === Daily Sheets ===
-  const dayNamesFull = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  
-  dayKeys.forEach((dayKey, idx) => {
+
+  // Daily sheets
+  dayKeys.forEach(dayKey => {
     const dayStores = dayData[dayKey]?.stores || [];
-    const dateParts = dayKey.split('-');
-    const dateObj = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
-    const dayName = dayNamesFull[dateObj.getDay()];
-    const month = months[parseInt(dateParts[1]) - 1];
-    const day = parseInt(dateParts[2]);
-    const sheetName = `${dayName}, ${month} ${day}`;
-    
-    const dayRows = [
-      [`${sheetName} — ${period}`],
-      ['Level', 'Region', 'Area Coach', 'Store #', 'Store Name', 'Avg IST (mins)', 'Total Orders', 
-       'IST <10 #', 'IST <10 %', 'IST 10-14 #', 'IST 10-14 %', 'IST 15-18 #', 'IST 15-18 %', 
-       'IST 19-25 #', 'IST 19-25 %', 'IST >25 #', 'IST >25 %', 'IST <19 %']
-    ];
-    
-    // TOTAL row for day
-    const dayTotals = calculateTotals(dayStores);
-    dayRows.push([
-      'TOTAL', 'ALL REGIONS', '', '', `${dayStores.length} Stores`,
-      dayTotals.avgIST, dayTotals.totalOrders,
-      dayTotals.istLt10, dayTotals.istLt10 / dayTotals.totalOrders,
-      dayTotals.ist1014, dayTotals.ist1014 / dayTotals.totalOrders,
-      dayTotals.ist1518, dayTotals.ist1518 / dayTotals.totalOrders,
-      dayTotals.ist1925, dayTotals.ist1925 / dayTotals.totalOrders,
-      dayTotals.istGt25, dayTotals.istGt25 / dayTotals.totalOrders,
-      dayTotals.lt19Pct
-    ]);
-    
-    // Group by region for day
-    const byRegionDay = {};
-    dayStores.forEach(s => {
-      const region = s.region_coach || 'Unknown';
-      if (!byRegionDay[region]) byRegionDay[region] = [];
-      byRegionDay[region].push(s);
+    if (!dayStores.length) return;
+    const label = dayLabel(dayKey);
+    const ws = XLSX.utils.aoa_to_sheet(buildRows(`${label} — ${period}`, dayStores));
+    XLSX.utils.book_append_sheet(wb, ws, label);
+  });
+
+  // Trend sheet
+  const trendHeaders = ['Level','Region','Area Coach','Store #','Store Name',
+    ...dayKeys.map(dayLabelShort)];
+  const trendRows = [[`In-Store Time Trend — ${period} ${weekStart}-${weekEnd}`], trendHeaders];
+
+  function trendRow(level, region, coach, storeNum, storeName, storeList, getStores) {
+    const row = [level, region, coach, storeNum, storeName];
+    dayKeys.forEach(dk => {
+      const ds = getStores(dayData[dk]?.stores || []);
+      const t = calcTotals(ds);
+      row.push(ds.length > 0 ? t.avgIST : null);
     });
-    
-    for (const [region, regionStores] of Object.entries(byRegionDay)) {
-      const regionTotals = calculateTotals(regionStores);
-      dayRows.push([
-        'REGION', region, '', '', `${regionStores.length} Stores`,
-        regionTotals.avgIST, regionTotals.totalOrders,
-        regionTotals.istLt10, regionTotals.istLt10 / regionTotals.totalOrders,
-        regionTotals.ist1014, regionTotals.ist1014 / regionTotals.totalOrders,
-        regionTotals.ist1518, regionTotals.ist1518 / regionTotals.totalOrders,
-        regionTotals.ist1925, regionTotals.ist1925 / regionTotals.totalOrders,
-        regionTotals.istGt25, regionTotals.istGt25 / regionTotals.totalOrders,
-        regionTotals.lt19Pct
-      ]);
-      
-      const byAreaDay = {};
-      regionStores.forEach(s => {
-        const area = s.area_coach || 'Unknown';
-        if (!byAreaDay[area]) byAreaDay[area] = [];
-        byAreaDay[area].push(s);
-      });
-      
-      for (const [area, areaStores] of Object.entries(byAreaDay)) {
-        const areaTotals = calculateTotals(areaStores);
-        dayRows.push([
-          'AREA', region, area, '', `${areaStores.length} Stores`,
-          areaTotals.avgIST, areaTotals.totalOrders,
-          areaTotals.istLt10, areaTotals.istLt10 / areaTotals.totalOrders,
-          areaTotals.ist1014, areaTotals.ist1014 / areaTotals.totalOrders,
-          areaTotals.ist1518, areaTotals.ist1518 / areaTotals.totalOrders,
-          areaTotals.ist1925, areaTotals.ist1925 / areaTotals.totalOrders,
-          areaTotals.istGt25, areaTotals.istGt25 / areaTotals.totalOrders,
-          areaTotals.lt19Pct
-        ]);
-        
-        areaStores.forEach(s => {
-          const totalOrders = s.total_orders || 0;
-          dayRows.push([
-            'STORE', s.region_coach || '', s.area_coach || '', s.store_id || '', s.name || '',
-            s.ist_avg || s.in_store || '', totalOrders,
-            s.ist_lt10 || '', s.ist_lt10_pct || '',
-            s.ist_1014 || '', s.ist_1014_pct || '',
-            s.ist_1518 || '', s.ist_1518_pct || '',
-            s.ist_1925 || '', s.ist_1925_pct || '',
-            s.ist_gt25 || '', s.ist_gt25_pct || '',
-            s.ist_lt19_pct || ''
-          ]);
+    return row;
+  }
+
+  const byRegion = groupStores(stores);
+  // TOTAL trend row
+  trendRows.push(trendRow('TOTAL','ALL REGIONS','','',`${stores.length} Stores`, stores, ds => ds));
+  for (const [region, rdata] of Object.entries(byRegion)) {
+    trendRows.push(trendRow('REGION', region,'','',`${rdata.stores.length} Stores`, rdata.stores,
+      ds => ds.filter(s => s.region_coach === region)));
+    for (const [areaKey, adata] of Object.entries(rdata.byArea)) {
+      trendRows.push(trendRow('AREA', region, adata.coach, areaKey, `${adata.stores.length} Stores`,
+        adata.stores, ds => ds.filter(s => (s.area||s.area_coach) === areaKey)));
+      adata.stores.forEach(s => {
+        const row = ['STORE', s.region_coach||'', s.area_coach||'', s.store_id||'', s.name||''];
+        dayKeys.forEach(dk => {
+          const ds = dayData[dk]?.stores || [];
+          const match = ds.find(x => x.store_id === s.store_id);
+          row.push(match ? round1(match.ist_avg || match.in_store || match.wtd_in_store) : null);
         });
-      }
-    }
-    
-    const dayWs = XLSX.utils.aoa_to_sheet(dayRows);
-    XLSX.utils.book_append_sheet(wb, dayWs, sheetName);
-  });
-  
-  // === Trend Sheet ===
-  const trendRows = [
-    [`In-Store Time Trend — ${period} ${weekStart}-${weekEnd}`],
-    ['Level', 'Region', 'Area Coach', 'Store #', 'Store Name']
-  ];
-  
-  // Add day columns
-  dayKeys.forEach((dayKey, idx) => {
-    const dateParts = dayKey.split('-');
-    const dateObj = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
-    const dayName = dayNamesFull[dateObj.getDay()];
-    const month = months[parseInt(dateParts[1]) - 1];
-    const day = parseInt(dateParts[2]);
-    trendRows[1].push(`${dayName}, ${month} ${day}`);
-  });
-  
-  // Add change columns
-  for (let i = 0; i < dayKeys.length - 1; i++) {
-    const fromParts = dayKeys[i].split('-');
-    const toParts = dayKeys[i + 1].split('-');
-    const fromDateObj = new Date(parseInt(fromParts[0]), parseInt(fromParts[1]) - 1, parseInt(fromParts[2]));
-    const toDateObj = new Date(parseInt(toParts[0]), parseInt(toParts[1]) - 1, parseInt(toParts[2]));
-    const fromDayName = dayNamesFull[fromDateObj.getDay()];
-    const toDayName = dayNamesFull[toDateObj.getDay()];
-    const fromMonth = months[parseInt(fromParts[1]) - 1];
-    const fromDay = parseInt(fromParts[2]);
-    const toMonth = months[parseInt(toParts[1]) - 1];
-    const toDay = parseInt(toParts[2]);
-    trendRows[1].push(`Δ ${fromDayName}, ${fromMonth} ${fromDay}→${toDayName}, ${toMonth} ${toDay}`);
-  }
-  
-  // TOTAL row
-  const trendTotal = [ 'TOTAL', 'ALL REGIONS', '', '', `${stores.length} Stores` ];
-  dayKeys.forEach((dayKey, idx) => {
-    const dayStores = dayData[dayKey]?.stores || [];
-    const dayTotals = calculateTotals(dayStores);
-    trendTotal.push(dayTotals.avgIST);
-  });
-  // Add changes
-  for (let i = 0; i < dayKeys.length - 1; i++) {
-    const fromStores = dayData[dayKeys[i]]?.stores || [];
-    const toStores = dayData[dayKeys[i + 1]]?.stores || [];
-    const fromAvg = calculateTotals(fromStores).avgIST;
-    const toAvg = calculateTotals(toStores).avgIST;
-    const change = toAvg - fromAvg;
-    trendTotal.push(change > 0 ? `▲ +${change.toFixed(1)}` : change < 0 ? `▼ ${change.toFixed(1)}` : '—');
-  }
-  trendRows.push(trendTotal);
-  
-  // REGION rows
-  for (const [region, regionStores] of Object.entries(byRegion)) {
-    const trendRegion = ['REGION', region, '', '', `${regionStores.length} Stores`];
-    dayKeys.forEach((dayKey, idx) => {
-      const dayStores = dayData[dayKey]?.stores || [];
-      const regionDayStores = dayStores.filter(s => s.region_coach === region);
-      const dayTotals = calculateTotals(regionDayStores);
-      trendRegion.push(regionDayStores.length > 0 ? dayTotals.avgIST : NaN);
-    });
-    // Add changes
-    for (let i = 0; i < dayKeys.length - 1; i++) {
-      const fromStores = dayData[dayKeys[i]]?.stores || [];
-      const toStores = dayData[dayKeys[i + 1]]?.stores || [];
-      const fromAvg = calculateTotals(fromStores.filter(s => s.region_coach === region)).avgIST;
-      const toAvg = calculateTotals(toStores.filter(s => s.region_coach === region)).avgIST;
-      const change = toAvg - fromAvg;
-      trendRegion.push(change > 0 ? `▲ +${change.toFixed(1)}` : change < 0 ? `▼ ${change.toFixed(1)}` : '—');
-    }
-    trendRows.push(trendRegion);
-    
-    // AREA rows
-    const byArea = {};
-    regionStores.forEach(s => {
-      const area = s.area_coach || 'Unknown';
-      if (!byArea[area]) byArea[area] = [];
-      byArea[area].push(s);
-    });
-    
-    for (const [area, areaStores] of Object.entries(byArea)) {
-      const trendArea = ['AREA', region, area, '', `${areaStores.length} Stores`];
-      dayKeys.forEach((dayKey, idx) => {
-        const dayStores = dayData[dayKey]?.stores || [];
-        const areaDayStores = dayStores.filter(s => s.area_coach === area);
-        const dayTotals = calculateTotals(areaDayStores);
-        trendArea.push(areaDayStores.length > 0 ? dayTotals.avgIST : NaN);
-      });
-      // Add changes
-      for (let i = 0; i < dayKeys.length - 1; i++) {
-        const fromStores = dayData[dayKeys[i]]?.stores || [];
-        const toStores = dayData[dayKeys[i + 1]]?.stores || [];
-        const fromAvg = calculateTotals(fromStores.filter(s => s.area_coach === area)).avgIST;
-        const toAvg = calculateTotals(toStores.filter(s => s.area_coach === area)).avgIST;
-        const change = toAvg - fromAvg;
-        trendArea.push(change > 0 ? `▲ +${change.toFixed(1)}` : change < 0 ? `▼ ${change.toFixed(1)}` : '—');
-      }
-      trendRows.push(trendArea);
-      
-      // STORE rows
-      areaStores.forEach(s => {
-        const trendStore = ['STORE', s.region_coach || '', s.area_coach || '', s.store_id || '', s.name || ''];
-        dayKeys.forEach((dayKey, idx) => {
-          const dayStore = (dayData[dayKey]?.stores || []).find(ds => ds.store_id === s.store_id);
-          trendStore.push(dayStore?.ist_avg || dayStore?.in_store || NaN);
-        });
-        // Add changes
-        for (let i = 0; i < dayKeys.length - 1; i++) {
-          const fromStore = (dayData[dayKeys[i]]?.stores || []).find(ds => ds.store_id === s.store_id);
-          const toStore = (dayData[dayKeys[i + 1]]?.stores || []).find(ds => ds.store_id === s.store_id);
-          const fromAvg = fromStore?.ist_avg || fromStore?.in_store || NaN;
-          const toAvg = toStore?.ist_avg || toStore?.in_store || NaN;
-          const change = toAvg - fromAvg;
-          trendStore.push(change > 0 ? `▲ +${change.toFixed(1)}` : change < 0 ? `▼ ${change.toFixed(1)}` : '—');
-        }
-        trendRows.push(trendStore);
+        trendRows.push(row);
       });
     }
   }
-  
+
   const trendWs = XLSX.utils.aoa_to_sheet(trendRows);
   XLSX.utils.book_append_sheet(wb, trendWs, 'Trend');
-  
-  // === WTD History Sheet (Matt's request) ===
-  if (allData && allData.weeks) {
-    const historyRows = [
-      ['WTD History — Week-over-Week Progress'],
-      ['Store #', 'Store Name', 'Area Coach', 'Region Coach']
-    ];
-    
-    // Get all weeks sorted
-    const allWeeks = Object.keys(allData.weeks).sort();
-    
-    // Add week columns to header
-    allWeeks.forEach(weekKey => {
-      const weekInfo = allData.weeks[weekKey];
-      historyRows[1].push(`${weekInfo.period || weekKey} WTD IST`);
-      historyRows[1].push(`${weekInfo.period || weekKey} %LT19`);
-    });
-    
-    // Add change column
-    if (allWeeks.length >= 2) {
-      historyRows[1].push('IST Change (First→Last Week)');
-      historyRows[1].push('Progress');
-    }
-    
-    // Get unique stores from current week
-    stores.forEach(s => {
-      const row = [s.store_id, s.name, s.area_coach, s.region_coach];
-      let firstIST = null, lastIST = null;
-      
-      allWeeks.forEach(weekKey => {
-        const weekInfo = allData.weeks[weekKey];
-        const weekStores = weekInfo.stores || [];
-        const storeMatch = weekStores.find(ws => ws.store_id === s.store_id);
-        
-        if (storeMatch) {
-          row.push(storeMatch.wtd_in_store || '');
-          row.push(storeMatch.ist_lt19_pct || '');
-          
-          if (!firstIST && storeMatch.wtd_in_store) firstIST = storeMatch.wtd_in_store;
-          lastIST = storeMatch.wtd_in_store || lastIST;
-        } else {
-          row.push('');
-          row.push('');
-        }
-      });
-      
-      // Calculate progress
-      if (allWeeks.length >= 2 && firstIST && lastIST) {
-        const change = lastIST - firstIST;
-        row.push(change.toFixed(1));
-        row.push(change < 0 ? '✓ Improving' : change > 0 ? '⚠ Needs Attention' : '— Stable');
-      }
-      
-      historyRows.push(row);
-    });
-    
-    const historyWs = XLSX.utils.aoa_to_sheet(historyRows);
-    XLSX.utils.book_append_sheet(wb, historyWs, 'WTD History');
-  }
-  
+
   return XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
 }
+
 
 // Send test email
 app.post('/api/automation/test-email', verifyAutomationAuth, async (req, res) => {
