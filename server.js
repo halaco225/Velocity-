@@ -1207,11 +1207,10 @@ function computeWeek(wtd) {
       week: wtd.week,
       period: wtd.period || '',
       dateRange: getWeekDateRange(wtd.week),
-      days: days.reduce((acc, d) => {
-        acc[d.date] = { date: d.date, type: d.type, stores: d.stores || [], uploader: d.uploader };
-        return acc;
-      }, {}),
-      stores: storeWTD
+      days: days.map(d => ({ date: d.date, type: d.type, storeCount: (d.stores||[]).length, uploader: d.uploader || 'Matt Hester' })),
+      stores: storeWTD,
+      weekStart: days.length ? (d => (d.getUTCMonth()+1)+'/'+(d.getUTCDate()))(new Date(days[0].date+'T12:00:00Z')) : '',
+      weekEnd: days.length ? (d => (d.getUTCMonth()+1)+'/'+(d.getUTCDate()))(new Date(days[days.length-1].date+'T12:00:00Z')) : ''
     };
   }
 
@@ -1299,8 +1298,10 @@ function computeWeek(wtd) {
 
   return {
     week: wtd.week, period: wtd.period||'', dateRange: getWeekDateRange(wtd.week),
-    days: days.map(d => ({ date: d.date, type: d.type, storeCount: d.stores.length, uploader: d.uploader })),
-    stores: storeWTD
+    days: days.map(d => ({ date: d.date, type: d.type, storeCount: d.stores.length, uploader: d.uploader || 'Matt Hester' })),
+    stores: storeWTD,
+    weekStart: days.length ? (d => (d.getUTCMonth()+1)+'/'+(d.getUTCDate()))(new Date(days[0].date+'T12:00:00Z')) : '',
+    weekEnd: days.length ? (d => (d.getUTCMonth()+1)+'/'+(d.getUTCDate()))(new Date(days[days.length-1].date+'T12:00:00Z')) : ''
   };
 }
 
