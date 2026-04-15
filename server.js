@@ -2097,7 +2097,7 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
     const ODS_ORG  = process.env.ODS_ORG      || 'dgi';
     const ODS_USER = process.env.ODS_USER      || 'hlacoste';
     const ODS_PASS = process.env.ODS_PASSWORD || process.env.ODS_Password;
-    if (\!ODS_PASS) return res.status(500).json({ error: 'ODS_PASSWORD env variable not set on Render' });
+    if (!ODS_PASS) return res.status(500).json({ error: 'ODS_PASSWORD env variable not set on Render' });
 
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
@@ -2204,7 +2204,7 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
     const ct = r4.headers['content-type'] || '';
     console.log(`[ODS Pull] Step4: HTTP ${r4.statusCode}, type=${ct}, size=${r4.body.length}, location=${r4.headers.location||'none'}`);
 
-    if (\!ct.includes('pdf') && r4.body.length < 50000) {
+    if (!ct.includes('pdf') && r4.body.length < 50000) {
       return res.status(500).json({ error:'Did not receive PDF', statusCode:r4.statusCode, contentType:ct, location:r4.headers.location||'', preview:r4.body.toString().substring(0,500) });
     }
 
@@ -2214,20 +2214,20 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
     const parsed = parseAboveStorePDFLocal(tmpPdf);
     try { fs.unlinkSync(tmpPdf); } catch(e) {}
 
-    if (\!parsed.stores || \!parsed.stores.length) {
+    if (!parsed.stores || !parsed.stores.length) {
       return res.status(200).json({ success:false, message:'PDF downloaded but no stores parsed', date:dateStr, pdfBytes:r4.body.length });
     }
 
     // Step 6: Merge into wtd_data
     const weekKey = getWeekKey(dateStr);
     const allData2 = loadData();
-    if (\!allData2.weeks[weekKey]) allData2.weeks[weekKey] = { week:weekKey, period:FISCAL_CALENDAR[weekKey]||'', days:{} };
-    if (\!allData2.weeks[weekKey].days[dateStr]) allData2.weeks[weekKey].days[dateStr] = { date:dateStr, type:'ods_auto', stores:[], uploader:'ODS Auto' };
+    if (!allData2.weeks[weekKey]) allData2.weeks[weekKey] = { week:weekKey, period:FISCAL_CALENDAR[weekKey]||'', days:{} };
+    if (!allData2.weeks[weekKey].days[dateStr]) allData2.weeks[weekKey].days[dateStr] = { date:dateStr, type:'ods_auto', stores:[], uploader:'ODS Auto' };
     const existing = {};
     (allData2.weeks[weekKey].days[dateStr].stores||[]).forEach(s => { existing[s.store_id]=s; });
     parsed.stores.forEach(s => {
       const align = ALIGNMENT[s.store_id];
-      if (\!align && \!existing[s.store_id]) return;
+      if (!align && !existing[s.store_id]) return;
       if (existing[s.store_id]) Object.assign(existing[s.store_id], s);
       else existing[s.store_id] = { ...s, ...(align||{}) };
     });
