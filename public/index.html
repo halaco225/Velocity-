@@ -1388,10 +1388,11 @@ function loadFromLocalStorage() {
     const parsed = JSON.parse(raw);
     if (!parsed.allWeeksData || !parsed.allWeeksData.length) return false;
     if (!parsed.allWeeksData[0].stores || !parsed.allWeeksData[0].stores.length) return false;
+    if (!Array.isArray(parsed.allWeeksData[0].days)) return false;
     allWeeksData = parsed.allWeeksData.map(w => ({...w, stores: enrichStoreAlignment(w.stores || [])}));
     currentWeekIdx = parsed.currentWeekIdx || 0;
     currentData = allWeeksData[currentWeekIdx];
-    currentUser = parsed.currentUser || (currentData.days[0]?.uploader || '');
+    currentUser = parsed.currentUser || (currentData.days[0]?.uploader || '') || 'Harold';
     return true;
   } catch(e) { console.warn('localStorage load failed:', e.message); return false; }
 }
@@ -1403,8 +1404,8 @@ if (loadFromLocalStorage()) {
   fetch('/api/data').then(r=>r.json()).then(d=>{
     if(d.data && d.data.length && d.data[0].stores && d.data[0].stores.length) {
       allWeeksData=d.data; currentWeekIdx=0; currentData=allWeeksData[0];
-      currentUser=currentData.days[0]?.uploader||'';
-      if(currentUser) { saveToLocalStorage(); showDashboard(); }
+      currentUser=currentData.days[0]?.uploader||'Harold';
+      saveToLocalStorage(); showDashboard();
     }
   }).catch(()=>{});
 }
