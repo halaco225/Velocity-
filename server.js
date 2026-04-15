@@ -3,6 +3,7 @@ const multer = require('multer');
 const XLSX = require('xlsx');
 const fs = require('fs');
 const path = require('path');
+const { FISCAL_CALENDAR_2026, getPeriodForDate, getDatesInPeriod, getWeeksInPeriod } = require('./fiscalCalendar');
 
 const app = express();
 // Configure multer to accept any field names for files
@@ -16,6 +17,16 @@ const upload = multer({
 });
 
 app.use(express.json());
+
+// Enable CORS for all routes - MUST be before any route definitions
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  next();
+});
+
 // Serve static files with no caching to ensure updates are always loaded
 app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res) => {
@@ -42,13 +53,72 @@ function loadData() {
           const weekKey = parsed.week || 'unknown';
           return { weeks: { [weekKey]: { week: weekKey, period: parsed.period || '', days: parsed.days } } };
         }
-        if (parsed.weeks) return parsed;
+        if (parsed.weeks) {
+          // Ensure all stores have ist_avg calculated from bucket data
+          ensureISTFromBuckets(parsed);
+          return parsed;
+        }
       }
     }
   } catch(e) {
     console.error('Error loading data:', e.message);
   }
   return { weeks: {} };
+}
+
+// Calculate IST average from bucket distribution for stores missing ist_avg
+function ensureISTFromBuckets(data) {
+  if (!data.weeks) return;
+  
+  for (const weekKey of Object.keys(data.weeks)) {
+    const week = data.weeks[weekKey];
+    
+    // Fix week-level stores
+    if (week.stores) {
+      for (const store of week.stores) {
+        if (store.ist_avg === null || store.ist_avg === undefined) {
+          const ist = calculateISTFromBuckets(store);
+          if (ist !== null) {
+            store.ist_avg = ist;
+            if (!store.wtd_in_store) store.wtd_in_store = ist;
+          }
+        }
+      }
+    }
+    
+    // Fix daily stores
+    if (week.days) {
+      for (const dayKey of Object.keys(week.days)) {
+        const day = week.days[dayKey];
+        if (day.stores) {
+          for (const store of day.stores) {
+            if (store.ist_avg === null || store.ist_avg === undefined) {
+              const ist = calculateISTFromBuckets(store);
+              if (ist !== null) {
+                store.ist_avg = ist;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Calculate IST average from bucket distribution
+function calculateISTFromBuckets(store) {
+  const lt10 = store.ist_lt10 || 0;
+  const t1014 = store.ist_1014 || 0;
+  const t1518 = store.ist_1518 || 0;
+  const t1925 = store.ist_1925 || 0;
+  const gt25 = store.ist_gt25 || 0;
+  const total = lt10 + t1014 + t1518 + t1925 + gt25;
+  
+  if (total === 0) return null;
+  
+  // Approximate midpoints for each bucket
+  const avgIST = (lt10 * 8 + t1014 * 12 + t1518 * 16.5 + t1925 * 22 + gt25 * 30) / total;
+  return Math.round(avgIST * 10) / 10;
 }
 
 function saveData(data) {
@@ -1015,6 +1085,44 @@ app.get('/api/data', (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
+// Get available periods from the data (for PTD dropdown)
+app.get('/api/periods', (req, res) => {
+  try {
+    const allData = loadData();
+    const weeks = allData.weeks || {};
+    
+    // Find all unique periods in the data
+    const periodMap = {};
+    Object.values(weeks).forEach(w => {
+      if (w.period) {
+        // Extract period (e.g., 'P4W2' -> 'P4')
+        const periodKey = w.period.replace(/W\d+$/, '');
+        if (!periodMap[periodKey]) {
+          periodMap[periodKey] = {
+            period: periodKey,
+            name: FISCAL_CALENDAR_2026[periodKey]?.name || periodKey,
+            weeks: [],
+            weeksWithData: []
+          };
+        }
+        periodMap[periodKey].weeks.push(w.period);
+        periodMap[periodKey].weeksWithData.push({
+          periodWeek: w.period,
+          week: w.week,
+          days: Object.keys(w.days || {}).length
+        });
+      }
+    });
+    
+    // Only return periods with multiple weeks of data
+    const periods = Object.values(periodMap).filter(p => p.weeksWithData.length > 0);
+    
+    res.json({ periods });
+  } catch(e) { 
+    res.status(500).json({ error: e.message }); 
+  }
+});
+
 app.post('/api/reset', (req, res) => {
   saveData({ weeks: {} });
   res.json({ success: true });
@@ -1054,6 +1162,33 @@ function computeWeek(wtd) {
   const days = Object.values(wtd.days || {}).sort((a, b) => a.date.localeCompare(b.date));
   if (!days.length) return { days: [], stores: [], week: wtd.week, period: wtd.period || '', dateRange: getWeekDateRange(wtd.week) };
 
+  // Check if we have pre-calculated WTD stores data from Excel import
+  if (wtd.stores && wtd.stores.length > 0 && wtd.stores[0].wtd_in_store) {
+    // Use the pre-calculated WTD data directly
+    const storeWTD = wtd.stores.map(s => {
+      const align = ALIGNMENT[s.store_id] || {};
+      return {
+        ...s,
+        name: s.name || align.name || 'Unknown',
+        area: s.area || align.area || '',
+        area_coach: s.area_coach || align.area_coach || '',
+        region_coach: s.region_coach || align.region_coach || ''
+      };
+    });
+    
+    return {
+      week: wtd.week,
+      period: wtd.period || '',
+      dateRange: getWeekDateRange(wtd.week),
+      days: days.reduce((acc, d) => {
+        acc[d.date] = { date: d.date, type: d.type, stores: d.stores || [], uploader: d.uploader };
+        return acc;
+      }, {}),
+      stores: storeWTD
+    };
+  }
+
+  // Fall back to calculation from daily data
   const allIds = new Set();
   days.forEach(d => {
     if (d.stores && Array.isArray(d.stores)) {
@@ -1150,13 +1285,981 @@ function computeAllWeeks(allData) {
 
 const ALIGNMENT = {"S038876":{"name":"Senoia","area":"Area 2011","area_coach":"Darian Spikes","region_coach":"Harold Lacoste"},"S039377":{"name":"Griffin","area":"Area 2011","area_coach":"Darian Spikes","region_coach":"Harold Lacoste"},"S039378":{"name":"Union City","area":"Area 2011","area_coach":"Darian Spikes","region_coach":"Harold Lacoste"},"S039379":{"name":"Jefferson St","area":"Area 2011","area_coach":"Darian Spikes","region_coach":"Harold Lacoste"},"S039384":{"name":"Newnan","area":"Area 2011","area_coach":"Darian Spikes","region_coach":"Harold Lacoste"},"S039454":{"name":"Zebulon","area":"Area 2011","area_coach":"Darian Spikes","region_coach":"Harold Lacoste"},"S039465":{"name":"Senoia Rd","area":"Area 2011","area_coach":"Darian Spikes","region_coach":"Harold Lacoste"},"S039383":{"name":"Stockbridge","area":"Area 2016","area_coach":"Ebony Simmons","region_coach":"Harold Lacoste"},"S039388":{"name":"Jonesboro Rd","area":"Area 2016","area_coach":"Ebony Simmons","region_coach":"Harold Lacoste"},"S039393":{"name":"Lovejoy","area":"Area 2016","area_coach":"Ebony Simmons","region_coach":"Harold Lacoste"},"S039429":{"name":"Ola","area":"Area 2016","area_coach":"Ebony Simmons","region_coach":"Harold Lacoste"},"S039461":{"name":"County Line","area":"Area 2016","area_coach":"Ebony Simmons","region_coach":"Harold Lacoste"},"S039513":{"name":"Jodeco","area":"Area 2016","area_coach":"Ebony Simmons","region_coach":"Harold Lacoste"},"S039521":{"name":"Kellytown","area":"Area 2016","area_coach":"Ebony Simmons","region_coach":"Harold Lacoste"},"S039522":{"name":"Ellenwood","area":"Area 2016","area_coach":"Ebony Simmons","region_coach":"Harold Lacoste"},"S039375":{"name":"Bells Ferry Rd","area":"Area 2022","area_coach":"Ja'Don McNeil","region_coach":"Harold Lacoste"},"S039376":{"name":"CrossRds","area":"Area 2022","area_coach":"Ja'Don McNeil","region_coach":"Harold Lacoste"},"S039382":{"name":"Glade Rd","area":"Area 2022","area_coach":"Ja'Don McNeil","region_coach":"Harold Lacoste"},"S039387":{"name":"Kennesaw","area":"Area 2022","area_coach":"Ja'Don McNeil","region_coach":"Harold Lacoste"},"S039392":{"name":"Towne Lake","area":"Area 2022","area_coach":"Ja'Don McNeil","region_coach":"Harold Lacoste"},"S039462":{"name":"Acworth/Emerson","area":"Area 2022","area_coach":"Ja'Don McNeil","region_coach":"Harold Lacoste"},"S039380":{"name":"Windy Hill","area":"Area 2000","area_coach":"Jorge Garcia","region_coach":"Harold Lacoste"},"S039386":{"name":"Powder Springs","area":"Area 2000","area_coach":"Jorge Garcia","region_coach":"Harold Lacoste"},"S039389":{"name":"Lithia Springs","area":"Area 2000","area_coach":"Jorge Garcia","region_coach":"Harold Lacoste"},"S039410":{"name":"Mableton","area":"Area 2000","area_coach":"Jorge Garcia","region_coach":"Harold Lacoste"},"S039451":{"name":"Bolton","area":"Area 2000","area_coach":"Jorge Garcia","region_coach":"Harold Lacoste"},"S039525":{"name":"Smyrna","area":"Area 2000","area_coach":"Jorge Garcia","region_coach":"Harold Lacoste"},"S039527":{"name":"Austell Rd","area":"Area 2000","area_coach":"Jorge Garcia","region_coach":"Harold Lacoste"},"S039412":{"name":"Miracle Strip","area":"Area 2015","area_coach":"Marc Gannon","region_coach":"Harold Lacoste"},"S039413":{"name":"Navarre","area":"Area 2015","area_coach":"Marc Gannon","region_coach":"Harold Lacoste"},"S039414":{"name":"Gulf Breeze","area":"Area 2015","area_coach":"Marc Gannon","region_coach":"Harold Lacoste"},"S039415":{"name":"Miramar Beach","area":"Area 2015","area_coach":"Marc Gannon","region_coach":"Harold Lacoste"},"S039416":{"name":"Niceville","area":"Area 2015","area_coach":"Marc Gannon","region_coach":"Harold Lacoste"},"S039430":{"name":"Racetrack","area":"Area 2015","area_coach":"Marc Gannon","region_coach":"Harold Lacoste"},"S039529":{"name":"Crestview","area":"Area 2015","area_coach":"Marc Gannon","region_coach":"Harold Lacoste"},"S039381":{"name":"Fairburn Rd","area":"Area 2034","area_coach":"Michelle Meehan","region_coach":"Harold Lacoste"},"S039385":{"name":"Ridge Rd","area":"Area 2034","area_coach":"Michelle Meehan","region_coach":"Harold Lacoste"},"S039390":{"name":"East Paulding","area":"Area 2034","area_coach":"Michelle Meehan","region_coach":"Harold Lacoste"},"S039391":{"name":"Hwy 5","area":"Area 2034","area_coach":"Michelle Meehan","region_coach":"Harold Lacoste"},"S039526":{"name":"Dallas","area":"Area 2034","area_coach":"Michelle Meehan","region_coach":"Harold Lacoste"},"S039417":{"name":"Collinsville","area":"Area 2041","area_coach":"ARNWINE-OPEN","region_coach":"Preston Arnwine"},"S039419":{"name":"Martinsville","area":"Area 2041","area_coach":"ARNWINE-OPEN","region_coach":"Preston Arnwine"},"S039421":{"name":"College Rd","area":"Area 2041","area_coach":"ARNWINE-OPEN","region_coach":"Preston Arnwine"},"S039424":{"name":"Gate City Blvd","area":"Area 2041","area_coach":"ARNWINE-OPEN","region_coach":"Preston Arnwine"},"S039427":{"name":"Pyramid Village","area":"Area 2041","area_coach":"ARNWINE-OPEN","region_coach":"Preston Arnwine"},"S039436":{"name":"Battleground","area":"Area 2041","area_coach":"ARNWINE-OPEN","region_coach":"Preston Arnwine"},"S039457":{"name":"E. Greensboro","area":"Area 2041","area_coach":"ARNWINE-OPEN","region_coach":"Preston Arnwine"},"S039418":{"name":"Riverside Dr","area":"Area 2017","area_coach":"Emmanuel Boateng","region_coach":"Preston Arnwine"},"S039422":{"name":"South Church","area":"Area 2017","area_coach":"Emmanuel Boateng","region_coach":"Preston Arnwine"},"S039423":{"name":"Graham","area":"Area 2017","area_coach":"Emmanuel Boateng","region_coach":"Preston Arnwine"},"S039432":{"name":"Mebane","area":"Area 2017","area_coach":"Emmanuel Boateng","region_coach":"Preston Arnwine"},"S039433":{"name":"Elton Way","area":"Area 2017","area_coach":"Emmanuel Boateng","region_coach":"Preston Arnwine"},"S039455":{"name":"Spring Garden","area":"Area 2017","area_coach":"Emmanuel Boateng","region_coach":"Preston Arnwine"},"S039456":{"name":"Whitsett","area":"Area 2017","area_coach":"Emmanuel Boateng","region_coach":"Preston Arnwine"},"S039420":{"name":"Harrisonburg","area":"Area 2004","area_coach":"Erin Pizzo","region_coach":"Preston Arnwine"},"S039425":{"name":"Elkton","area":"Area 2004","area_coach":"Erin Pizzo","region_coach":"Preston Arnwine"},"S039426":{"name":"Woodstock","area":"Area 2004","area_coach":"Erin Pizzo","region_coach":"Preston Arnwine"},"S039428":{"name":"Stuarts Draft","area":"Area 2004","area_coach":"Erin Pizzo","region_coach":"Preston Arnwine"},"S039431":{"name":"Staunton","area":"Area 2004","area_coach":"Erin Pizzo","region_coach":"Preston Arnwine"},"S039435":{"name":"Shoppers World","area":"Area 2004","area_coach":"Erin Pizzo","region_coach":"Preston Arnwine"},"S039450":{"name":"Orange","area":"Area 2004","area_coach":"Erin Pizzo","region_coach":"Preston Arnwine"},"S039453":{"name":"JMU/Market","area":"Area 2004","area_coach":"Erin Pizzo","region_coach":"Preston Arnwine"},"S039466":{"name":"Waynesboro","area":"Area 2004","area_coach":"Erin Pizzo","region_coach":"Preston Arnwine"},"S039400":{"name":"E Palmetto","area":"Area 2009","area_coach":"Royal Mitchell","region_coach":"Preston Arnwine"},"S039401":{"name":"Darlington","area":"Area 2009","area_coach":"Royal Mitchell","region_coach":"Preston Arnwine"},"S039402":{"name":"2nd Loop","area":"Area 2009","area_coach":"Royal Mitchell","region_coach":"Preston Arnwine"},"S039403":{"name":"Marion","area":"Area 2009","area_coach":"Royal Mitchell","region_coach":"Preston Arnwine"},"S039394":{"name":"Elberton","area":"Area 2048","area_coach":"Russell Kowalczyk","region_coach":"Preston Arnwine"},"S039395":{"name":"Abbeville","area":"Area 2048","area_coach":"Russell Kowalczyk","region_coach":"Preston Arnwine"},"S039396":{"name":"Hartwell","area":"Area 2048","area_coach":"Russell Kowalczyk","region_coach":"Preston Arnwine"},"S039398":{"name":"Royston","area":"Area 2048","area_coach":"Russell Kowalczyk","region_coach":"Preston Arnwine"},"S039399":{"name":"Lavonia","area":"Area 2048","area_coach":"Russell Kowalczyk","region_coach":"Preston Arnwine"},"S039404":{"name":"Greenwood Bypass","area":"Area 2048","area_coach":"Russell Kowalczyk","region_coach":"Preston Arnwine"},"S039405":{"name":"Simpsonville","area":"Area 2048","area_coach":"Russell Kowalczyk","region_coach":"Preston Arnwine"},"S039407":{"name":"Newberry","area":"Area 2048","area_coach":"Russell Kowalczyk","region_coach":"Preston Arnwine"},"S039408":{"name":"Seneca","area":"Area 2048","area_coach":"Russell Kowalczyk","region_coach":"Preston Arnwine"},"S040090":{"name":"Main","area":"Area 2002","area_coach":"Brenda Marta","region_coach":"Terrance Spillane"},"S040091":{"name":"Silver City","area":"Area 2002","area_coach":"Brenda Marta","region_coach":"Terrance Spillane"},"S040093":{"name":"Missouri","area":"Area 2002","area_coach":"Brenda Marta","region_coach":"Terrance Spillane"},"S040102":{"name":"Deming","area":"Area 2002","area_coach":"Brenda Marta","region_coach":"Terrance Spillane"},"S039180":{"name":"Zaragosa","area":"Area 2010","area_coach":"Constance Miranda","region_coach":"Terrance Spillane"},"S039182":{"name":"Vista","area":"Area 2010","area_coach":"Constance Miranda","region_coach":"Terrance Spillane"},"S039185":{"name":"Gateway","area":"Area 2010","area_coach":"Constance Miranda","region_coach":"Terrance Spillane"},"S039318":{"name":"Socorro","area":"Area 2010","area_coach":"Constance Miranda","region_coach":"Terrance Spillane"},"S039323":{"name":"Tierre Este","area":"Area 2010","area_coach":"Constance Miranda","region_coach":"Terrance Spillane"},"S041651":{"name":"Eastlake","area":"Area 2010","area_coach":"Constance Miranda","region_coach":"Terrance Spillane"},"S040082":{"name":"Taylor Ranch","area":"Area 2033","area_coach":"Eric Harstine","region_coach":"Terrance Spillane"},"S040084":{"name":"7th/Lomas","area":"Area 2033","area_coach":"Eric Harstine","region_coach":"Terrance Spillane"},"S040101":{"name":"Washington/Zuni","area":"Area 2033","area_coach":"Eric Harstine","region_coach":"Terrance Spillane"},"S040107":{"name":"Coors/Barcelona","area":"Area 2033","area_coach":"Eric Harstine","region_coach":"Terrance Spillane"},"S040108":{"name":"Wyoming/Harper","area":"Area 2033","area_coach":"Eric Harstine","region_coach":"Terrance Spillane"},"S040111":{"name":"303 Coors","area":"Area 2033","area_coach":"Eric Harstine","region_coach":"Terrance Spillane"},"S038729":{"name":"Kenworthy","area":"Area 2024","area_coach":"Javier Martinez","region_coach":"Terrance Spillane"},"S039174":{"name":"University","area":"Area 2024","area_coach":"Javier Martinez","region_coach":"Terrance Spillane"},"S039175":{"name":"Airway","area":"Area 2024","area_coach":"Javier Martinez","region_coach":"Terrance Spillane"},"S039178":{"name":"CrossRds EP","area":"Area 2024","area_coach":"Javier Martinez","region_coach":"Terrance Spillane"},"S039192":{"name":"Resler","area":"Area 2024","area_coach":"Javier Martinez","region_coach":"Terrance Spillane"},"S039324":{"name":"Outlet Mall","area":"Area 2024","area_coach":"Javier Martinez","region_coach":"Terrance Spillane"},"S039448":{"name":"Dyer","area":"Area 2024","area_coach":"Javier Martinez","region_coach":"Terrance Spillane"},"S040088":{"name":"Los Lunas","area":"Area 2055","area_coach":"Kevin Dunn","region_coach":"Terrance Spillane"},"S040096":{"name":"Belen","area":"Area 2055","area_coach":"Kevin Dunn","region_coach":"Terrance Spillane"},"S040099":{"name":"Candelaria","area":"Area 2055","area_coach":"Kevin Dunn","region_coach":"Terrance Spillane"},"S040100":{"name":"T or C","area":"Area 2055","area_coach":"Kevin Dunn","region_coach":"Terrance Spillane"},"S040110":{"name":"Bull Chicks","area":"Area 2055","area_coach":"Kevin Dunn","region_coach":"Terrance Spillane"},"S039589":{"name":"Rio Rancho","area":"Area 2039","area_coach":"Max Losey","region_coach":"Terrance Spillane"},"S040094":{"name":"Villa Linda Mall","area":"Area 2039","area_coach":"Max Losey","region_coach":"Terrance Spillane"},"S040104":{"name":"Southern","area":"Area 2039","area_coach":"Max Losey","region_coach":"Terrance Spillane"},"S040105":{"name":"Las Vegas","area":"Area 2039","area_coach":"Max Losey","region_coach":"Terrance Spillane"},"S040106":{"name":"Espanola","area":"Area 2039","area_coach":"Max Losey","region_coach":"Terrance Spillane"},"S040109":{"name":"Unser & McMahon","area":"Area 2039","area_coach":"Max Losey","region_coach":"Terrance Spillane"},"S039173":{"name":"Yarbrough","area":"Area 2043","area_coach":"Oscar Gutierrez","region_coach":"Terrance Spillane"},"S039176":{"name":"Lovington","area":"Area 2043","area_coach":"Oscar Gutierrez","region_coach":"Terrance Spillane"},"S039177":{"name":"Hobbs","area":"Area 2043","area_coach":"Oscar Gutierrez","region_coach":"Terrance Spillane"},"S039179":{"name":"George Dieter","area":"Area 2043","area_coach":"Oscar Gutierrez","region_coach":"Terrance Spillane"},"S039188":{"name":"Carlsbad","area":"Area 2043","area_coach":"Oscar Gutierrez","region_coach":"Terrance Spillane"},"S039518":{"name":"Hobbs North","area":"Area 2043","area_coach":"Oscar Gutierrez","region_coach":"Terrance Spillane"},"S039530":{"name":"Montana","area":"Area 2043","area_coach":"Oscar Gutierrez","region_coach":"Terrance Spillane"},"S040083":{"name":"20th St","area":"Area 2008","area_coach":"Tami Elliott-Baker","region_coach":"Terrance Spillane"},"S040085":{"name":"North Gallup","area":"Area 2008","area_coach":"Tami Elliott-Baker","region_coach":"Terrance Spillane"},"S040086":{"name":"Main Street","area":"Area 2008","area_coach":"Tami Elliott-Baker","region_coach":"Terrance Spillane"},"S040087":{"name":"East Gallup","area":"Area 2008","area_coach":"Tami Elliott-Baker","region_coach":"Terrance Spillane"},"S040092":{"name":"Aztec","area":"Area 2008","area_coach":"Tami Elliott-Baker","region_coach":"Terrance Spillane"},"S040112":{"name":"Durango","area":"Area 2008","area_coach":"Tami Elliott-Baker","region_coach":"Terrance Spillane"}};
 
-// Enable CORS for all routes
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.sendStatus(200);
+// =====================
+// AUTOMATION API ENDPOINTS
+// For automated report uploads from ODS
+// =====================
+
+// Simple auth token for automation (in production, use proper auth)
+const AUTOMATION_TOKEN = process.env.AUTOMATION_TOKEN || 'velocity-auto-2024';
+
+// Middleware to verify automation requests
+function verifyAutomationAuth(req, res, next) {
+  const token = req.headers['x-automation-token'] || req.query.token;
+  if (token !== AUTOMATION_TOKEN) {
+    return res.status(401).json({ error: 'Unauthorized - Invalid automation token' });
+  }
   next();
+}
+
+// Upload Speed of Service report (XLSX) from automation
+app.post('/api/automation/upload-sos', verifyAutomationAuth, upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const filePath = req.file.path;
+
+    // Use the existing SOS Excel parser
+    const parsed = parseSOSExcel(filePath);
+    
+    if (!parsed.stores || parsed.stores.length === 0) {
+      // Clean up temp file
+      try { if (fs.existsSync(filePath)) fs.unlinkSync(filePath); } catch(e) {}
+      return res.status(400).json({ error: 'No store data found in SOS Excel' });
+    }
+
+    // Use report date from file, or default to yesterday
+    let dateStr = parsed.reportDate;
+    if (!dateStr) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      dateStr = yesterday.toISOString().split('T')[0];
+    }
+    
+    const weekKey = getWeekKey(dateStr);
+    const periodWeek = FISCAL_CALENDAR[weekKey] || '';
+
+    // Load existing data
+    const allData = loadData();
+    if (!allData.weeks[weekKey]) {
+      allData.weeks[weekKey] = { week: weekKey, period: periodWeek, days: {} };
+    }
+    if (!allData.weeks[weekKey].days[dateStr]) {
+      allData.weeks[weekKey].days[dateStr] = { date: dateStr, type: 'automation', stores: [], uploader: 'automation' };
+    }
+
+    const existing = {};
+    (allData.weeks[weekKey].days[dateStr].stores || []).forEach(s => { existing[s.store_id] = s; });
+
+    let storeCount = 0;
+    parsed.stores.forEach(s => {
+      const sid = s.store_id;
+      const align = ALIGNMENT[sid];
+      if (!align && !existing[sid]) return;
+
+      if (existing[sid]) {
+        // Only update make and pct_lt4 from SOS Excel
+        existing[sid].make = s.make;
+        existing[sid].pct_lt4 = s.pct_lt4;
+      } else if (align) {
+        existing[sid] = {
+          store_id: sid,
+          name: align.name,
+          area: align.area,
+          area_coach: align.area_coach,
+          region_coach: align.region_coach,
+          make: s.make,
+          pct_lt4: s.pct_lt4,
+          in_store: null,
+          ist_lt10: null, ist_1014: null, ist_1518: null,
+          ist_1925: null, ist_gt25: null,
+          ist_gt25_count: null, ist_lt19_pct: null,
+          deliveries: null, on_time: null, production: null, pct_lt15: null, rack: null
+        };
+      }
+      storeCount++;
+    });
+
+    allData.weeks[weekKey].days[dateStr].stores = Object.values(existing);
+    saveData(allData);
+
+    // Clean up temp file
+    try { if (fs.existsSync(filePath)) fs.unlinkSync(filePath); } catch(e) {}
+
+    res.json({ 
+      success: true, 
+      message: 'Speed of Service report uploaded successfully',
+      date: dateStr,
+      week: weekKey,
+      period: periodWeek,
+      storeCount 
+    });
+  } catch (e) {
+    console.error('Automation SOS upload error:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Upload Daily Dispatch report (PDF) from automation
+app.post('/api/automation/upload-dispatch', verifyAutomationAuth, upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const filePath = req.file.path;
+
+    // Use the existing PDF parser (local, no API needed)
+    const parsed = parseAboveStorePDFLocal(filePath);
+    
+    if (!parsed.stores || parsed.stores.length === 0) {
+      return res.status(400).json({ error: 'No store data found in PDF' });
+    }
+
+    // Get yesterday's date for the report
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const dateStr = yesterday.toISOString().split('T')[0];
+    const weekKey = getWeekKey(dateStr);
+    const periodWeek = FISCAL_CALENDAR[weekKey] || '';
+
+    // Load existing data
+    const allData = loadData();
+    if (!allData.weeks[weekKey]) {
+      allData.weeks[weekKey] = { week: weekKey, period: periodWeek, days: {} };
+    }
+    if (!allData.weeks[weekKey].days[dateStr]) {
+      allData.weeks[weekKey].days[dateStr] = { date: dateStr, type: 'automation', stores: [], uploader: 'automation' };
+    }
+
+    const existing = {};
+    (allData.weeks[weekKey].days[dateStr].stores || []).forEach(s => { existing[s.store_id] = s; });
+
+    let storeCount = 0;
+    parsed.stores.forEach(s => {
+      const sid = s.store_id;
+      const align = ALIGNMENT[sid];
+      if (!align && !existing[sid]) return;
+
+      if (existing[sid]) {
+        // Merge IST data from PDF
+        existing[sid].ist_lt10 = s.ist_lt10 || existing[sid].ist_lt10;
+        existing[sid].ist_1014 = s.ist_1014 || existing[sid].ist_1014;
+        existing[sid].ist_1518 = s.ist_1518 || existing[sid].ist_1518;
+        existing[sid].ist_1925 = s.ist_1925 || existing[sid].ist_1925;
+        existing[sid].ist_gt25 = s.ist_gt25 || existing[sid].ist_gt25;
+        existing[sid].ist_gt25_count = s.ist_gt25 || existing[sid].ist_gt25_count;
+        existing[sid].ist_lt19_pct = s.ist_lt19_pct || existing[sid].ist_lt19_pct;
+        if (s.ist_avg) existing[sid].in_store = s.ist_avg;
+      } else if (align) {
+        existing[sid] = {
+          store_id: sid,
+          name: align.name,
+          area: align.area,
+          area_coach: align.area_coach,
+          region_coach: align.region_coach,
+          ist_lt10: s.ist_lt10,
+          ist_1014: s.ist_1014,
+          ist_1518: s.ist_1518,
+          ist_1925: s.ist_1925,
+          ist_gt25: s.ist_gt25,
+          ist_gt25_count: s.ist_gt25,
+          ist_lt19_pct: s.ist_lt19_pct,
+          in_store: s.ist_avg || null,
+          make: null, pct_lt4: null, production: null, pct_lt15: null,
+          on_time: null, rack: null, deliveries: null
+        };
+      }
+      storeCount++;
+    });
+
+    allData.weeks[weekKey].days[dateStr].stores = Object.values(existing);
+    saveData(allData);
+
+    // Clean up temp file
+    try { if (fs.existsSync(filePath)) fs.unlinkSync(filePath); } catch(e) {}
+
+    res.json({ 
+      success: true, 
+      message: 'Daily Dispatch report uploaded successfully',
+      date: dateStr,
+      week: weekKey,
+      period: periodWeek,
+      storeCount 
+    });
+  } catch (e) {
+    console.error('Automation Dispatch upload error:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Send daily report emails
+app.post('/api/automation/send-emails', verifyAutomationAuth, async (req, res) => {
+  try {
+    const nodemailer = require('nodemailer');
+    
+    // Gmail SMTP configuration
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.VELOCITY_EMAIL_USER || 'velocityai.reports@gmail.com',
+        pass: process.env.VELOCITY_EMAIL_PASS || 'dewnkjrxbgmodwwd'
+      }
+    });
+
+    // Get yesterday's data
+    const allData = loadData();
+    const weekKeys = Object.keys(allData.weeks || {}).sort((a, b) => b.localeCompare(a));
+    
+    if (weekKeys.length === 0) {
+      return res.status(400).json({ error: 'No data available' });
+    }
+
+    const latestWeek = allData.weeks[weekKeys[0]];
+    const dayKeys = Object.keys(latestWeek.days || {}).sort((a, b) => b.localeCompare(a));
+    
+    if (dayKeys.length === 0) {
+      return res.status(400).json({ error: 'No daily data available' });
+    }
+
+    // Use computed week data which has WTD values
+    const weekComputed = computeWeek(latestWeek);
+    const stores = weekComputed.stores || [];
+
+    // Calculate summary metrics from WTD values
+    const validStores = stores.filter(s => s.wtd_in_store || s.ist_avg || s.in_store || s.make);
+    const avgInStore = validStores.reduce((a, s) => a + (s.wtd_in_store || s.ist_avg || 0), 0) / validStores.length;
+    const avgPctLt4 = validStores.reduce((a, s) => {
+      const pct = parseFloat(String(s.wtd_pct_lt4 || '0').replace('%', '')) || 0;
+      return a + pct;
+    }, 0) / validStores.length;
+    const avgOnTime = validStores.reduce((a, s) => {
+      const pct = parseFloat(String(s.wtd_on_time || '0').replace('%', '')) || 0;
+      return a + pct;
+    }, 0) / validStores.length;
+    const totalDeliveries = validStores.reduce((a, s) => a + (s.wtd_deliveries || 0), 0);
+
+    // Sort by WTD in-store time for top/bottom performers
+    // Use ist_avg as fallback if wtd_in_store is not available
+    const sortedByIST = [...validStores].sort((a, b) => {
+      const aIST = a.wtd_in_store || a.ist_avg || 999;
+      const bIST = b.wtd_in_store || b.ist_avg || 999;
+      return aIST - bIST;
+    });
+    const topPerformers = sortedByIST.slice(0, 5);
+    const bottomPerformers = sortedByIST.slice(-5).reverse();
+
+    const dashboardUrl = 'https://00p2f.app.super.myninja.ai';
+
+    // Email HTML
+    const generateHTML = (isAreaCoach = false, areaFilter = null) => {
+      let filteredStores = validStores;
+      let filteredTop = topPerformers;
+      let filteredBottom = bottomPerformers;
+      
+      if (areaFilter) {
+        filteredStores = validStores.filter(s => s.area === areaFilter);
+        const areaSorted = [...filteredStores].sort((a, b) => (a.wtd_in_store || a.ist_avg || a.in_store || 999) - (b.wtd_in_store || b.ist_avg || b.in_store || 999));
+        filteredTop = areaSorted.slice(0, 5);
+        filteredBottom = areaSorted.slice(-5).reverse();
+      }
+
+      const getISTColor = (ist) => {
+        if (!ist) return '#666';
+        if (ist <= 19) return '#28a745';
+        if (ist <= 22) return '#ffc107';
+        if (ist <= 25) return '#fd7e14';
+        return '#dc3545';
+      };
+
+      return `
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    h1 { color: #e31837; border-bottom: 3px solid #e31837; padding-bottom: 10px; }
+    h2 { color: #333; margin-top: 30px; }
+    .summary-box { background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    .summary-box table { width: 100%; border-collapse: collapse; }
+    .summary-box td { padding: 8px; font-size: 16px; }
+    .summary-box td:last-child { font-weight: bold; text-align: right; }
+    .dashboard-btn { 
+      display: inline-block; background: #e31837; color: white; padding: 12px 24px; 
+      text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold;
+    }
+    table.stores { width: 100%; border-collapse: collapse; margin: 10px 0; }
+    table.stores th { background: #333; color: white; padding: 10px; text-align: left; }
+    table.stores td { padding: 8px; border-bottom: 1px solid #ddd; }
+    .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>🍕 Velocity Daily Report</h1>
+  <p><strong>Report Date:</strong> ${dayKeys[0]}</p>
+  ${areaFilter ? `<p><strong>Area:</strong> ${areaFilter}</p>` : ''}
+  
+  <div class="summary-box">
+    <h2 style="margin-top:0">📊 Yesterday's Summary</h2>
+    <table>
+      <tr><td>Stores Reporting:</td><td>${filteredStores.length}</td></tr>
+      <tr><td>Avg In-Store Time:</td><td style="color: ${getISTColor(avgInStore)}">${avgInStore.toFixed(1)} mins</td></tr>
+      <tr><td>Avg % <4 Min:</td><td>${avgPctLt4.toFixed(1)}%</td></tr>
+      <tr><td>Avg On-Time %:</td><td>${avgOnTime.toFixed(1)}%</td></tr>
+      <tr><td>Total Deliveries:</td><td>${totalDeliveries.toLocaleString()}</td></tr>
+    </table>
+  </div>
+
+  <h2>🏆 Top 5 Performers</h2>
+  <table class="stores">
+    <tr><th>Store</th><th>In-Store</th><th>Make</th><th>%<4</th></tr>
+    ${filteredTop.map(s => `
+      <tr>
+        <td><strong>${s.name}</strong><br><small>${s.store_id}</small></td>
+        <td style="color: ${getISTColor(s.wtd_in_store || s.ist_avg || s.in_store)}">${s.wtd_in_store || s.ist_avg || s.in_store || '—'} mins</td>
+        <td>${s.wtd_make || s.make || '—'}</td>
+        <td>${s.wtd_pct_lt4 || s.pct_lt4 || '—'}</td>
+      </tr>
+    `).join('')}
+  </table>
+
+  <h2>⚠️ Bottom 5 Performers</h2>
+  <table class="stores">
+    <tr><th>Store</th><th>In-Store</th><th>Make</th><th>%<4</th></tr>
+    ${filteredBottom.map(s => `
+      <tr>
+        <td><strong>${s.name}</strong><br><small>${s.store_id}</small></td>
+        <td style="color: ${getISTColor(s.wtd_in_store || s.ist_avg || s.in_store)}">${s.wtd_in_store || s.ist_avg || s.in_store || '—'} mins</td>
+        <td>${s.wtd_make || s.make || '—'}</td>
+        <td>${s.wtd_pct_lt4 || s.pct_lt4 || '—'}</td>
+      </tr>
+    `).join('')}
+  </table>
+
+  <div class="footer">
+    <p>This is an automated email from Velocity - Pizza Hut Speed of Service Dashboard</p>
+    <p>Generated: ${new Date().toLocaleString()}</p>
+  </div>
+</body>
+</html>`;
+    };
+
+    // Email distribution lists
+    const areaCoaches = [
+      { name: 'Jorge Garcia', area: '2000', email: 'jgarcia@ayvazpizza.com' },
+      { name: 'Darian Spikes', area: '2011', email: 'dspikes@ayvazpizza.com' },
+      { name: 'Marc Gannon', area: '2015', email: 'mgannon@ayvazpizza.com' },
+      { name: 'Ebony Simmons', area: '2016', email: 'esimmons@ayvazpizza.com' },
+      { name: 'Jadon McNeil', area: '2022', email: 'jmcneil@ayvazpizza.com' },
+      { name: 'Michelle Meehan', area: '2034', email: 'mmeehan@ayvazpizza.com' }
+    ];
+    const peers = [
+      { name: 'Preston Arnwine', email: 'parnwine@ayvazpizza.com' },
+      { name: 'Terrance Spillane', email: 'tspillane@ayvazpizza.com' }
+    ];
+    const vp = { name: 'Matt Hester', email: 'mhester@ayvazpizza.com' };
+    // Region coach (Harold Lacoste) gets full summary
+    const regionCoach = { name: 'Harold Lacoste', email: 'hlacoste@ayvazpizza.com' };
+
+    const results = { sent: [], failed: [] };
+
+    // Generate Excel attachment for all emails
+    const excelBuffer = generateExcelExport(weekComputed, allData);
+    const excelAttachment = {
+      filename: `Velocity_Report_${dayKeys[0]}.xlsx`,
+      content: excelBuffer,
+      contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    };
+
+    // TESTING MODE: Only send to Harold Lacoste
+    // Uncomment the sections below when ready to go live
+    
+    /* DISABLED FOR TESTING
+    // Send to Area Coaches (each gets their area's data)
+    for (const coach of areaCoaches) {
+      try {
+        const info = await transporter.sendMail({
+          from: `"Velocity Reports" <${process.env.VELOCITY_EMAIL_USER || 'velocityai.reports@gmail.com'}>`,
+          to: coach.email,
+          cc: vp.email,
+          subject: `Velocity Daily Report - ${coach.area} - ${dayKeys[0]}`,
+          html: generateHTML(true, coach.area),
+          attachments: [excelAttachment]
+        });
+        results.sent.push({ to: coach.email, area: coach.area, messageId: info.messageId });
+      } catch (e) {
+        results.failed.push({ to: coach.email, error: e.message });
+      }
+    }
+
+    // Send summary to peers
+    for (const peer of peers) {
+      try {
+        const info = await transporter.sendMail({
+          from: `"Velocity Reports" <${process.env.VELOCITY_EMAIL_USER || 'velocityai.reports@gmail.com'}>`,
+          to: peer.email,
+          subject: `Velocity Daily Report - Summary - ${dayKeys[0]}`,
+          html: generateHTML(false),
+          attachments: [excelAttachment]
+        });
+        results.sent.push({ to: peer.email, messageId: info.messageId });
+      } catch (e) {
+        results.failed.push({ to: peer.email, error: e.message });
+      }
+    }
+    */
+
+    // Send summary to Region Coach (Harold Lacoste) - ONLY THIS IS ACTIVE FOR TESTING
+    try {
+      const info = await transporter.sendMail({
+        from: `"Velocity Reports" <${process.env.VELOCITY_EMAIL_USER || 'velocityai.reports@gmail.com'}>`,
+        to: regionCoach.email,
+        subject: `Velocity Daily Report - Region Summary - ${dayKeys[0]}`,
+        html: generateHTML(false),
+        attachments: [excelAttachment]
+      });
+      results.sent.push({ to: regionCoach.email, messageId: info.messageId });
+    } catch (e) {
+      results.failed.push({ to: regionCoach.email, error: e.message });
+    }
+
+    res.json({ 
+      success: true, 
+      date: dayKeys[0],
+      totalSent: results.sent.length,
+      totalFailed: results.failed.length,
+      results 
+    });
+  } catch (e) {
+    console.error('Send emails error:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Generate Excel export for email attachment
+function generateExcelExport(weekData, allData = null) {
+  const wb = XLSX.utils.book_new();
+  const stores = weekData.stores || [];
+  
+  // Get period/week info
+  const period = weekData.period || 'P4W3';
+  const weekStart = weekData.weekStart || '4/7';
+  const weekEnd = weekData.weekEnd || '4/13';
+  const dayData = weekData.days || {};
+  const dayKeys = Object.keys(dayData).sort();
+  
+  // Helper to calculate totals
+  function calculateTotals(storeList) {
+    const totalOrders = storeList.reduce((sum, s) => sum + (s.total_orders || s.wtd_deliveries || 0), 0);
+    const avgIST = storeList.reduce((sum, s) => sum + (s.wtd_in_store || s.ist_avg || 0), 0) / storeList.length;
+    const istLt10 = storeList.reduce((sum, s) => sum + (s.ist_lt10 || 0), 0);
+    const ist1014 = storeList.reduce((sum, s) => sum + (s.ist_1014 || 0), 0);
+    const ist1518 = storeList.reduce((sum, s) => sum + (s.ist_1518 || 0), 0);
+    const ist1925 = storeList.reduce((sum, s) => sum + (s.ist_1925 || 0), 0);
+    const istGt25 = storeList.reduce((sum, s) => sum + (s.ist_gt25 || 0), 0);
+    const lt19Pct = storeList.reduce((sum, s) => sum + (parseFloat(s.ist_lt19_pct) || 0), 0) / storeList.length;
+    
+    return {
+      totalOrders,
+      avgIST,
+      istLt10,
+      ist1014,
+      ist1518,
+      ist1925,
+      istGt25,
+      lt19Pct
+    };
+  }
+  
+  // === WTD IST Sheet ===
+  const wtdRows = [
+    [`WTD IST — ${period} ${weekStart}-${weekEnd}`],
+    ['Level', 'Region', 'Area Coach', 'Store #', 'Store Name', 'Avg IST (mins)', 'Total Orders', 
+     'IST <10 #', 'IST <10 %', 'IST 10-14 #', 'IST 10-14 %', 'IST 15-18 #', 'IST 15-18 %', 
+     'IST 19-25 #', 'IST 19-25 %', 'IST >25 #', 'IST >25 %', 'IST <19 %']
+  ];
+  
+  // TOTAL row
+  const totals = calculateTotals(stores);
+  wtdRows.push([
+    'TOTAL', 'ALL REGIONS', '', '', `${stores.length} Stores`,
+    totals.avgIST, totals.totalOrders,
+    totals.istLt10, totals.istLt10 / totals.totalOrders,
+    totals.ist1014, totals.ist1014 / totals.totalOrders,
+    totals.ist1518, totals.ist1518 / totals.totalOrders,
+    totals.ist1925, totals.ist1925 / totals.totalOrders,
+    totals.istGt25, totals.istGt25 / totals.totalOrders,
+    totals.lt19Pct
+  ]);
+  
+  // Group by region
+  const byRegion = {};
+  stores.forEach(s => {
+    const region = s.region_coach || 'Unknown';
+    if (!byRegion[region]) byRegion[region] = [];
+    byRegion[region].push(s);
+  });
+  
+  // REGION rows
+  for (const [region, regionStores] of Object.entries(byRegion)) {
+    const regionTotals = calculateTotals(regionStores);
+    wtdRows.push([
+      'REGION', region, '', '', `${regionStores.length} Stores`,
+      regionTotals.avgIST, regionTotals.totalOrders,
+      regionTotals.istLt10, regionTotals.istLt10 / regionTotals.totalOrders,
+      regionTotals.ist1014, regionTotals.ist1014 / regionTotals.totalOrders,
+      regionTotals.ist1518, regionTotals.ist1518 / regionTotals.totalOrders,
+      regionTotals.ist1925, regionTotals.ist1925 / regionTotals.totalOrders,
+      regionTotals.istGt25, regionTotals.istGt25 / regionTotals.totalOrders,
+      regionTotals.lt19Pct
+    ]);
+    
+    // Group by area within region
+    const byArea = {};
+    regionStores.forEach(s => {
+      const area = s.area_coach || 'Unknown';
+      if (!byArea[area]) byArea[area] = [];
+      byArea[area].push(s);
+    });
+    
+    // AREA rows
+    for (const [area, areaStores] of Object.entries(byArea)) {
+      const areaTotals = calculateTotals(areaStores);
+      wtdRows.push([
+        'AREA', region, area, '', `${areaStores.length} Stores`,
+        areaTotals.avgIST, areaTotals.totalOrders,
+        areaTotals.istLt10, areaTotals.istLt10 / areaTotals.totalOrders,
+        areaTotals.ist1014, areaTotals.ist1014 / areaTotals.totalOrders,
+        areaTotals.ist1518, areaTotals.ist1518 / areaTotals.totalOrders,
+        areaTotals.ist1925, areaTotals.ist1925 / areaTotals.totalOrders,
+        areaTotals.istGt25, areaTotals.istGt25 / areaTotals.totalOrders,
+        areaTotals.lt19Pct
+      ]);
+      
+      // STORE rows
+      areaStores.forEach(s => {
+        const totalOrders = s.total_orders || s.wtd_deliveries || 0;
+        wtdRows.push([
+          'STORE', s.region_coach || '', s.area_coach || '', s.store_id || '', s.name || '',
+          s.wtd_in_store || '', totalOrders,
+          s.ist_lt10 || '', s.ist_lt10_pct || '',
+          s.ist_1014 || '', s.ist_1014_pct || '',
+          s.ist_1518 || '', s.ist_1518_pct || '',
+          s.ist_1925 || '', s.ist_1925_pct || '',
+          s.ist_gt25 || '', s.ist_gt25_pct || '',
+          s.ist_lt19_pct || ''
+        ]);
+      });
+    }
+  }
+  
+  const wtdWs = XLSX.utils.aoa_to_sheet(wtdRows);
+  XLSX.utils.book_append_sheet(wb, wtdWs, 'WTD IST');
+  
+  // === PTD IST Sheet ===
+  const ptdRows = [
+    [`PTD IST — ${period.split('W')[0]} (Period To Date)`],
+    ['Level', 'Region', 'Area Coach', 'Store #', 'Store Name', 'Avg IST (mins)', 'Total Orders', 
+     'IST <10 #', 'IST <10 %', 'IST 10-14 #', 'IST 10-14 %', 'IST 15-18 #', 'IST 15-18 %', 
+     'IST 19-25 #', 'IST 19-25 %', 'IST >25 #', 'IST >25 %', 'IST <19 %']
+  ];
+  
+  // Use same structure as WTD
+  ptdRows.push([
+    'TOTAL', 'ALL REGIONS', '', '', `${stores.length} Stores`,
+    totals.avgIST, totals.totalOrders,
+    totals.istLt10, totals.istLt10 / totals.totalOrders,
+    totals.ist1014, totals.ist1014 / totals.totalOrders,
+    totals.ist1518, totals.ist1518 / totals.totalOrders,
+    totals.ist1925, totals.ist1925 / totals.totalOrders,
+    totals.istGt25, totals.istGt25 / totals.totalOrders,
+    totals.lt19Pct
+  ]);
+  
+  for (const [region, regionStores] of Object.entries(byRegion)) {
+    const regionTotals = calculateTotals(regionStores);
+    ptdRows.push([
+      'REGION', region, '', '', `${regionStores.length} Stores`,
+      regionTotals.avgIST, regionTotals.totalOrders,
+      regionTotals.istLt10, regionTotals.istLt10 / regionTotals.totalOrders,
+      regionTotals.ist1014, regionTotals.ist1014 / regionTotals.totalOrders,
+      regionTotals.ist1518, regionTotals.ist1518 / regionTotals.totalOrders,
+      regionTotals.ist1925, regionTotals.ist1925 / regionTotals.totalOrders,
+      regionTotals.istGt25, regionTotals.istGt25 / regionTotals.totalOrders,
+      regionTotals.lt19Pct
+    ]);
+    
+    const byArea = {};
+    regionStores.forEach(s => {
+      const area = s.area_coach || 'Unknown';
+      if (!byArea[area]) byArea[area] = [];
+      byArea[area].push(s);
+    });
+    
+    for (const [area, areaStores] of Object.entries(byArea)) {
+      const areaTotals = calculateTotals(areaStores);
+      ptdRows.push([
+        'AREA', region, area, '', `${areaStores.length} Stores`,
+        areaTotals.avgIST, areaTotals.totalOrders,
+        areaTotals.istLt10, areaTotals.istLt10 / areaTotals.totalOrders,
+        areaTotals.ist1014, areaTotals.ist1014 / areaTotals.totalOrders,
+        areaTotals.ist1518, areaTotals.ist1518 / areaTotals.totalOrders,
+        areaTotals.ist1925, areaTotals.ist1925 / areaTotals.totalOrders,
+        areaTotals.istGt25, areaTotals.istGt25 / areaTotals.totalOrders,
+        areaTotals.lt19Pct
+      ]);
+      
+      areaStores.forEach(s => {
+        const totalOrders = s.total_orders || s.wtd_deliveries || 0;
+        ptdRows.push([
+          'STORE', s.region_coach || '', s.area_coach || '', s.store_id || '', s.name || '',
+          s.wtd_in_store || '', totalOrders,
+          s.ist_lt10 || '', s.ist_lt10_pct || '',
+          s.ist_1014 || '', s.ist_1014_pct || '',
+          s.ist_1518 || '', s.ist_1518_pct || '',
+          s.ist_1925 || '', s.ist_1925_pct || '',
+          s.ist_gt25 || '', s.ist_gt25_pct || '',
+          s.ist_lt19_pct || ''
+        ]);
+      });
+    }
+  }
+  
+  const ptdWs = XLSX.utils.aoa_to_sheet(ptdRows);
+  XLSX.utils.book_append_sheet(wb, ptdWs, 'PTD IST');
+  
+  // === Daily Sheets ===
+  const dayNamesFull = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+  dayKeys.forEach((dayKey, idx) => {
+    const dayStores = dayData[dayKey]?.stores || [];
+    const dateParts = dayKey.split('-');
+    const dateObj = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
+    const dayName = dayNamesFull[dateObj.getDay()];
+    const month = months[parseInt(dateParts[1]) - 1];
+    const day = parseInt(dateParts[2]);
+    const sheetName = `${dayName}, ${month} ${day}`;
+    
+    const dayRows = [
+      [`${sheetName} — ${period}`],
+      ['Level', 'Region', 'Area Coach', 'Store #', 'Store Name', 'Avg IST (mins)', 'Total Orders', 
+       'IST <10 #', 'IST <10 %', 'IST 10-14 #', 'IST 10-14 %', 'IST 15-18 #', 'IST 15-18 %', 
+       'IST 19-25 #', 'IST 19-25 %', 'IST >25 #', 'IST >25 %', 'IST <19 %']
+    ];
+    
+    // TOTAL row for day
+    const dayTotals = calculateTotals(dayStores);
+    dayRows.push([
+      'TOTAL', 'ALL REGIONS', '', '', `${dayStores.length} Stores`,
+      dayTotals.avgIST, dayTotals.totalOrders,
+      dayTotals.istLt10, dayTotals.istLt10 / dayTotals.totalOrders,
+      dayTotals.ist1014, dayTotals.ist1014 / dayTotals.totalOrders,
+      dayTotals.ist1518, dayTotals.ist1518 / dayTotals.totalOrders,
+      dayTotals.ist1925, dayTotals.ist1925 / dayTotals.totalOrders,
+      dayTotals.istGt25, dayTotals.istGt25 / dayTotals.totalOrders,
+      dayTotals.lt19Pct
+    ]);
+    
+    // Group by region for day
+    const byRegionDay = {};
+    dayStores.forEach(s => {
+      const region = s.region_coach || 'Unknown';
+      if (!byRegionDay[region]) byRegionDay[region] = [];
+      byRegionDay[region].push(s);
+    });
+    
+    for (const [region, regionStores] of Object.entries(byRegionDay)) {
+      const regionTotals = calculateTotals(regionStores);
+      dayRows.push([
+        'REGION', region, '', '', `${regionStores.length} Stores`,
+        regionTotals.avgIST, regionTotals.totalOrders,
+        regionTotals.istLt10, regionTotals.istLt10 / regionTotals.totalOrders,
+        regionTotals.ist1014, regionTotals.ist1014 / regionTotals.totalOrders,
+        regionTotals.ist1518, regionTotals.ist1518 / regionTotals.totalOrders,
+        regionTotals.ist1925, regionTotals.ist1925 / regionTotals.totalOrders,
+        regionTotals.istGt25, regionTotals.istGt25 / regionTotals.totalOrders,
+        regionTotals.lt19Pct
+      ]);
+      
+      const byAreaDay = {};
+      regionStores.forEach(s => {
+        const area = s.area_coach || 'Unknown';
+        if (!byAreaDay[area]) byAreaDay[area] = [];
+        byAreaDay[area].push(s);
+      });
+      
+      for (const [area, areaStores] of Object.entries(byAreaDay)) {
+        const areaTotals = calculateTotals(areaStores);
+        dayRows.push([
+          'AREA', region, area, '', `${areaStores.length} Stores`,
+          areaTotals.avgIST, areaTotals.totalOrders,
+          areaTotals.istLt10, areaTotals.istLt10 / areaTotals.totalOrders,
+          areaTotals.ist1014, areaTotals.ist1014 / areaTotals.totalOrders,
+          areaTotals.ist1518, areaTotals.ist1518 / areaTotals.totalOrders,
+          areaTotals.ist1925, areaTotals.ist1925 / areaTotals.totalOrders,
+          areaTotals.istGt25, areaTotals.istGt25 / areaTotals.totalOrders,
+          areaTotals.lt19Pct
+        ]);
+        
+        areaStores.forEach(s => {
+          const totalOrders = s.total_orders || 0;
+          dayRows.push([
+            'STORE', s.region_coach || '', s.area_coach || '', s.store_id || '', s.name || '',
+            s.ist_avg || s.in_store || '', totalOrders,
+            s.ist_lt10 || '', s.ist_lt10_pct || '',
+            s.ist_1014 || '', s.ist_1014_pct || '',
+            s.ist_1518 || '', s.ist_1518_pct || '',
+            s.ist_1925 || '', s.ist_1925_pct || '',
+            s.ist_gt25 || '', s.ist_gt25_pct || '',
+            s.ist_lt19_pct || ''
+          ]);
+        });
+      }
+    }
+    
+    const dayWs = XLSX.utils.aoa_to_sheet(dayRows);
+    XLSX.utils.book_append_sheet(wb, dayWs, sheetName);
+  });
+  
+  // === Trend Sheet ===
+  const trendRows = [
+    [`In-Store Time Trend — ${period} ${weekStart}-${weekEnd}`],
+    ['Level', 'Region', 'Area Coach', 'Store #', 'Store Name']
+  ];
+  
+  // Add day columns
+  dayKeys.forEach((dayKey, idx) => {
+    const dateParts = dayKey.split('-');
+    const dateObj = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
+    const dayName = dayNamesFull[dateObj.getDay()];
+    const month = months[parseInt(dateParts[1]) - 1];
+    const day = parseInt(dateParts[2]);
+    trendRows[1].push(`${dayName}, ${month} ${day}`);
+  });
+  
+  // Add change columns
+  for (let i = 0; i < dayKeys.length - 1; i++) {
+    const fromParts = dayKeys[i].split('-');
+    const toParts = dayKeys[i + 1].split('-');
+    const fromDateObj = new Date(parseInt(fromParts[0]), parseInt(fromParts[1]) - 1, parseInt(fromParts[2]));
+    const toDateObj = new Date(parseInt(toParts[0]), parseInt(toParts[1]) - 1, parseInt(toParts[2]));
+    const fromDayName = dayNamesFull[fromDateObj.getDay()];
+    const toDayName = dayNamesFull[toDateObj.getDay()];
+    const fromMonth = months[parseInt(fromParts[1]) - 1];
+    const fromDay = parseInt(fromParts[2]);
+    const toMonth = months[parseInt(toParts[1]) - 1];
+    const toDay = parseInt(toParts[2]);
+    trendRows[1].push(`Δ ${fromDayName}, ${fromMonth} ${fromDay}→${toDayName}, ${toMonth} ${toDay}`);
+  }
+  
+  // TOTAL row
+  const trendTotal = [ 'TOTAL', 'ALL REGIONS', '', '', `${stores.length} Stores` ];
+  dayKeys.forEach((dayKey, idx) => {
+    const dayStores = dayData[dayKey]?.stores || [];
+    const dayTotals = calculateTotals(dayStores);
+    trendTotal.push(dayTotals.avgIST);
+  });
+  // Add changes
+  for (let i = 0; i < dayKeys.length - 1; i++) {
+    const fromStores = dayData[dayKeys[i]]?.stores || [];
+    const toStores = dayData[dayKeys[i + 1]]?.stores || [];
+    const fromAvg = calculateTotals(fromStores).avgIST;
+    const toAvg = calculateTotals(toStores).avgIST;
+    const change = toAvg - fromAvg;
+    trendTotal.push(change > 0 ? `▲ +${change.toFixed(1)}` : change < 0 ? `▼ ${change.toFixed(1)}` : '—');
+  }
+  trendRows.push(trendTotal);
+  
+  // REGION rows
+  for (const [region, regionStores] of Object.entries(byRegion)) {
+    const trendRegion = ['REGION', region, '', '', `${regionStores.length} Stores`];
+    dayKeys.forEach((dayKey, idx) => {
+      const dayStores = dayData[dayKey]?.stores || [];
+      const regionDayStores = dayStores.filter(s => s.region_coach === region);
+      const dayTotals = calculateTotals(regionDayStores);
+      trendRegion.push(regionDayStores.length > 0 ? dayTotals.avgIST : NaN);
+    });
+    // Add changes
+    for (let i = 0; i < dayKeys.length - 1; i++) {
+      const fromStores = dayData[dayKeys[i]]?.stores || [];
+      const toStores = dayData[dayKeys[i + 1]]?.stores || [];
+      const fromAvg = calculateTotals(fromStores.filter(s => s.region_coach === region)).avgIST;
+      const toAvg = calculateTotals(toStores.filter(s => s.region_coach === region)).avgIST;
+      const change = toAvg - fromAvg;
+      trendRegion.push(change > 0 ? `▲ +${change.toFixed(1)}` : change < 0 ? `▼ ${change.toFixed(1)}` : '—');
+    }
+    trendRows.push(trendRegion);
+    
+    // AREA rows
+    const byArea = {};
+    regionStores.forEach(s => {
+      const area = s.area_coach || 'Unknown';
+      if (!byArea[area]) byArea[area] = [];
+      byArea[area].push(s);
+    });
+    
+    for (const [area, areaStores] of Object.entries(byArea)) {
+      const trendArea = ['AREA', region, area, '', `${areaStores.length} Stores`];
+      dayKeys.forEach((dayKey, idx) => {
+        const dayStores = dayData[dayKey]?.stores || [];
+        const areaDayStores = dayStores.filter(s => s.area_coach === area);
+        const dayTotals = calculateTotals(areaDayStores);
+        trendArea.push(areaDayStores.length > 0 ? dayTotals.avgIST : NaN);
+      });
+      // Add changes
+      for (let i = 0; i < dayKeys.length - 1; i++) {
+        const fromStores = dayData[dayKeys[i]]?.stores || [];
+        const toStores = dayData[dayKeys[i + 1]]?.stores || [];
+        const fromAvg = calculateTotals(fromStores.filter(s => s.area_coach === area)).avgIST;
+        const toAvg = calculateTotals(toStores.filter(s => s.area_coach === area)).avgIST;
+        const change = toAvg - fromAvg;
+        trendArea.push(change > 0 ? `▲ +${change.toFixed(1)}` : change < 0 ? `▼ ${change.toFixed(1)}` : '—');
+      }
+      trendRows.push(trendArea);
+      
+      // STORE rows
+      areaStores.forEach(s => {
+        const trendStore = ['STORE', s.region_coach || '', s.area_coach || '', s.store_id || '', s.name || ''];
+        dayKeys.forEach((dayKey, idx) => {
+          const dayStore = (dayData[dayKey]?.stores || []).find(ds => ds.store_id === s.store_id);
+          trendStore.push(dayStore?.ist_avg || dayStore?.in_store || NaN);
+        });
+        // Add changes
+        for (let i = 0; i < dayKeys.length - 1; i++) {
+          const fromStore = (dayData[dayKeys[i]]?.stores || []).find(ds => ds.store_id === s.store_id);
+          const toStore = (dayData[dayKeys[i + 1]]?.stores || []).find(ds => ds.store_id === s.store_id);
+          const fromAvg = fromStore?.ist_avg || fromStore?.in_store || NaN;
+          const toAvg = toStore?.ist_avg || toStore?.in_store || NaN;
+          const change = toAvg - fromAvg;
+          trendStore.push(change > 0 ? `▲ +${change.toFixed(1)}` : change < 0 ? `▼ ${change.toFixed(1)}` : '—');
+        }
+        trendRows.push(trendStore);
+      });
+    }
+  }
+  
+  const trendWs = XLSX.utils.aoa_to_sheet(trendRows);
+  XLSX.utils.book_append_sheet(wb, trendWs, 'Trend');
+  
+  // === WTD History Sheet (Matt's request) ===
+  if (allData && allData.weeks) {
+    const historyRows = [
+      ['WTD History — Week-over-Week Progress'],
+      ['Store #', 'Store Name', 'Area Coach', 'Region Coach']
+    ];
+    
+    // Get all weeks sorted
+    const allWeeks = Object.keys(allData.weeks).sort();
+    
+    // Add week columns to header
+    allWeeks.forEach(weekKey => {
+      const weekInfo = allData.weeks[weekKey];
+      historyRows[1].push(`${weekInfo.period || weekKey} WTD IST`);
+      historyRows[1].push(`${weekInfo.period || weekKey} %LT19`);
+    });
+    
+    // Add change column
+    if (allWeeks.length >= 2) {
+      historyRows[1].push('IST Change (First→Last Week)');
+      historyRows[1].push('Progress');
+    }
+    
+    // Get unique stores from current week
+    stores.forEach(s => {
+      const row = [s.store_id, s.name, s.area_coach, s.region_coach];
+      let firstIST = null, lastIST = null;
+      
+      allWeeks.forEach(weekKey => {
+        const weekInfo = allData.weeks[weekKey];
+        const weekStores = weekInfo.stores || [];
+        const storeMatch = weekStores.find(ws => ws.store_id === s.store_id);
+        
+        if (storeMatch) {
+          row.push(storeMatch.wtd_in_store || '');
+          row.push(storeMatch.ist_lt19_pct || '');
+          
+          if (!firstIST && storeMatch.wtd_in_store) firstIST = storeMatch.wtd_in_store;
+          lastIST = storeMatch.wtd_in_store || lastIST;
+        } else {
+          row.push('');
+          row.push('');
+        }
+      });
+      
+      // Calculate progress
+      if (allWeeks.length >= 2 && firstIST && lastIST) {
+        const change = lastIST - firstIST;
+        row.push(change.toFixed(1));
+        row.push(change < 0 ? '✓ Improving' : change > 0 ? '⚠ Needs Attention' : '— Stable');
+      }
+      
+      historyRows.push(row);
+    });
+    
+    const historyWs = XLSX.utils.aoa_to_sheet(historyRows);
+    XLSX.utils.book_append_sheet(wb, historyWs, 'WTD History');
+  }
+  
+  return XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+}
+
+// Send test email
+app.post('/api/automation/test-email', verifyAutomationAuth, async (req, res) => {
+  try {
+    const nodemailer = require('nodemailer');
+    const { to } = req.body;
+    
+    if (!to) {
+      return res.status(400).json({ error: 'Email address required' });
+    }
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.VELOCITY_EMAIL_USER || 'velocityai.reports@gmail.com',
+        pass: process.env.VELOCITY_EMAIL_PASS || 'dewnkjrxbgmodwwd'
+      }
+    });
+
+    const info = await transporter.sendMail({
+      from: `"Velocity Reports" <${process.env.VELOCITY_EMAIL_USER || 'velocityai.reports@gmail.com'}>`,
+      to: to,
+      subject: 'Velocity Email Test - Success!',
+      html: `
+        <h1>✅ Velocity Email is Working!</h1>
+        <p>If you received this email, the Velocity automation email system is configured correctly.</p>
+        <p>Daily reports will be sent automatically at 7:00 AM.</p>
+        <p>Time sent: ${new Date().toLocaleString()}</p>
+      `
+    });
+
+    res.json({ success: true, messageId: info.messageId, response: info.response });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Get automation status
+app.get('/api/automation/status', verifyAutomationAuth, (req, res) => {
+  try {
+    const allData = loadData();
+    const weeks = Object.keys(allData.weeks || {}).sort((a, b) => b.localeCompare(a));
+    
+    // Get last upload info
+    let lastUpload = null;
+    if (weeks.length > 0) {
+      const latestWeek = allData.weeks[weeks[0]];
+      const days = Object.keys(latestWeek.days || {}).sort((a, b) => b.localeCompare(a));
+      if (days.length > 0) {
+        lastUpload = {
+          date: days[0],
+          week: weeks[0],
+          storeCount: latestWeek.days[days[0]].stores?.length || 0
+        };
+      }
+    }
+
+    res.json({
+      status: 'active',
+      lastUpload,
+      totalWeeks: weeks.length
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 const PORT = process.env.PORT || 3000;
