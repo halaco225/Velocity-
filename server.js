@@ -895,30 +895,24 @@ app.post('/api/upload', upload.any(), async (req, res) => {
       const isExcel = file.originalname.match(/\.xlsx?$/i);
       const isPdf = file.originalname.match(/\.pdf$/i);
 
-      // Block known export file names from being uploaded as source data
-      const isExportFile = file.originalname.match(/Velocity_IST|IST_Tracker/i);
-      if (isExportFile) {
-        errors.push(`${file.originalname}: This looks like an exported Velocity report. Only upload the Speed of Service Excel and Above Store PDF.`);
-        continue;
-      }
-
-      // Only accept known valid file types by name pattern
-      // Valid: "AboveStore*", "Above Store*", "PH_Speed*", "SpeedofService*", "Speed_of_Service*"
-      // Numbers in filename are fine: "AboveStore (1).pdf", "PH_Speed_Of_Service (2).xlsx"
+      // Identify file types
       const isAboveStore = file.originalname.match(/above.?store/i);
-      const isSOSExcel = file.originalname.match(/speed.?of.?service|PH_Speed/i);
-      if (isExcel && !isSOSExcel) {
-        errors.push(`${file.originalname}: Unrecognized Excel file. Only upload the PH Speed of Service Excel report.`);
+      const isSOSExcel = file.originalname.match(/speed.?of.?service|PH_Speed|PH_Delivery/i);
+      const isISTTracker = file.originalname.match(/Velocity_IST|IST_Tracker/i);
+
+      if (isPdf && !isAboveStore) {
+        errors.push(`${file.originalname}: Unrecognized PDF. Only upload the Above Store Report PDF.`);
         continue;
       }
-      if (isPdf && !isAboveStore) {
-        errors.push(`${file.originalname}: Unrecognized PDF file. Only upload the Above Store Report PDF.`);
+      if (isExcel && !isSOSExcel && !isISTTracker) {
+        errors.push(`${file.originalname}: Unrecognized Excel. Upload SOS Excel or IST Tracker.`);
         continue;
       }
       let parsed = null;
       try {
-        if (isExcel) {
-          // Only SOS Excel is accepted (filename already validated above)
+        if (isExcel && isISTTracker) {
+          parsed = parseISTTrackerExcel(file.path);
+        } else if (isExcel) {
           parsed = parseSOSExcel(file.path);
         }
         else if (isPdf) {
