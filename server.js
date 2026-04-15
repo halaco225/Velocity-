@@ -2084,5 +2084,127 @@ app.get('/api/automation/status', verifyAutomationAuth, (req, res) => {
   }
 });
 
+// =====================
+// ODS Auto-Pull: fetch Daily Dispatch Performance from oneVIEW and ingest
+// POST /api/automation/pull-ods
+// =====================
+app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
+  try {
+    const https = require('https');
+    const querystring = require('querystring');
+
+    const ODS_ORG  = process.env.ODS_ORG      || 'dgi';
+    const ODS_USER = process.env.ODS_USER      || 'hlacoste';
+    const ODS_PASS = process.env.ODS_PASSWORD;
+    if (!ODS_PASS) return res.status(500).json({ error: 'ODS_PASSWORD env variable not set on Render' });
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const dateStr = yesterday.toISOString().split('T')[0];
+    console.log(`[ODS Pull] Fetching Daily Dispatch Performance for ${dateStr}`);
+
+    function httpsReq(options, postData) {
+      return new Promise((resolve, reject) => {
+        const req = https.request(options, (r) => {
+          const chunks = [];
+          r.on('data', d => chunks.push(d));
+          r.on('end', () => resolve({ body: Buffer.concat(chunks), headers: r.headers, statusCode: r.statusCode }));
+        });
+        req.on('error', reject);
+        if (postData) req.write(postData);
+        req.end();
+      });
+    }
+
+    function mergeCookies(existing, newSetCookies) {
+      const map = {};
+      (existing || '').split('; ').forEach(c => { const [k,v] = c.split('='); if (k&&v) map[k.trim()]=v.trim(); });
+      [].concat(newSetCookies||[]).forEach(c => { const p = c.split(';')[0]; const [k,v] = p.split('='); if (k&&v) map[k.trim()]=v.trim(); });
+      return Object.entries(map).map(([k,v]) => `${k}=${v}`).join('; ');
+    }
+
+    const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36';
+
+    // Step 1: GET login page for initial cookie
+    const r1 = await httpsReq({ hostname:'bi.onedatasource.com', path:'/asp/login.html', method:'GET', headers:{'User-Agent':UA} });
+    let cookie = mergeCookies('', r1.headers['set-cookie']);
+
+    // Step 2: POST login
+    const loginBody = querystring.stringify({ orgCode:ODS_ORG, userId:ODS_USER, password:ODS_PASS, _eventId:'login', locale:'en_US', timezone:'America/New_York' });
+    const r2 = await httpsReq({
+      hostname:'bi.onedatasource.com', path:'/asp/login.html', method:'POST',
+      headers:{ 'Content-Type':'application/x-www-form-urlencoded','Content-Length':Buffer.byteLength(loginBody),'Cookie':cookie,'User-Agent':UA }
+    }, loginBody);
+    cookie = mergeCookies(cookie, r2.headers['set-cookie']);
+    if (r2.statusCode >= 400) return res.status(500).json({ error:`ODS login failed: HTTP ${r2.statusCode}` });
+
+    // Step 3: GET report parameters page to get CSRF + flowExecutionKey
+    const r3 = await httpsReq({
+      hostname:'bi.onedatasource.com',
+      path:'/asp/flow.html?_flowId=aboveStoreInStoreReportsFlow&_eventId=selectParameters&selectedReportId=457',
+      method:'GET', headers:{'Cookie':cookie,'User-Agent':UA}
+    });
+    cookie = mergeCookies(cookie, r3.headers['set-cookie']);
+    const html3 = r3.body.toString();
+    const csrfMatch = html3.match(/name="OWASP_CSRFTOKEN"\s+value="([^"]+)"/);
+    const csrfToken = csrfMatch ? csrfMatch[1] : '';
+    const flowKeyMatch = html3.match(/_flowExecutionKey=([^"&\s]+)/);
+    const flowKey = flowKeyMatch ? flowKeyMatch[1] : 'e1s1';
+    console.log(`[ODS Pull] flowKey=${flowKey} csrf=${csrfToken?'ok':'missing'}`);
+
+    // Step 4: POST form to get PDF
+    const reportBody = querystring.stringify({
+      _eventId:'retrieveReports', orgTypes:'territory', orgTypeValues:'26',
+      storesInOrgType:'all', selectedDate:dateStr, exportFormat:'pdf', OWASP_CSRFTOKEN:csrfToken
+    });
+    const r4 = await httpsReq({
+      hostname:'bi.onedatasource.com',
+      path:`/asp/flow.html?_flowId=aboveStoreInStoreReportsFlow&_flowExecutionKey=${flowKey}&_eventId=selectParameters&selectedReportId=457`,
+      method:'POST',
+      headers:{ 'Content-Type':'application/x-www-form-urlencoded','Content-Length':Buffer.byteLength(reportBody),'Cookie':cookie,'User-Agent':UA,'Referer':'https://bi.onedatasource.com/' }
+    }, reportBody);
+    cookie = mergeCookies(cookie, r4.headers['set-cookie']);
+    const ct = r4.headers['content-type'] || '';
+    console.log(`[ODS Pull] Report response: HTTP ${r4.statusCode}, type=${ct}, size=${r4.body.length}`);
+
+    if (!ct.includes('pdf') && r4.body.length < 5000) {
+      return res.status(500).json({ error:'Did not receive PDF', statusCode:r4.statusCode, contentType:ct, preview:r4.body.toString().substring(0,300) });
+    }
+
+    // Step 5: Save PDF and parse
+    const tmpPdf = path.join(os.tmpdir(), `dispatch_${dateStr}.pdf`);
+    fs.writeFileSync(tmpPdf, r4.body);
+    const parsed = parseAboveStorePDFLocal(tmpPdf);
+    try { fs.unlinkSync(tmpPdf); } catch(e) {}
+
+    if (!parsed.stores || !parsed.stores.length) {
+      return res.status(200).json({ success:false, message:'PDF downloaded but no stores parsed', date:dateStr, pdfBytes:r4.body.length });
+    }
+
+    // Step 6: Merge into wtd_data
+    const weekKey = getWeekKey(dateStr);
+    const allData2 = loadData();
+    if (!allData2.weeks[weekKey]) allData2.weeks[weekKey] = { week:weekKey, period:FISCAL_CALENDAR[weekKey]||'', days:{} };
+    if (!allData2.weeks[weekKey].days[dateStr]) allData2.weeks[weekKey].days[dateStr] = { date:dateStr, type:'ods_auto', stores:[], uploader:'ODS Auto' };
+    const existing = {};
+    (allData2.weeks[weekKey].days[dateStr].stores||[]).forEach(s => { existing[s.store_id]=s; });
+    parsed.stores.forEach(s => {
+      const align = ALIGNMENT[s.store_id];
+      if (!align && !existing[s.store_id]) return;
+      if (existing[s.store_id]) Object.assign(existing[s.store_id], s);
+      else existing[s.store_id] = { ...s, ...(align||{}) };
+    });
+    allData2.weeks[weekKey].days[dateStr].stores = Object.values(existing);
+    saveData(allData2);
+    console.log(`[ODS Pull] Done: ${parsed.stores.length} stores ingested for ${dateStr}`);
+    res.json({ success:true, date:dateStr, week:weekKey, storeCount:parsed.stores.length });
+
+  } catch(e) {
+    console.error('[ODS Pull] Error:', e);
+    res.status(500).json({ error:e.message });
+  }
+});
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => console.log(`Velocity running on port ${PORT}`));
