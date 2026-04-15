@@ -2151,16 +2151,20 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
 
     const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36';
 
-    // Step 1: GET login page for initial cookie
+    // Step 1: GET login page for initial cookie + discover form action
     const r1 = await httpsReq({ hostname:'bi.onedatasource.com', path:'/asp/login.html', method:'GET', headers:{'User-Agent':UA,'Cookie':''} }, null, 0);
     let cookie = mergeCookies('', r1.headers['set-cookie']);
-    console.log(`[ODS Pull] Step1: HTTP ${r1.statusCode}, cookie=${cookie.substring(0,40)}`);
+    const html1 = r1.body.toString();
+    const formActionMatch = html1.match(/<form[^>]+action="([^"]+)"/i);
+    const hiddenFields = [...html1.matchAll(/<input[^>]+type="hidden"[^>]+name="([^"]+)"[^>]+value="([^"]*)"/gi)].map(m => m[1]+'='+m[2]);
+    console.log(`[ODS Pull] Step1: HTTP ${r1.statusCode}, cookie=${cookie.substring(0,40)}, formAction=${formActionMatch?formActionMatch[1]:'NOT FOUND'}, hiddenFields=${hiddenFields.join('|')}`);
 
-    // Step 2: POST login (manually follow redirects to capture ALL intermediate cookies)
+    // Step 2: POST login using the actual form action discovered from Step 1
+    const loginPath = (formActionMatch && formActionMatch[1].startsWith('/')) ? formActionMatch[1] : '/asp/login.html';
     const loginBody = querystring.stringify({ orgCode:ODS_ORG, userId:ODS_USER, password:ODS_PASS, _eventId:'login', locale:'en_US', timezone:'America/New_York' });
     const r2a = await httpsReq({
-      hostname:'bi.onedatasource.com', path:'/asp/login.html', method:'POST',
-      headers:{ 'Content-Type':'application/x-www-form-urlencoded','Content-Length':Buffer.byteLength(loginBody),'Cookie':cookie,'User-Agent':UA }
+      hostname:'bi.onedatasource.com', path:loginPath, method:'POST',
+      headers:{ 'Content-Type':'application/x-www-form-urlencoded','Content-Length':Buffer.byteLength(loginBody),'Cookie':cookie,'User-Agent':UA,'Referer':'https://bi.onedatasource.com/asp/login.html' }
     }, loginBody, 0);
     cookie = mergeCookies(cookie, r2a.headers['set-cookie']);
     console.log(`[ODS Pull] Step2a (login POST): HTTP ${r2a.statusCode}, cookie len=${cookie.length}, location=${r2a.headers.location||'none'}`);
