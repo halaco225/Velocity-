@@ -2096,7 +2096,7 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
 
     const ODS_ORG  = process.env.ODS_ORG      || 'dgi';
     const ODS_USER = process.env.ODS_USER      || 'hlacoste';
-    const ODS_PASS = process.env.ODS_PASSWORD;
+    const ODS_PASS = process.env.ODS_PASSWORD || process.env.ODS_Password;
     if (!ODS_PASS) return res.status(500).json({ error: 'ODS_PASSWORD env variable not set on Render' });
 
     const yesterday = new Date();
