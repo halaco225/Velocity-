@@ -2092,6 +2092,7 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
   try {
     const https = require('https');
     const querystring = require('querystring');
+    const os = require('os');
 
     const ODS_ORG  = process.env.ODS_ORG      || 'dgi';
     const ODS_USER = process.env.ODS_USER      || 'hlacoste';
