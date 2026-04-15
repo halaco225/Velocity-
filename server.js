@@ -2156,8 +2156,10 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
     let cookie = mergeCookies('', r1.headers['set-cookie']);
     const html1 = r1.body.toString();
     const formActionMatch = html1.match(/<form[^>]+action="([^"]+)"/i);
-    const hiddenFields = [...html1.matchAll(/<input[^>]+type="hidden"[^>]+name="([^"]+)"[^>]+value="([^"]*)"/gi)].map(m => m[1]+'='+m[2]);
-    console.log(`[ODS Pull] Step1: HTTP ${r1.statusCode}, cookie=${cookie.substring(0,40)}, formAction=${formActionMatch?formActionMatch[1]:'NOT FOUND'}, hiddenFields=${hiddenFields.join('|')}`);
+    const allInputNames = [...html1.matchAll(/<input[^>]+name="([^"]+)"/gi)].map(m => m[1]);
+    const hiddenFields = {};
+    [...html1.matchAll(/<input[^>]+type="hidden"[^>]+name="([^"]+)"[^>]+value="([^"]*)"/gi)].forEach(m => { hiddenFields[m[1]] = m[2]; });
+    console.log(`[ODS Pull] Step1: HTTP ${r1.statusCode}, cookie=${cookie.substring(0,40)}, formAction=${formActionMatch?formActionMatch[1]:'NOT FOUND'}, allInputNames=${allInputNames.join('|')}`);
 
     // Step 2: POST login using the actual form action and Spring Security field names
     // formAction is relative (e.g. 'j_spring_security_check') so resolve to /asp/<action>
@@ -2170,12 +2172,18 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
     }
     console.log(`[ODS Pull] Using loginPath=${loginPath}`);
 
-    // Extract hidden form fields to include in POST
-    const hiddenFieldData = {};
-    [...html1.matchAll(/<input[^>]+type="hidden"[^>]+name="([^"]+)"[^>]+value="([^"]*)"/gi)].forEach(m => { hiddenFieldData[m[1]] = m[2]; });
-
-    // Spring Security uses j_username / j_password field names
-    const loginBody = querystring.stringify({ ...hiddenFieldData, orgCode:ODS_ORG, j_username:ODS_USER, j_password:ODS_PASS, _eventId:'login', locale:'en_US', timezone:'America/New_York' });
+    // Spring Security uses j_username / j_password; include all variants + hidden fields for compatibility
+    const loginBody = querystring.stringify({
+      ...hiddenFields,
+      orgCode: ODS_ORG,
+      j_username: ODS_USER,   // standard Spring Security
+      j_password: ODS_PASS,
+      userId: ODS_USER,       // ODS legacy field name
+      password: ODS_PASS,
+      _eventId: 'login',
+      locale: 'en_US',
+      timezone: 'America/New_York'
+    });
     const r2a = await httpsReq({
       hostname:'bi.onedatasource.com', path:loginPath, method:'POST',
       headers:{ 'Content-Type':'application/x-www-form-urlencoded','Content-Length':Buffer.byteLength(loginBody),'Cookie':cookie,'User-Agent':UA,'Referer':'https://bi.onedatasource.com/asp/login.html' }
