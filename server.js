@@ -2249,11 +2249,11 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
     // Step 4: POST form to get PDF (no redirect following — we want the raw response)
     const reportBody = querystring.stringify({
       _eventId:'retrieveReports', orgTypes:'territory', orgTypeValues:'26',
-      storesInOrgType:'all', selectedDate:dateStr, exportFormat:'pdf', [csrfFieldName||'OWASP_CSRFTOKEN']:csrfToken
+      storesInOrgType:'all', selectedDate:dateStr, exportFormat:'pdf'
     });
     const r4 = await httpsReq({
       hostname:'bi.onedatasource.com',
-      path:`/asp/flow.html?_flowId=aboveStoreInStoreReportsFlow&_flowExecutionKey=${flowKey}&_eventId=retrieveReports&selectedReportId=457`,
+      path:`/asp/flow.html?_flowId=aboveStoreInStoreReportsFlow&_flowExecutionKey=${flowKey}`,
       method:'POST',
       headers:{ 'Content-Type':'application/x-www-form-urlencoded','Content-Length':Buffer.byteLength(reportBody),'Cookie':cookie,'User-Agent':UA,'Referer':'https://bi.onedatasource.com/asp/flow.html' }
     }, reportBody, 0);
