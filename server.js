@@ -2240,22 +2240,26 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
         if (m) { csrfToken = m[1]; csrfFieldName = pat; break; }
       }
     }
-    const flowKeyMatch = html3.match(/_flowExecutionKey=([^"&\s]+)/);
+    const flowKeyMatch = html3.match(/_flowExecutionKey=([^"'&\s]+)/);
     const flowKey = flowKeyMatch ? flowKeyMatch[1] : 'e1s1';
     // Log all input names to diagnose form structure
     const allInputs = [...html3.matchAll(/<input[^>]+name="([^"]+)"[^>]*>/gi)].map(m=>m[1]);
-    console.log(`[ODS Pull] flowKey=${flowKey} csrf=${csrfToken?csrfFieldName+'=ok':'missing'} allInputs=${allInputs.join('|')}`);
+    console.log(`[ODS Pull] flowKey='${flowKey}' csrf=${csrfToken?csrfFieldName+'=ok':'missing'} cookieLen=${cookie.length} cookie60=${cookie.substring(0,60)} allInputs=${allInputs.join('|')}`);
 
     // Step 4: POST form to get PDF (no redirect following — we want the raw response)
     const reportBody = querystring.stringify({
+      _flowExecutionKey: flowKey,
       _eventId:'retrieveReports', orgTypes:'territory', orgTypeValues:'26',
       storesInOrgType:'all', selectedDate:dateStr, exportFormat:'pdf'
     });
+    const step4Url = `/asp/flow.html?_flowId=aboveStoreInStoreReportsFlow&_flowExecutionKey=${flowKey}`;
+    const step4Referer = `https://bi.onedatasource.com/asp/flow.html?_flowId=aboveStoreInStoreReportsFlow&_flowExecutionKey=${flowKey}`;
+    console.log(`[ODS Pull] Step4 POST url=${step4Url} bodyLen=${Buffer.byteLength(reportBody)} body=${reportBody.substring(0,200)}`);
     const r4 = await httpsReq({
       hostname:'bi.onedatasource.com',
-      path:`/asp/flow.html?_flowId=aboveStoreInStoreReportsFlow&_flowExecutionKey=${flowKey}`,
+      path: step4Url,
       method:'POST',
-      headers:{ 'Content-Type':'application/x-www-form-urlencoded','Content-Length':Buffer.byteLength(reportBody),'Cookie':cookie,'User-Agent':UA,'Referer':'https://bi.onedatasource.com/asp/flow.html' }
+      headers:{ 'Content-Type':'application/x-www-form-urlencoded','Content-Length':Buffer.byteLength(reportBody),'Cookie':cookie,'User-Agent':UA,'Referer':step4Referer,'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8','Accept-Language':'en-US,en;q=0.5','Origin':'https://bi.onedatasource.com' }
     }, reportBody, 0);
     cookie = mergeCookies(cookie, r4.headers['set-cookie']);
     const ct = r4.headers['content-type'] || '';
