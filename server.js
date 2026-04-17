@@ -2216,7 +2216,7 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
     }, null, 0);
     cookie = mergeCookies(cookie, r3.headers['set-cookie']);
     const html3 = r3.body.toString();
-    console.log(`[ODS Pull] Step3: HTTP ${r3.statusCode}, bodyLen=${html3.length}, has_form=${html3.includes('OWASP_CSRFTOKEN')}`);
+    console.log(`[ODS Pull] Step3: HTTP ${r3.statusCode}, bodyLen=${html3.length}, has_form=${html3.includes('OWASP_CSRFTOKEN')}, location=${r3.headers.location||'none'}, preview=${html3.substring(0,300).replace(/\n/g,' ')}`);
 
     if (r3.statusCode === 302 || r3.statusCode === 301) {
       return res.status(500).json({ error:`ODS session not established after login, redirecting to: ${r3.headers.location}` });
