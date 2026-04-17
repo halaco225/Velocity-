@@ -2175,8 +2175,9 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
     // Spring Security uses j_username / j_password; include all variants + hidden fields for compatibility
     const loginBody = querystring.stringify({
       ...hiddenFields,
-      orgCode: ODS_ORG,
+      orgId: ODS_ORG,
       j_username: ODS_USER,   // standard Spring Security
+      j_password_pseudo: ODS_PASS,
       j_password: ODS_PASS,
       userId: ODS_USER,       // ODS legacy field name
       password: ODS_PASS,
