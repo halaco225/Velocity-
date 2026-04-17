@@ -2225,16 +2225,30 @@ app.post('/api/automation/pull-ods', verifyAutomationAuth, async (req, res) => {
       return res.status(500).json({ error:'ODS redirected to login page — credentials may be wrong', preview: html3.substring(0,200) });
     }
 
-    const csrfMatch = html3.match(/name="OWASP_CSRFTOKEN"\s+value="([^"]+)"/);
-    const csrfToken = csrfMatch ? csrfMatch[1] : '';
+    // Try multiple CSRF token field name patterns
+    const csrfPatterns = ['OWASP_CSRFTOKEN','_csrf','csrfToken','csrf_token','CSRFToken','authenticity_token'];
+    let csrfToken = '', csrfFieldName = '';
+    for (const pat of csrfPatterns) {
+      const m = html3.match(new RegExp('name="'+pat+'"\\s+value="([^"]+)"'));
+      if (m) { csrfToken = m[1]; csrfFieldName = pat; break; }
+    }
+    // Also try value-before-name order
+    if (!csrfToken) {
+      for (const pat of csrfPatterns) {
+        const m = html3.match(new RegExp('value="([^"]+)"\\s+name="'+pat+'"'));
+        if (m) { csrfToken = m[1]; csrfFieldName = pat; break; }
+      }
+    }
     const flowKeyMatch = html3.match(/_flowExecutionKey=([^"&\s]+)/);
     const flowKey = flowKeyMatch ? flowKeyMatch[1] : 'e1s1';
-    console.log(`[ODS Pull] flowKey=${flowKey} csrf=${csrfToken?'ok':'missing'}`);
+    // Log all input names to diagnose form structure
+    const allInputs = [...html3.matchAll(/<input[^>]+name="([^"]+)"[^>]*>/gi)].map(m=>m[1]);
+    console.log(`[ODS Pull] flowKey=${flowKey} csrf=${csrfToken?csrfFieldName+'=ok':'missing'} allInputs=${allInputs.join('|')}`);
 
     // Step 4: POST form to get PDF (no redirect following — we want the raw response)
     const reportBody = querystring.stringify({
       _eventId:'retrieveReports', orgTypes:'territory', orgTypeValues:'26',
-      storesInOrgType:'all', selectedDate:dateStr, exportFormat:'pdf', OWASP_CSRFTOKEN:csrfToken
+      storesInOrgType:'all', selectedDate:dateStr, exportFormat:'pdf', [csrfFieldName||'OWASP_CSRFTOKEN']:csrfToken
     });
     const r4 = await httpsReq({
       hostname:'bi.onedatasource.com',
