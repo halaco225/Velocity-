@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<\!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1412,6 +1412,180 @@ if (loadFromLocalStorage()) {
 
 // ==============================
 // EXCEL EXPORT
+
+// ─── PTD Trend sheet: weekly Avg IST across all weeks in current period ───
+function writePTDTrendSheet(ws) {
+  const currentPeriod = currentData.period ? currentData.period.replace(/W\d+$/, '') : null;
+  const periodWeeks = currentPeriod
+    ? allWeeksData.filter(w => w.period && w.period.startsWith(currentPeriod)).sort((a,b)=>a.week.localeCompare(b.week))
+    : [currentData];
+
+  if (\!periodWeeks.length) return;
+
+  const hasP17 = periodWeeks.some(w => w.period && w.period.includes('P17'));
+  const currentWeekPeriod = currentData.period || '';
+
+  function weekLabel(w) {
+    let p = w.period || '';
+    if (hasP17) p = p.replace(/P17(W\d+)/, (_, wPart) => {
+      const baseP = currentPeriod.replace('P17','P').replace(/W\d+$/,'');
+      return baseP + wPart;
+    });
+    const dr = w.dateRange || '';
+    const isLast = w.period === currentWeekPeriod;
+    return p + (dr ? ' ' + dr : '') + (isLast ? ' (WTD)' : '');
+  }
+
+  function colLetter(n) {
+    let s = '';
+    while (n > 0) { const r=(n-1)%26; s=String.fromCharCode(65+r)+s; n=Math.floor((n-1)/26); }
+    return s;
+  }
+
+  const weekLabels = periodWeeks.map(w => weekLabel(w));
+  const numWeeks = periodWeeks.length;
+  const numDeltas = numWeeks > 1 ? numWeeks - 1 : 0;
+  const baseCols = 5;
+  const totalCols = baseCols + numWeeks + numDeltas;
+
+  ws.getColumn(1).width = 8;
+  ws.getColumn(2).width = 16;
+  ws.getColumn(3).width = 18;
+  ws.getColumn(4).width = 9;
+  ws.getColumn(5).width = 18;
+  for (let i = 0; i < numWeeks; i++) ws.getColumn(baseCols+1+i).width = 20;
+  for (let i = 0; i < numDeltas; i++) ws.getColumn(baseCols+numWeeks+1+i).width = 12;
+
+  // Title
+  const dispPeriod = currentPeriod ? currentPeriod.replace('P17','P4') : '';
+  const p17Note = hasP17 ? ` \u2014 P17W1 shown as ${dispPeriod}W1 per user calendar` : '';
+  ws.mergeCells('A1:' + colLetter(totalCols) + '1');
+  const tc = ws.getCell('A1');
+  tc.value = `PTD Trend \u2013 ${dispPeriod} Weekly Avg IST (mins)${p17Note}`;
+  tc.font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
+  tc.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: MID_NAVY } };
+  tc.alignment = { horizontal: 'center', vertical: 'middle' };
+  ws.getRow(1).height = 20;
+
+  const deltaHeaders = [];
+  for (let i = 0; i < numDeltas; i++) deltaHeaders.push(`\u0394 W${i+1}\u2192W${i+2}`);
+  const headers = ['Level','Region','Area Coach','Store #','Store Name',...weekLabels,...deltaHeaders];
+  const hdrRow = ws.addRow(headers);
+  hdrRow.height = 28;
+  hdrRow.eachCell((cell, col) => hdrCell(cell, headers[col-1]));
+  ws.views = [{ state: 'frozen', ySplit: 2 }];
+
+  // Build store weekly IST averages
+  const storeWeekly = {};
+  for (let wi = 0; wi < periodWeeks.length; wi++) {
+    const week = periodWeeks[wi];
+    const weekDays = (week.days || []).map(d => d.date);
+    for (const s of (week.stores || [])) {
+      if (\!storeWeekly[s.store_id]) {
+        storeWeekly[s.store_id] = {
+          store_id: s.store_id, name: s.name||s.store_id,
+          area: s.area||'', area_coach: s.area_coach||'', region_coach: s.region_coach||'',
+          weekAvgs: new Array(numWeeks).fill(null)
+        };
+      }
+      const dailyISTs = weekDays
+        .map(date => s.daily&&s.daily[date]&&s.daily[date].in_store\!=null ? s.daily[date].in_store : null)
+        .filter(v => v\!=null);
+      if (dailyISTs.length > 0) {
+        storeWeekly[s.store_id].weekAvgs[wi] = +(dailyISTs.reduce((a,b)=>a+b,0)/dailyISTs.length).toFixed(1);
+      }
+    }
+  }
+
+  const allStores = Object.values(storeWeekly).filter(s => s.weekAvgs.some(v=>v\!=null));
+
+  function groupAvg(stores, wi) {
+    const vals = stores.map(s=>s.weekAvgs[wi]).filter(v=>v\!=null);
+    return vals.length ? +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : null;
+  }
+  function deltaStr(a, b) {
+    if (a==null||b==null) return '\u2013';
+    const diff = +(b-a).toFixed(1);
+    if (Math.abs(diff)<0.05) return '\u2013';
+    return diff<0 ? `\u25bc ${diff}` : `\u25b2 +${diff}`;
+  }
+
+  const trendRows = [];
+
+  const totalWeekAvgs = periodWeeks.map((_,wi)=>groupAvg(allStores,wi));
+  trendRows.push({
+    level:'TOTAL', region:'ALL REGIONS', area_coach:null, store_id:null,
+    store_name: allStores.length+' Stores',
+    weekAvgs:totalWeekAvgs, deltas:totalWeekAvgs.slice(1).map((v,i)=>deltaStr(totalWeekAvgs[i],v)),
+    fillBg:MID_NAVY, fontColor:'FFFFFFFF', bold:true
+  });
+
+  const regions = [...new Set(allStores.map(s=>s.region_coach||'Unknown'))].sort();
+  for (const region of regions) {
+    const rStores = allStores.filter(s=>(s.region_coach||'Unknown')===region);
+    const rWeekAvgs = periodWeeks.map((_,wi)=>groupAvg(rStores,wi));
+    trendRows.push({
+      level:'REGION', region, area_coach:null, store_id:null,
+      store_name:rStores.length+' Stores',
+      weekAvgs:rWeekAvgs, deltas:rWeekAvgs.slice(1).map((v,i)=>deltaStr(rWeekAvgs[i],v)),
+      fillBg:DARK_NAVY, fontColor:'FFFFFFFF', bold:true
+    });
+
+    const areas = [...new Set(rStores.map(s=>s.area_coach||s.area||'Unknown'))].sort();
+    for (const area of areas) {
+      const aStores = rStores.filter(s=>(s.area_coach||s.area||'Unknown')===area);
+      const aWeekAvgs = periodWeeks.map((_,wi)=>groupAvg(aStores,wi));
+      trendRows.push({
+        level:'AREA', region, area_coach:area, store_id:aStores[0]?.area||'',
+        store_name:aStores.length+' Stores',
+        weekAvgs:aWeekAvgs, deltas:aWeekAvgs.slice(1).map((v,i)=>deltaStr(aWeekAvgs[i],v)),
+        fillBg:BLUE_ROW, fontColor:'FFFFFFFF', bold:true
+      });
+
+      aStores.forEach((s, idx) => {
+        trendRows.push({
+          level:'STORE', region, area_coach:area, store_id:s.store_id,
+          store_name:s.name,
+          weekAvgs:s.weekAvgs, deltas:s.weekAvgs.slice(1).map((v,i)=>deltaStr(s.weekAvgs[i],v)),
+          fillBg:idx%2===0?LIGHT_BLUE1:LIGHT_BLUE2, fontColor:'FF000000', bold:false
+        });
+      });
+    }
+  }
+
+  trendRows.forEach(r => {
+    const row = ws.addRow([r.level,r.region,r.area_coach,r.store_id,r.store_name,...r.weekAvgs,...r.deltas]);
+    row.eachCell((cell, col) => {
+      cell.font = { bold:r.bold, color:{argb:r.fontColor}, size:10 };
+      setSolid(cell, r.fillBg);
+      cell.border = { bottom:{style:'hair',color:{argb:'FFCCCCCC'}} };
+
+      if (col > baseCols && col <= baseCols+numWeeks) {
+        const val = cell.value;
+        if (val\!=null && typeof val==='number') {
+          setSolid(cell, istFill(val));
+          cell.font = { bold:r.bold, size:10, color:{argb: val>25?'FFFFFFFF':'FF000000'} };
+          cell.alignment = { horizontal:'center' };
+        } else {
+          cell.value = '\u2014';
+          cell.alignment = { horizontal:'center' };
+          setSolid(cell, r.fillBg);
+          cell.font = { bold:r.bold, size:10, color:{argb:r.fontColor} };
+        }
+      }
+      if (col > baseCols+numWeeks) {
+        cell.alignment = { horizontal:'center' };
+        const v = cell.value;
+        if (typeof v==='string') {
+          if (v.startsWith('\u25bc')) cell.font = { bold:r.bold, size:10, color:{argb:'FF00B050'} };
+          else if (v.startsWith('\u25b2')) cell.font = { bold:r.bold, size:10, color:{argb:'FFFF0000'} };
+          else cell.font = { bold:r.bold, size:10, color:{argb:r.fontColor} };
+        }
+      }
+    });
+  });
+}
+
 // ==============================
 async function exportExcel() {
   try {
@@ -1945,10 +2119,9 @@ async function exportExcel() {
     const wtdWS = wb.addWorksheet('WTD IST');
     writeISTSheet(wtdWS, wtdStores, `WTD IST — ${period} ${dateRange}`);
 
-    // 2. PTD sheet (all days in current period)
-    const ptdStores = getPTDStores();
-    const ptdWS = wb.addWorksheet('PTD IST');
-    writeISTSheet(ptdWS, ptdStores, `PTD IST — ${period.replace(/W\d+$/,'')} (Period To Date)`);
+    // 2. PTD Trend sheet (weekly Avg IST across all weeks in period)
+    const ptdTrendWS = wb.addWorksheet('PTD Trend');
+    writePTDTrendSheet(ptdTrendWS);
 
     // 3. Individual day sheets for current week
     const days = Object.values(currentData.days || {}).sort((a,b)=>a.date.localeCompare(b.date));
