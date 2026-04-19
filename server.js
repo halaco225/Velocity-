@@ -1191,7 +1191,9 @@ function computeWeek(wtd) {
   if (!days.length) return { days: [], stores: [], week: wtd.week, period: wtd.period || '', dateRange: getWeekDateRange(wtd.week) };
 
   // Check if we have pre-calculated WTD stores data from Excel import
-  if (wtd.stores && wtd.stores.length > 0 && wtd.stores[0].wtd_in_store) {
+  // Only use pre-computed WTD shortcut if no real daily store data exists
+  const hasDailyStores = Object.values(wtd.days || {}).some(d => d.stores && d.stores.length > 0);
+  if (!hasDailyStores && wtd.stores && wtd.stores.length > 0 && wtd.stores[0].wtd_in_store) {
     // Use the pre-calculated WTD data directly
     const storeWTD = wtd.stores.map(s => {
       const align = ALIGNMENT[s.store_id] || {};
