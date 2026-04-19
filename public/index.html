@@ -1420,7 +1420,7 @@ function writePTDTrendSheet(ws) {
     ? allWeeksData.filter(w => w.period && w.period.startsWith(currentPeriod)).sort((a,b)=>a.week.localeCompare(b.week))
     : [currentData];
 
-  if (\!periodWeeks.length) return;
+  if (!periodWeeks.length) return;
 
   const hasP17 = periodWeeks.some(w => w.period && w.period.includes('P17'));
   const currentWeekPeriod = currentData.period || '';
@@ -1481,7 +1481,7 @@ function writePTDTrendSheet(ws) {
     const week = periodWeeks[wi];
     const weekDays = (week.days || []).map(d => d.date);
     for (const s of (week.stores || [])) {
-      if (\!storeWeekly[s.store_id]) {
+      if (!storeWeekly[s.store_id]) {
         storeWeekly[s.store_id] = {
           store_id: s.store_id, name: s.name||s.store_id,
           area: s.area||'', area_coach: s.area_coach||'', region_coach: s.region_coach||'',
@@ -1489,18 +1489,18 @@ function writePTDTrendSheet(ws) {
         };
       }
       const dailyISTs = weekDays
-        .map(date => s.daily&&s.daily[date]&&s.daily[date].in_store\!=null ? s.daily[date].in_store : null)
-        .filter(v => v\!=null);
+        .map(date => s.daily&&s.daily[date]&&s.daily[date].in_store!=null ? s.daily[date].in_store : null)
+        .filter(v => v!=null);
       if (dailyISTs.length > 0) {
         storeWeekly[s.store_id].weekAvgs[wi] = +(dailyISTs.reduce((a,b)=>a+b,0)/dailyISTs.length).toFixed(1);
       }
     }
   }
 
-  const allStores = Object.values(storeWeekly).filter(s => s.weekAvgs.some(v=>v\!=null));
+  const allStores = Object.values(storeWeekly).filter(s => s.weekAvgs.some(v=>v!=null));
 
   function groupAvg(stores, wi) {
-    const vals = stores.map(s=>s.weekAvgs[wi]).filter(v=>v\!=null);
+    const vals = stores.map(s=>s.weekAvgs[wi]).filter(v=>v!=null);
     return vals.length ? +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : null;
   }
   function deltaStr(a, b) {
@@ -1562,7 +1562,7 @@ function writePTDTrendSheet(ws) {
 
       if (col > baseCols && col <= baseCols+numWeeks) {
         const val = cell.value;
-        if (val\!=null && typeof val==='number') {
+        if (val!=null && typeof val==='number') {
           setSolid(cell, istFill(val));
           cell.font = { bold:r.bold, size:10, color:{argb: val>25?'FFFFFFFF':'FF000000'} };
           cell.alignment = { horizontal:'center' };
