@@ -1415,8 +1415,26 @@ if (loadFromLocalStorage()) {
 
 // ─── PTD Trend sheet: weekly Avg IST across all weeks in current period ───
 function writePTDTrendSheet(ws) {
-  const DARK_NAVY = 'FF1F3864';
-  const MID_NAVY  = 'FF0D2137';
+  const DARK_NAVY   = 'FF1F3864';
+  const MID_NAVY    = 'FF0D2137';
+  const BLUE_ROW    = 'FF2E75B6';
+  const LIGHT_BLUE1 = 'FFD6E4F0';
+  const LIGHT_BLUE2 = 'FFEBF3FB';
+  const LIGHT_GRAY  = 'FFF2F2F2';
+  const GREEN_FILL  = 'FF70AD47';
+  const YELLOW_FILL = 'FFFFD966';
+  const ORANGE_FILL = 'FFED7D31';
+  const RED_FILL    = 'FFC00000';
+  function setSolid(cell, argb) {
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb } };
+  }
+  function istFill(avg) {
+    if (avg == null) return LIGHT_GRAY;
+    if (avg <= 18) return GREEN_FILL;
+    if (avg <= 20) return YELLOW_FILL;
+    if (avg <= 25) return ORANGE_FILL;
+    return RED_FILL;
+  }
   function hdrCell(cell, value) {
     cell.value = value;
     cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10 };
