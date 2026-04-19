@@ -1415,6 +1415,8 @@ if (loadFromLocalStorage()) {
 
 // ─── PTD Trend sheet: weekly Avg IST across all weeks in current period ───
 function writePTDTrendSheet(ws) {
+  const DARK_NAVY = 'FF1F3864';
+  const MID_NAVY  = 'FF0D2137';
   const currentPeriod = currentData.period ? currentData.period.replace(/W\d+$/, '') : null;
   const periodWeeks = currentPeriod
     ? allWeeksData.filter(w => w.period && w.period.startsWith(currentPeriod)).sort((a,b)=>a.week.localeCompare(b.week))
