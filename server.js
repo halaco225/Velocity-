@@ -959,7 +959,7 @@ app.post('/api/upload', upload.any(), async (req, res) => {
       if (!allData.weeks[weekKey]) {
         allData.weeks[weekKey] = { week: weekKey, period: periodWeek, days: {} };
       }
-      if (\!allData.weeks[weekKey].days) { allData.weeks[weekKey].days = {}; }
+      if (!allData.weeks[weekKey].days) { allData.weeks[weekKey].days = {}; }
       if (!allData.weeks[weekKey].days[finalDate]) {
         allData.weeks[weekKey].days[finalDate] = { date: finalDate, type: reportType, uploader: uploaderName, stores: [] };
       }
