@@ -1417,6 +1417,18 @@ if (loadFromLocalStorage()) {
 function writePTDTrendSheet(ws) {
   const DARK_NAVY = 'FF1F3864';
   const MID_NAVY  = 'FF0D2137';
+  function hdrCell(cell, value) {
+    cell.value = value;
+    cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 10 };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: DARK_NAVY } };
+    cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+    cell.border = {
+      top: { style: 'thin', color: { argb: 'FF000000' } },
+      bottom: { style: 'thin', color: { argb: 'FF000000' } },
+      left: { style: 'thin', color: { argb: 'FF000000' } },
+      right: { style: 'thin', color: { argb: 'FF000000' } }
+    };
+  }
   const currentPeriod = currentData.period ? currentData.period.replace(/W\d+$/, '') : null;
   const periodWeeks = currentPeriod
     ? allWeeksData.filter(w => w.period && w.period.startsWith(currentPeriod)).sort((a,b)=>a.week.localeCompare(b.week))
