@@ -1521,13 +1521,13 @@ function writePTDTrendSheet(ws) {
         };
       }
       // Use ist_avg directly (IST Tracker stores weekly avg); fall back to daily if available
-      const ist = s.ist_avg \!= null ? s.ist_avg : (s.wtd_in_store \!= null ? s.wtd_in_store : null);
-      if (ist \!= null) {
+      const ist = s.ist_avg != null ? s.ist_avg : (s.wtd_in_store != null ? s.wtd_in_store : null);
+      if (ist != null) {
         storeWeekly[s.store_id].weekAvgs[wi] = +Number(ist).toFixed(1);
       } else {
         const dailyISTs = weekDays
-          .map(date => s.daily&&s.daily[date]&&s.daily[date].in_store\!=null ? s.daily[date].in_store : null)
-          .filter(v => v\!=null);
+          .map(date => s.daily&&s.daily[date]&&s.daily[date].in_store!=null ? s.daily[date].in_store : null)
+          .filter(v => v!=null);
         if (dailyISTs.length > 0) {
           storeWeekly[s.store_id].weekAvgs[wi] = +(dailyISTs.reduce((a,b)=>a+b,0)/dailyISTs.length).toFixed(1);
         }
